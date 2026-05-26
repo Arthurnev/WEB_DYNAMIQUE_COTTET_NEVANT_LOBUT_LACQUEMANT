@@ -200,3 +200,390 @@ body {
     font-size: 26px;
   }
 }
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.sidebar {
+  width: 260px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  font-weight: 800;
+  font-size: 18px;
+  margin-bottom: 35px;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar nav a {
+  padding: 14px 16px;
+  border-radius: 12px;
+  color: #334155;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.sidebar nav a.active,
+.sidebar nav a:hover {
+  background: #eaf3ff;
+  color: #1e88e5;
+}
+
+.help-box {
+  margin-top: auto;
+  background: #eaf3ff;
+  padding: 18px;
+  border-radius: 16px;
+  font-size: 14px;
+}
+
+.help-box a {
+  color: #1e88e5;
+  font-weight: 700;
+}
+
+.dashboard-main {
+  flex: 1;
+  padding: 30px;
+}
+
+.topbar {
+  height: 45px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.user-info {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar {
+  background: #2d8cff;
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.welcome h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.welcome p {
+  color: #64748b;
+  margin-bottom: 24px;
+}
+
+.dashboard-btn {
+  width: auto;
+  padding: 14px 26px;
+}
+
+.dashboard-grid {
+  margin-top: 35px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 18px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+}
+
+.dashboard-card h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.appointment {
+  display: flex;
+  gap: 18px;
+  background: #f8fafc;
+  padding: 18px;
+  border-radius: 16px;
+  margin-bottom: 14px;
+}
+
+.icon-box {
+  background: #dbeafe;
+  color: #1e88e5;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar p {
+  margin-bottom: 14px;
+  letter-spacing: 8px;
+  color: #334155;
+}
+.student-app {
+  min-height: 100vh;
+  display: flex;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.student-sidebar {
+  width: 275px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.student-brand {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.brand-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ff6b2c;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.student-menu {
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.student-menu a {
+  text-decoration: none;
+  color: #334155;
+  font-weight: 700;
+  padding: 15px 18px;
+  border-radius: 12px;
+}
+
+.student-menu a.active,
+.student-menu a:hover {
+  background: #eaf3ff;
+  color: #2388f2;
+}
+
+.student-menu span {
+  float: right;
+  background: #ff3447;
+  color: white;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 13px;
+}
+
+.student-help {
+  margin-top: auto;
+  background: #eaf3ff;
+  padding: 18px;
+  font-size: 14px;
+}
+
+.help-icon {
+  background: #2388f2;
+  color: white;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.student-help p {
+  color: #64748b;
+  margin: 6px 0 10px;
+}
+
+.student-help a {
+  color: #2388f2;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.student-main {
+  flex: 1;
+}
+
+.student-topbar {
+  height: 70px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 28px;
+}
+
+.student-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.student-avatar {
+  background: #2388f2;
+  color: white;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.student-welcome {
+  padding: 28px;
+}
+
+.student-welcome h1 {
+  font-size: 34px;
+  margin-bottom: 8px;
+}
+
+.student-welcome p {
+  color: #64748b;
+  margin-bottom: 28px;
+}
+
+.student-welcome button {
+  background: #2388f2;
+  color: white;
+  border: none;
+  padding: 16px 28px;
+  border-radius: 9px;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 8px 18px rgba(35, 136, 242, 0.25);
+  cursor: pointer;
+}
+
+.student-grid {
+  padding: 0 28px 28px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 26px;
+}
+
+.student-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 26px;
+}
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.card-title h2,
+.student-card h2 {
+  font-size: 21px;
+}
+
+.card-title a {
+  color: #2388f2;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.appointment-item {
+  display: flex;
+  gap: 18px;
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+.appointment-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #dbeafe;
+  color: #2388f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.appointment-item h3 {
+  font-size: 19px;
+  margin-bottom: 7px;
+}
+
+.appointment-item p {
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.calendar-grid {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(7, 32px);
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.calendar-grid span {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.calendar-grid b {
+  font-weight: 600;
+  padding: 5px;
+}
+
+.calendar-grid .today {
+  background: #e5e7eb;
+  border-radius: 50%;
+}
+
+.calendar-grid .selected {
+  color: #2388f2;
+  border: 2px solid #2388f2;
+  border-radius: 50%;
+}
