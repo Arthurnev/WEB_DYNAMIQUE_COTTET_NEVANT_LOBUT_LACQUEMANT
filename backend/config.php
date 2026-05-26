@@ -2,7 +2,7 @@
 $host = "localhost";
 $dbname = "vitacare";
 $username = "root";
-$password = "";
+$password = "root";
 
 try {
     $pdo = new PDO(
