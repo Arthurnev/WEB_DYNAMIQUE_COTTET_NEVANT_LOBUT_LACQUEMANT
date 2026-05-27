@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tableau de bord - VitaCare Campus | Dr. Martin</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="../css/style_praticien.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">V</div>
+            <span class="brand-name">VitaCare <small>Campus</small></span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="active"><i class="fas fa-th-large"></i> Tableau de bord</a>
+            <a href="#"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            <a href="#"><i class="fas fa-clock"></i> Disponibilités</a>
+            <a href="#"><i class="fas fa-users"></i> Patients</a>
+            <a href="#"><i class="fas fa-heart"></i> Activités</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <a href="#">Nous contacter</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-right">
+                <span class="icon-btn"><i class="fas fa-bell"></i></span>
+                <span class="icon-btn"><i class="fas fa-shopping-cart"></i></span>
+                <div class="user-profile">
+                    <div class="avatar" id="avatar-initials">MM</div>
+                    <span class="user-name" id="user-name">Dr. Martin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page content -->
+        <div class="page-content">
+
+            <!-- Page header -->
+            <div class="page-header">
+                <h1 id="welcome-message">Bonjour, Dr. Martin 🎉</h1>
+                <p class="subtitle">Voici un aperçu de votre journée et de votre semaine</p>
+            </div>
+
+            <!-- Dashboard grid 3 colonnes -->
+            <div class="dashboard-grid">
+
+                <!-- COLONNE GAUCHE -->
+                <div class="dashboard-col-left">
+
+                    <!-- Agenda de la semaine -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-calendar-alt" style="color:#2c7da0;"></i> Agenda de la semaine</h2>
+                        </div>
+                        <div class="agenda-list">
+                            <div class="agenda-day">
+                                <span class="day-label">Lun</span>
+                                <div class="day-events">
+                                    <div class="event-item">09:00 - M. Dupont</div>
+                                    <div class="event-item">14:00 - Mme. Bernard</div>
+                                </div>
+                            </div>
+                            <div class="agenda-day">
+                                <span class="day-label">Mar</span>
+                                <div class="day-events">
+                                    <div class="event-item">10:30 - M. Martin</div>
+                                    <div class="event-item">15:00 - Mme. Rousseau</div>
+                                </div>
+                            </div>
+                            <div class="agenda-day">
+                                <span class="day-label">Mer</span>
+                                <div class="day-events">
+                                    <div class="event-item">09:00 - M. Petit</div>
+                                </div>
+                            </div>
+                            <div class="agenda-day">
+                                <span class="day-label">Jeu</span>
+                                <div class="day-events">
+                                    <div class="event-item">11:00 - Mme. Dubois</div>
+                                    <div class="event-item">16:00 - M. Laurent</div>
+                                </div>
+                            </div>
+                            <div class="agenda-day">
+                                <span class="day-label">Ven</span>
+                                <div class="day-events">
+                                    <div class="event-item">09:30 - M. Thomas</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="see-all">Voir agenda complet →</a>
+                        </div>
+                    </div>
+
+                    <!-- Patients récents -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-users" style="color:#2c7da0;"></i> Patients récents</h2>
+                            <a href="#" class="see-all">Voir tous</a>
+                        </div>
+                        <div class="patient-list">
+                            <div class="patient-item">
+                                <div class="patient-avatar"><i class="fas fa-user-circle"></i></div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Jean Dupont</div>
+                                    <div class="patient-detail">Consultation générale</div>
+                                </div>
+                                <div class="patient-date">20/05/2026</div>
+                                <a href="#" class="patient-link">Dossier</a>
+                            </div>
+                            <div class="patient-item">
+                                <div class="patient-avatar"><i class="fas fa-user-circle"></i></div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Sophie Martin</div>
+                                    <div class="patient-detail">Suivi nutritionnel</div>
+                                </div>
+                                <div class="patient-date">18/05/2026</div>
+                                <a href="#" class="patient-link">Dossier</a>
+                            </div>
+                            <div class="patient-item">
+                                <div class="patient-avatar"><i class="fas fa-user-circle"></i></div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Paul Lefebvre</div>
+                                    <div class="patient-detail">Bilan de santé</div>
+                                </div>
+                                <div class="patient-date">15/05/2026</div>
+                                <a href="#" class="patient-link">Dossier</a>
+                            </div>
+                            <div class="patient-item">
+                                <div class="patient-avatar"><i class="fas fa-user-circle"></i></div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Marie Rousseau</div>
+                                    <div class="patient-detail">Consultation</div>
+                                </div>
+                                <div class="patient-date">10/05/2026</div>
+                                <a href="#" class="patient-link">Dossier</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- COLONNE MILIEU -->
+                <div class="dashboard-col-middle">
+
+                    <!-- Réservations du jour -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-clock" style="color:#146b3a;"></i> Réservations du jour</h2>
+                        </div>
+                        <div class="reservation-list">
+                            <div class="reservation-item">
+                                <div class="reservation-header">
+                                    <span class="reservation-time">09:00</span>
+                                    <span class="reservation-status confirmed">Confirmé</span>
+                                </div>
+                                <div class="reservation-patient">Jean Dupont</div>
+                                <div class="reservation-service">Consultation médicale</div>
+                                <div class="reservation-actions">
+                                    <button class="btn-sm btn-confirm"><i class="fas fa-check"></i> Confirmer</button>
+                                    <button class="btn-sm btn-cancel"><i class="fas fa-times"></i> Annuler</button>
+                                </div>
+                            </div>
+                            <div class="reservation-item">
+                                <div class="reservation-header">
+                                    <span class="reservation-time">10:30</span>
+                                    <span class="reservation-status confirmed">Confirmé</span>
+                                </div>
+                                <div class="reservation-patient">Sophie Martin</div>
+                                <div class="reservation-service">Suivi</div>
+                                <div class="reservation-actions">
+                                    <button class="btn-sm btn-confirm"><i class="fas fa-check"></i> Confirmer</button>
+                                    <button class="btn-sm btn-cancel"><i class="fas fa-times"></i> Annuler</button>
+                                </div>
+                            </div>
+                            <div class="reservation-item">
+                                <div class="reservation-header">
+                                    <span class="reservation-time">14:00</span>
+                                    <span class="reservation-status pending">En attente</span>
+                                </div>
+                                <div class="reservation-patient">Paul Lefebvre</div>
+                                <div class="reservation-service">Consultation</div>
+                                <div class="reservation-actions">
+                                    <button class="btn-sm btn-confirm"><i class="fas fa-check"></i> Confirmer</button>
+                                    <button class="btn-sm btn-cancel"><i class="fas fa-times"></i> Annuler</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Disponibilités à venir -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-hourglass-half" style="color:#f59e0b;"></i> Disponibilités à venir</h2>
+                        </div>
+                        <div class="disponibilite-list">
+                            <div class="dispo-item">
+                                <div class="dispo-date">28/05/2026</div>
+                                <div class="dispo-time">15:00 - 17:00</div>
+                                <div class="dispo-status">Libre</div>
+                            </div>
+                            <div class="dispo-item">
+                                <div class="dispo-date">29/05/2026</div>
+                                <div class="dispo-time">09:00 - 12:00</div>
+                                <div class="dispo-status">Libre</div>
+                            </div>
+                            <div class="dispo-item">
+                                <div class="dispo-date">30/05/2026</div>
+                                <div class="dispo-time">14:00 - 16:00</div>
+                                <div class="dispo-status">Libre</div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="see-all">Gérer mes disponibilités →</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- COLONNE DROITE -->
+                <div class="dashboard-col-right">
+
+                    <!-- Activités créées -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-heart" style="color:#146b3a;"></i> Activités créées</h2>
+                            <a href="#" class="see-all">Voir toutes</a>
+                        </div>
+                        <div class="activite-list">
+                            <div class="activite-item">
+                                <div class="activite-nom">Atelier gestion du stress</div>
+                                <div class="activite-detail">05/06/2026</div>
+                                <div class="activite-inscrits">12/20 inscrits</div>
+                                <div class="activite-progress">
+                                    <div class="progress-bar" style="width:60%;"></div>
+                                </div>
+                            </div>
+                            <div class="activite-item">
+                                <div class="activite-nom">Nutrition équilibrée</div>
+                                <div class="activite-detail">10/06/2026</div>
+                                <div class="activite-inscrits">18/25 inscrits</div>
+                                <div class="activite-progress">
+                                    <div class="progress-bar" style="width:72%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary"><i class="fas fa-plus"></i> Créer une activité</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+    // Simulation utilisateur connecté (localStorage)
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.nom) {
+        document.getElementById("user-name").textContent = "Dr. " + user.nom;
+        document.getElementById("avatar-initials").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+        document.getElementById("welcome-message").innerHTML = "Bonjour, Dr. " + user.nom + " 🎉";
+    } else {
+        // fallback par défaut
+        const defaultUser = { nom: "Martin", prenom: "Marc" };
+        document.getElementById("user-name").textContent = "Dr. Martin";
+        document.getElementById("avatar-initials").textContent = "MM";
+        document.getElementById("welcome-message").innerHTML = "Bonjour, Dr. Martin 🎉";
+    }
+</script>
+
+</body>
+</html>
