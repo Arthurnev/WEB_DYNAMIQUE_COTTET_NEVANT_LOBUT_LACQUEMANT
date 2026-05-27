@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard Étudiant - VitaCare</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -38,8 +38,12 @@
       <div class="student-actions">
         <span>🔔</span>
         <span>🛒</span>
-        <div class="student-avatar">JD</div>
-        <strong>Jean Dupont</strong>
+        <!-- APRÈS -->
+        <div class="student-avatar" id="topbar-avatar" 
+     onclick="window.location.href='profil.html'" 
+     style="cursor:pointer">JD
+       </div>
+       <strong id="topbar-name">Jean Dupont</strong>
       </div>
     </header>
 
@@ -110,6 +114,19 @@
 
 </div>
 
-<script src="../js/auth.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  if (!user.id) window.location.href = "login.html";
+
+  const initiales = ((user.prenom?.[0] ?? "") + (user.nom?.[0] ?? "")).toUpperCase();
+  document.getElementById("topbar-avatar").textContent = initiales || "?";
+  document.getElementById("topbar-name").textContent   = (user.prenom ?? "") + " " + (user.nom ?? "");
+
+  // Mettre à jour le "Bonjour, Jean 👋"
+  document.querySelector(".student-welcome h1").textContent = 
+    "Bonjour, " + (user.prenom ?? "vous") + " 👋";
+</script>
 </body>
 </html>
