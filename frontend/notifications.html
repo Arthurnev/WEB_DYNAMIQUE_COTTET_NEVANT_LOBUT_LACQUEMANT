@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications - VitaCare</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="student-app">
+
+  <aside class="student-sidebar">
+    <div class="student-brand">
+      <div class="brand-icon">V</div>
+      <strong>VitaCare Campus</strong>
+    </div>
+
+    <nav class="student-menu">
+      <a href="index.html">▦ Dashboard</a>
+      <a href="catalogue.html">📖 Catalogue</a>
+      <a href="suivi_historique.html">📅 Suivi & historique</a>
+      <a href="activites.html">〽 Activités</a>
+      <a class="active" href="notifications.html">🔔 Notifications <span id="sidebar-notif-count">0</span></a>
+    </nav>
+
+    <div class="student-help">
+      <div class="help-icon">?</div>
+      <strong>Besoin d'aide ?</strong>
+      <p>Notre équipe est là pour vous aider.</p>
+      <a href="#">Nous contacter</a>
+    </div>
+  </aside>
+
+  <main class="student-main">
+
+    <header class="student-topbar">
+      <div class="student-actions">
+
+        <div class="notif-dropdown-container">
+          <button class="notif-bell" id="notif-bell" type="button">
+            <i class="fas fa-bell"></i>
+            <span class="notif-count" id="topbar-notif-count">0</span>
+          </button>
+
+          <div class="notif-dropdown" id="notif-dropdown">
+            <div class="notif-dropdown-header">
+              <span>Notifications</span>
+              <button type="button" onclick="marquerToutLuDropdown()">Tout lu</button>
+            </div>
+
+            <div class="notif-dropdown-list" id="notif-dropdown-list"></div>
+
+            <div class="notif-dropdown-footer">
+              <a href="notifications.html">Voir toutes les notifications</a>
+            </div>
+          </div>
+        </div>
+
+        <span>🛒</span>
+
+        <div class="account-wrapper">
+  <button class="avatar-button" onclick="toggleAccountMenu()" type="button">
+    <div class="student-avatar" id="studentAvatar"></div>
+  </button>
+
+  <strong id="studentName"></strong>
+
+  <div class="account-menu hidden" id="accountMenu">
+    <a href="compte.html">⚙️ Mon compte</a>
+    <button class="logout-btn" onclick="logout()">🚪 Déconnexion</button>
+  </div>
+</div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="page-header">
+        <h1>Notifications</h1>
+        <p class="subtitle" id="unread-count">0 notification non lue</p>
+      </div>
+
+      <div class="notif-filters-container">
+        <div class="notif-filters">
+          <button class="filter-btn active" data-filter="all">Toutes</button>
+          <button class="filter-btn" data-filter="rappel">Rappels</button>
+          <button class="filter-btn" data-filter="confirmation">Confirmations</button>
+          <button class="filter-btn" data-filter="annulation">Annulations</button>
+          <button class="filter-btn" data-filter="nouveaute">Nouveautés</button>
+          <button class="filter-btn" data-filter="info">Infos</button>
+        </div>
+
+        <button class="mark-all-read" onclick="marquerToutLuPage()">Tout marquer comme lu</button>
+      </div>
+
+      <div id="notifications-list" class="notif-list"></div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script src="js/notifications.js"></script>
+</body>
+</html>
