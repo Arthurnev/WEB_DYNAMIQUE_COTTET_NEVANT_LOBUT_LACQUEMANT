@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mes activités - VitaCare Campus | Dr. Martin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style_praticien.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">V</div>
+            <span class="brand-name">VitaCare <small>Campus</small></span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
+            <a href="#"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            <a href="#"><i class="fas fa-clock"></i> Disponibilités</a>
+            <a href="#"><i class="fas fa-users"></i> Patients</a>
+            <a href="activites_praticien.html" class="active"><i class="fas fa-heart"></i> Activités</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <a href="#">Nous contacter</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-right">
+                <span class="icon-btn"><i class="fas fa-bell"></i></span>
+                <span class="icon-btn"><i class="fas fa-shopping-cart"></i></span>
+                <div class="user-profile">
+                    <div class="avatar" id="avatar-initials">MM</div>
+                    <span class="user-name" id="user-name">Dr. Martin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="activities-header">
+                <div>
+                    <h1>Mes activités</h1>
+                    <p class="subtitle">Gérez vos ateliers et activités proposés aux étudiants</p>
+                </div>
+                <button class="btn-create" id="openModalBtn">
+                    <i class="fas fa-plus"></i> Créer une activité
+                </button>
+            </div>
+
+            <div id="activitiesContainer" class="activities-grid">
+                <div style="text-align:center; padding:40px;">Chargement...</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div id="activityModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-plus-circle"></i> Nouvelle activité</h2>
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+        </div>
+        <form id="activityForm">
+            <div class="form-group">
+                <label>Titre de l'activité *</label>
+                <input type="text" id="activityTitle" required placeholder="Ex: Atelier gestion du stress">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="activityDesc" rows="3" placeholder="Décrivez votre activité..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Date *</label>
+                <input type="date" id="activityDate" required>
+            </div>
+            <div class="form-group">
+                <label>Heure *</label>
+                <input type="time" id="activityTime" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Durée (minutes) *</label>
+                    <input type="number" id="activityDuration" value="60" required min="15" step="15">
+                </div>
+                <div class="form-group">
+                    <label>Lieu *</label>
+                    <input type="text" id="activityLocation" required placeholder="Salle A - Campus Paris">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Prix (€) - 0 pour gratuit</label>
+                    <input type="number" id="activityPrice" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Capacité max *</label>
+                    <input type="number" id="activityCapacity" value="20" required min="1">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Catégorie</label>
+                <select id="activityCategory">
+                    <option value="Bien-être">Bien-être</option>
+                    <option value="Sport & Fitness">Sport & Fitness</option>
+                    <option value="Nutrition">Nutrition</option>
+                    <option value="Méditation">Méditation</option>
+                    <option value="Atelier">Atelier</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel-modal" id="cancelModalBtn">Annuler</button>
+                <button type="submit" class="btn-submit">Publier l'activité</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const CURRENT_PRATICIEN = 'Dr. Martin';
+
+    // Récupérer l'utilisateur connecté
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.nom) {
+        document.getElementById("user-name").textContent = "Dr. " + user.nom;
+        document.getElementById("avatar-initials").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+    }
+
+    // ========== CHARGER DEPUIS LA BDD ==========
+    async function loadActivitiesFromDB() {
+        try {
+            const res = await fetch('../backend/lister_activites.php', { credentials: 'include' });
+            const data = await res.json();
+            if (data.success) {
+                return data.activites;
+            }
+            return [];
+        } catch (error) {
+            console.error("Erreur chargement:", error);
+            return [];
+        }
+    }
+
+    // ========== SAUVEGARDER DANS LA BDD ==========
+    async function saveActivityToDB(activity) {
+        try {
+            const res = await fetch('../backend/ajouter_activite.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    nom: activity.title,
+                    description: activity.description,
+                    date_heure: `${activity.date} ${activity.time}`,
+                    capacite_max: activity.capacity,
+                    lieu: activity.location
+                })
+            });
+            const data = await res.json();
+            return data.success;
+        } catch (error) {
+            console.error("Erreur sauvegarde:", error);
+            return false;
+        }
+    }
+
+    // ========== SUPPRIMER DANS LA BDD ==========
+    async function deleteActivityFromDB(id) {
+        try {
+            const res = await fetch(`../backend/supprimer_activite.php?id=${id}`, { credentials: 'include' });
+            const data = await res.json();
+            return data.success;
+        } catch (error) {
+            console.error("Erreur suppression:", error);
+            return false;
+        }
+    }
+
+    // ========== AFFICHER LES ACTIVITÉS ==========
+    async function renderActivities() {
+        const container = document.getElementById('activitiesContainer');
+        const activites = await loadActivitiesFromDB();
+        
+        if (activites.length === 0) {
+            container.innerHTML = `
+                <div class="empty-activities">
+                    <i class="fas fa-calendar-plus"></i>
+                    <p>Vous n'avez pas encore créé d'activité</p>
+                    <button class="btn-create" onclick="document.getElementById('openModalBtn').click()">
+                        <i class="fas fa-plus"></i> Créer une activité
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = activites.map(activite => {
+            const date = new Date(activite.date_heure);
+            const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            const today = new Date();
+            const estActif = new Date(activite.date_heure) > today;
+            const statusClass = estActif ? 'status-active' : 'status-completed';
+            const statusLabel = estActif ? 'Actif' : 'Terminé';
+            const inscrits = activite.inscrits || 0;
+            const percent = (inscrits / activite.capacite_max) * 100;
+            
+            return `
+                <div class="activity-card">
+                    <div class="activity-card-header">
+                        <div class="activity-title">${escapeHtml(activite.nom)}</div>
+                        <div class="activity-status ${statusClass}">${statusLabel}</div>
+                        <div class="activity-desc">${escapeHtml(activite.description || 'Aucune description')}</div>
+                    </div>
+                    <div class="activity-card-body">
+                        <div class="activity-details">
+                            <div class="detail-item"><i class="far fa-calendar-alt"></i><span>${dateStr} à ${timeStr}</span></div>
+                            <div class="detail-item"><i class="fas fa-map-marker-alt"></i><span>${escapeHtml(activite.lieu)}</span></div>
+                            <div class="detail-item"><i class="fas fa-users"></i><span>Capacité: ${activite.capacite_max} personnes</span></div>
+                        </div>
+                        <div class="inscription-info">
+                            <div class="inscrits-count">${inscrits}/${activite.capacite_max} inscrits</div>
+                            <div class="progress-bar-container"><div class="progress-fill" style="width: ${percent}%;"></div></div>
+                        </div>
+                    </div>
+                    <div class="activity-card-footer">
+                        <button class="btn-view" onclick="viewRegistrations(${activite.id})"><i class="fas fa-users"></i> Voir les inscrits</button>
+                        <button class="btn-delete" onclick="deleteActivity(${activite.id})"><i class="fas fa-trash-alt"></i> Supprimer</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function viewRegistrations(id) {
+        alert("Fonctionnalité à venir - Liste des inscrits");
+    }
+
+    // ========== AJOUTER UNE ACTIVITÉ ==========
+    async function addActivity(event) {
+        event.preventDefault();
+        
+        const title = document.getElementById('activityTitle').value.trim();
+        const description = document.getElementById('activityDesc').value.trim();
+        const date = document.getElementById('activityDate').value;
+        const time = document.getElementById('activityTime').value;
+        const duration = parseInt(document.getElementById('activityDuration').value);
+        const location = document.getElementById('activityLocation').value.trim();
+        const price = parseInt(document.getElementById('activityPrice').value) || 0;
+        const capacity = parseInt(document.getElementById('activityCapacity').value);
+        const category = document.getElementById('activityCategory').value;
+        
+        if (!title || !date || !time || !location || !capacity) {
+            showToast('Veuillez remplir tous les champs obligatoires', 'error');
+            return;
+        }
+        
+        const newActivity = {
+            title: title,
+            description: description || '',
+            date: date,
+            time: time,
+            duration: duration,
+            location: location,
+            price: price,
+            capacity: capacity,
+            category: category
+        };
+        
+        const success = await saveActivityToDB(newActivity);
+        
+        if (success) {
+            showToast('Activité créée avec succès !', 'success');
+            closeModal();
+            document.getElementById('activityForm').reset();
+            document.getElementById('activityDuration').value = '60';
+            document.getElementById('activityPrice').value = '0';
+            document.getElementById('activityCapacity').value = '20';
+            await renderActivities();
+        } else {
+            showToast('Erreur lors de la création', 'error');
+        }
+    }
+
+    // ========== SUPPRIMER UNE ACTIVITÉ ==========
+    async function deleteActivity(id) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette activité ?')) {
+            const success = await deleteActivityFromDB(id);
+            if (success) {
+                showToast('Activité supprimée avec succès', 'success');
+                await renderActivities();
+            } else {
+                showToast('Erreur lors de la suppression', 'error');
+            }
+        }
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3000);
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Modal
+    const modal = document.getElementById('activityModal');
+    const openBtn = document.getElementById('openModalBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelModalBtn');
+    const form = document.getElementById('activityForm');
+
+    function openModal() {
+        modal.classList.add('open');
+        const defaultDate = new Date();
+        defaultDate.setDate(defaultDate.getDate() + 7);
+        document.getElementById('activityDate').value = defaultDate.toISOString().split('T')[0];
+        document.getElementById('activityTime').value = '14:00';
+    }
+
+    function closeModal() {
+        modal.classList.remove('open');
+        form.reset();
+    }
+
+    openBtn.onclick = openModal;
+    closeBtn.onclick = closeModal;
+    cancelBtn.onclick = closeModal;
+    form.onsubmit = addActivity;
+
+    window.onclick = (event) => {
+        if (event.target === modal) closeModal();
+    };
+
+    // Charger au démarrage
+    renderActivities();
+</script>
+
+<style>
+    .toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        padding: 12px 24px;
+        border-radius: 40px;
+        color: white;
+        font-weight: 600;
+        z-index: 1100;
+        animation: slideIn 0.3s ease;
+    }
+    .toast.success { background: #2e8b57; }
+    .toast.error { background: #dc2626; }
+    .toast i { margin-right: 8px; }
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+</style>
+
+</body>
+</html>
