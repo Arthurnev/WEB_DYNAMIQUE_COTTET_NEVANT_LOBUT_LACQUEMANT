@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VitaCare Campus — Mon Profil</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:       #3d8b6e;
+      --green-light: #eaf5f0;
+      --green-mid:   #c6e8da;
+      --green-dark:  #2a6b53;
+      --text:        #1a2e25;
+      --text-soft:   #6b8278;
+      --border:      #ddeee7;
+      --bg:          #f4faf7;
+      --white:       #ffffff;
+      --danger:      #e05c5c;
+      --shadow:      0 2px 12px rgba(61,139,110,.10);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 240px;
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+    }
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo {
+      width: 34px; height: 34px;
+      background: var(--green);
+      border-radius: 10px;
+      display: grid; place-items: center;
+      color: white; font-weight: 700; font-size: 16px;
+    }
+    .sidebar-brand strong { font-size: 15px; color: var(--text); }
+    .sidebar-nav { padding: 16px 12px; flex: 1; }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text-soft);
+      font-size: 14px; font-weight: 500;
+      transition: all .18s;
+    }
+    .sidebar-nav a:hover { background: var(--green-light); color: var(--green); }
+    .sidebar-nav a.active { background: var(--green-light); color: var(--green); font-weight: 600; }
+    .sidebar-nav a .icon { font-size: 17px; width: 22px; text-align: center; }
+    .sidebar-footer { padding: 12px 12px 0; border-top: 1px solid var(--border); }
+    .sidebar-footer a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--danger);
+      font-size: 14px; font-weight: 500;
+      transition: background .18s;
+    }
+    .sidebar-footer a:hover { background: #fdeaea; }
+
+    /* ── HEADER ── */
+    .topbar {
+      position: fixed;
+      top: 0; left: 240px; right: 0;
+      height: 64px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 0 32px;
+      gap: 16px;
+      z-index: 100;
+    }
+    .topbar-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: none; background: var(--green-light);
+      display: grid; place-items: center;
+      cursor: pointer; font-size: 17px;
+      transition: background .15s;
+    }
+    .topbar-icon:hover { background: var(--green-mid); }
+    .topbar-user {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer;
+    }
+    .topbar-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--green);
+      display: grid; place-items: center;
+      color: white; font-weight: 700; font-size: 14px;
+      transition: transform .15s;
+    }
+    .topbar-avatar:hover { transform: scale(1.05); }
+    .topbar-name { font-weight: 600; font-size: 14px; }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: 240px;
+      padding-top: 64px;
+      flex: 1;
+      padding-bottom: 40px;
+    }
+    .page-content {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 36px 32px;
+    }
+    .page-title {
+      font-size: 22px; font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .page-subtitle {
+      color: var(--text-soft); font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 15px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 22px;
+      color: var(--text);
+    }
+    .card-title .icon { font-size: 18px; }
+
+    /* ── AVATAR SECTION ── */
+    .profile-avatar-row {
+      display: flex; align-items: center; gap: 20px;
+      margin-bottom: 0;
+    }
+    .profile-avatar-big {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: var(--green);
+      display: grid; place-items: center;
+      color: white; font-weight: 700; font-size: 26px;
+      flex-shrink: 0;
+    }
+    .profile-avatar-info h2 { font-size: 18px; font-weight: 700; }
+    .profile-avatar-info .role-badge {
+      display: inline-block;
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 12px; font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-top: 4px;
+    }
+    .btn-ghost {
+      background: none; border: 1px solid var(--border);
+      color: var(--green); font-size: 13px; font-weight: 600;
+      padding: 6px 14px; border-radius: 8px;
+      cursor: pointer; margin-top: 10px;
+      transition: all .15s;
+    }
+    .btn-ghost:hover { background: var(--green-light); border-color: var(--green); }
+
+    /* ── FORM ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-grid .full { grid-column: 1 / -1; }
+    .form-group label {
+      display: block;
+      font-size: 13px; font-weight: 600;
+      color: var(--text-soft);
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color .15s, box-shadow .15s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(61,139,110,.12);
+      background: white;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      background: var(--green);
+      color: white;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 10px;
+      font-size: 14px; font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--green-dark); }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-primary:disabled {
+      background: var(--green-mid); cursor: not-allowed;
+    }
+
+    /* ── MESSAGE ── */
+    #message, #message-pwd {
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-size: 13px; font-weight: 500;
+      margin-bottom: 18px;
+      display: none;
+    }
+    .msg-success { background: var(--green-light); color: var(--green-dark); border: 1px solid var(--green-mid); display: block !important; }
+    .msg-error   { background: #fdeaea; color: var(--danger); border: 1px solid #f5c6c6; display: block !important; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 22px 0;
+    }
+
+    /* ── PASSWORD STRENGTH ── */
+    .pwd-strength { margin-top: 6px; }
+    .pwd-bar {
+      height: 4px; border-radius: 2px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .pwd-bar-fill {
+      height: 100%; width: 0;
+      border-radius: 2px;
+      transition: width .3s, background .3s;
+    }
+    .pwd-label { font-size: 12px; color: var(--text-soft); margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">V</div>
+    <strong>VitaCare Campus</strong>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html"><span class="icon">🏠</span> Dashboard</a>
+    <a href="catalogue.html"><span class="icon">📋</span> Catalogue</a>
+    <a href="historique.html"><span class="icon">📅</span> Suivi &amp; historique</a>
+    <a href="#"><span class="icon">〜</span> Activités</a>
+    <a href="#"><span class="icon">🔔</span> Notifications</a>
+    <a href="profil.html" class="active"><span class="icon">👤</span> Mon profil</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="#" onclick="logout()"><span class="icon">🚪</span> Déconnexion</a>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <button class="topbar-icon" title="Notifications">🔔</button>
+  <button class="topbar-icon" title="Panier">🛒</button>
+  <div class="topbar-user" onclick="window.location.href='profil.html'">
+    <div class="topbar-avatar" id="topbar-avatar">JD</div>
+    <span class="topbar-name" id="topbar-name">Jean Dupont</span>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="page-content">
+    <div class="page-title">Mon profil</div>
+    <div class="page-subtitle">Gérez vos informations personnelles</div>
+
+    <!-- CARTE AVATAR -->
+    <div class="card">
+      <div class="profile-avatar-row">
+        <div class="profile-avatar-big" id="avatar-big">JD</div>
+        <div class="profile-avatar-info">
+          <h2 id="display-name">Jean Dupont</h2>
+          <span class="role-badge" id="display-role">Étudiant</span>
+          <br>
+          <button class="btn-ghost">Changer la photo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFOS PERSONNELLES -->
+    <div class="card">
+      <div class="card-title"><span class="icon">👤</span> Informations personnelles</div>
+      <div id="message"></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Prénom</label>
+          <input type="text" id="prenom" placeholder="Jean">
+        </div>
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" id="nom" placeholder="Dupont">
+        </div>
+        <div class="form-group full">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="jean.dupont@exemple.com">
+        </div>
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input type="tel" id="telephone" placeholder="06 12 34 56 78">
+        </div>
+        <div class="form-group">
+          <label>Adresse</label>
+          <input type="text" id="adresse" placeholder="123 Rue de l'Université">
+        </div>
+        <div class="form-group">
+          <label>Campus</label>
+          <select id="campus">
+            <option value="">Sélectionner</option>
+            <option>Paris</option>
+            <option>Lyon</option>
+            <option>Bordeaux</option>
+            <option>Toulouse</option>
+            <option>Lille</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Filière</label>
+          <select id="filiere">
+            <option value="">Sélectionner</option>
+            <option>Informatique</option>
+            <option>Médecine</option>
+            <option>Droit</option>
+            <option>Sciences</option>
+            <option>Économie</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Année</label>
+          <select id="annee">
+            <option value="">Sélectionner</option>
+            <option>L1</option><option>L2</option><option>L3</option>
+            <option>M1</option><option>M2</option>
+            <option>D1</option><option>D2</option><option>D3</option>
+          </select>
+        </div>
+      </div>
+      <hr class="divider">
+      <button class="btn-primary" onclick="saveProfile()" id="btn-save">
+        💾 Enregistrer les modifications
+      </button>
+    </div>
+
+    <!-- MOT DE PASSE -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🔒</span> Modifier le mot de passe</div>
+      <div id="message-pwd"></div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Mot de passe actuel</label>
+          <input type="password" id="pwd-actuel" placeholder="••••••••">
+        </div>
+        <div class="form-group">
+          <label>Nouveau mot de passe</label>
+          <input type="password" id="pwd-new" placeholder="••••••••" oninput="checkStrength(this.value)">
+          <div class="pwd-strength">
+            <div class="pwd-bar"><div class="pwd-bar-fill" id="pwd-bar-fill"></div></div>
+            <div class="pwd-label" id="pwd-label"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Confirmer le nouveau mot de passe</label>
+          <input type="password" id="pwd-confirm" placeholder="••••••••">
+        </div>
+      </div>
+      <hr class="divider">
+      <button class="btn-primary" onclick="savePassword()">🔑 Changer le mot de passe</button>
+    </div>
+
+  </div>
+</main>
+
+<script src="js/auth.js"></script>
+<script>
+  // ── Chargement des données utilisateur ──
+  function loadUser() {
+    const raw = localStorage.getItem("user");
+    if (!raw) { window.location.href = "login.html"; return; }
+    const user = JSON.parse(raw);
+
+    const initiales = ((user.prenom?.[0] ?? "") + (user.nom?.[0] ?? "")).toUpperCase() || "?";
+    document.getElementById("avatar-big").textContent    = initiales;
+    document.getElementById("topbar-avatar").textContent = initiales;
+    document.getElementById("topbar-name").textContent   = (user.prenom ?? "") + " " + (user.nom ?? "");
+    document.getElementById("display-name").textContent  = (user.prenom ?? "") + " " + (user.nom ?? "");
+    document.getElementById("display-role").textContent  =
+      user.role === "praticien" ? "Praticien" :
+      user.role === "admin"     ? "Administrateur" : "Étudiant";
+
+    document.getElementById("prenom").value    = user.prenom    ?? "";
+    document.getElementById("nom").value       = user.nom       ?? "";
+    document.getElementById("email").value     = user.email     ?? "";
+    document.getElementById("telephone").value = user.telephone ?? "";
+    document.getElementById("adresse").value   = user.adresse   ?? "";
+
+    if (user.campus)  setSelect("campus",  user.campus);
+    if (user.filiere) setSelect("filiere", user.filiere);
+    if (user.annee)   setSelect("annee",   user.annee);
+  }
+
+  function setSelect(id, val) {
+    const sel = document.getElementById(id);
+    for (const opt of sel.options) {
+      if (opt.value === val || opt.text === val) { opt.selected = true; break; }
+    }
+  }
+
+  // ── Sauvegarde du profil ──
+  async function saveProfile() {
+    const btn = document.getElementById("btn-save");
+    btn.disabled = true;
+    btn.textContent = "Enregistrement…";
+
+    const raw  = localStorage.getItem("user");
+    const user = raw ? JSON.parse(raw) : {};
+
+    const updated = {
+      id:        user.id,
+      prenom:    document.getElementById("prenom").value.trim(),
+      nom:       document.getElementById("nom").value.trim(),
+      email:     document.getElementById("email").value.trim(),
+      telephone: document.getElementById("telephone").value.trim(),
+      adresse:   document.getElementById("adresse").value.trim(),
+      campus:    document.getElementById("campus").value,
+      filiere:   document.getElementById("filiere").value,
+      annee:     document.getElementById("annee").value,
+    };
+
+    try {
+      const res  = await fetch("../backend/user.php?action=update_profile", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(updated),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        // Mettre à jour le localStorage
+        localStorage.setItem("user", JSON.stringify({ ...user, ...updated }));
+        loadUser();
+        showMsg("message", "✅ Profil mis à jour avec succès !", "success");
+      } else {
+        showMsg("message", data.error ?? "Erreur lors de la mise à jour.", "error");
+      }
+    } catch {
+      showMsg("message", "Erreur de connexion au serveur.", "error");
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = "💾 Enregistrer les modifications";
+  }
+
+  // ── Changement de mot de passe ──
+  async function savePassword() {
+    const actuel  = document.getElementById("pwd-actuel").value;
+    const nouveau = document.getElementById("pwd-new").value;
+    const confirm = document.getElementById("pwd-confirm").value;
+
+    if (!actuel || !nouveau || !confirm) {
+      showMsg("message-pwd", "Remplis tous les champs.", "error"); return;
+    }
+    if (nouveau !== confirm) {
+      showMsg("message-pwd", "Les mots de passe ne correspondent pas.", "error"); return;
+    }
+    if (nouveau.length < 6) {
+      showMsg("message-pwd", "Mot de passe trop court (6 caractères min).", "error"); return;
+    }
+
+    const user = JSON.parse(localStorage.getItem("user") ?? "{}");
+
+    try {
+      const res  = await fetch("../backend/user.php?action=change_password", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ id: user.id, mot_de_passe_actuel: actuel, nouveau_mot_de_passe: nouveau }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showMsg("message-pwd", "✅ Mot de passe modifié !", "success");
+        document.getElementById("pwd-actuel").value  = "";
+        document.getElementById("pwd-new").value     = "";
+        document.getElementById("pwd-confirm").value = "";
+      } else {
+        showMsg("message-pwd", data.error ?? "Erreur.", "error");
+      }
+    } catch {
+      showMsg("message-pwd", "Erreur de connexion au serveur.", "error");
+    }
+  }
+
+  // ── Force du mot de passe ──
+  function checkStrength(val) {
+    const fill  = document.getElementById("pwd-bar-fill");
+    const label = document.getElementById("pwd-label");
+    if (!val) { fill.style.width = "0"; label.textContent = ""; return; }
+
+    let score = 0;
+    if (val.length >= 8)            score++;
+    if (/[A-Z]/.test(val))          score++;
+    if (/[0-9]/.test(val))          score++;
+    if (/[^A-Za-z0-9]/.test(val))   score++;
+
+    const levels = [
+      { pct: "20%", color: "#e05c5c", text: "Très faible" },
+      { pct: "40%", color: "#f4a261", text: "Faible" },
+      { pct: "65%", color: "#f4d35e", text: "Moyen" },
+      { pct: "85%", color: "#52b788", text: "Fort" },
+      { pct: "100%",color: "#2d6a4f", text: "Très fort" },
+    ];
+    const lvl = levels[Math.min(score, 4)];
+    fill.style.width      = lvl.pct;
+    fill.style.background = lvl.color;
+    label.textContent     = lvl.text;
+    label.style.color     = lvl.color;
+  }
+
+  // ── Utilitaire messages ──
+  function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className   = type === "success" ? "msg-success" : "msg-error";
+    setTimeout(() => { el.className = ""; el.style.display = "none"; }, 4000);
+  }
+
+  loadUser();
+</script>
+</body>
+</html>
