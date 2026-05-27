@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Catalogue - VitaCare</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Leaflet pour la carte interactive -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+</head>
+<body>
+
+<div class="student-app">
+
+  <aside class="student-sidebar">
+    <div class="student-brand">
+      <div class="brand-icon">V</div>
+      <strong>VitaCare Campus</strong>
+    </div>
+
+    <nav class="student-menu">
+      <a href="index.html">▦ Dashboard</a>
+      <a class="active" href="catalogue.html">📖 Catalogue</a>
+      <a href="suivi_historique.html">📅 Suivi & historique</a>
+      <a href="activites.html">〽 Activités</a>
+      <a href="notifications.html">🔔 Notifications <span>3</span></a>
+    </nav>
+
+    <div class="student-help">
+      <div class="help-icon">?</div>
+      <strong>Besoin d'aide ?</strong>
+      <p>Notre équipe est là pour vous aider.</p>
+      <a href="#">Nous contacter</a>
+    </div>
+  </aside>
+
+  <main class="student-main">
+
+    <header class="student-topbar">
+      <div class="student-actions">
+        <span>🔔</span>
+        <span>🛒</span>
+
+        <div class="account-wrapper">
+  <button class="avatar-button" onclick="toggleAccountMenu()" type="button">
+    <div class="student-avatar" id="studentAvatar"></div>
+  </button>
+
+  <strong id="studentName"></strong>
+
+  <div class="account-menu hidden" id="accountMenu">
+    <a href="compte.html">⚙️ Mon compte</a>
+    <button class="logout-btn" onclick="logout()">🚪 Déconnexion</button>
+  </div>
+</div>
+    </header>
+
+    <section class="catalogue-page">
+      <div class="catalogue-header">
+        <div>
+          <h1>Catalogue des services</h1>
+          <p>Recherchez une consultation, une activité ou un professionnel.</p>
+        </div>
+      </div>
+
+      <div class="catalogue-search">
+        <input type="text" id="searchInput" placeholder="Rechercher un service, un praticien, une spécialité...">
+      </div>
+
+      <div class="catalogue-tabs">
+        <button class="active" data-category="all">Tous</button>
+        <button data-category="medecine">Médecine</button>
+        <button data-category="sport">Sport & Fitness</button>
+        <button data-category="bien_etre">Bien-être mental</button>
+        <button data-category="nutrition">Nutrition</button>
+      </div>
+
+      <div class="catalogue-layout">
+
+        <section class="services-list" id="servicesList">
+          <!-- Les cartes seront générées par JS -->
+        </section>
+
+        <aside class="catalogue-side">
+          <div class="filters-card">
+  <h2>Filtres</h2>
+
+  <h3>Mode de consultation</h3>
+  <label>
+    <input type="checkbox" class="filter-mode" value="Présentiel">
+    Présentiel
+  </label>
+  <label>
+    <input type="checkbox" class="filter-mode" value="Vidéo">
+    Vidéo
+  </label>
+  <label>
+    <input type="checkbox" class="filter-mode" value="Téléphone">
+    Téléphone
+  </label>
+
+  <h3>Durée</h3>
+  <div class="duration-filters">
+    <button class="duration-filter active" data-duration="all">Tous</button>
+    <button class="duration-filter" data-duration="15">15 min</button>
+    <button class="duration-filter" data-duration="30">30 min</button>
+    <button class="duration-filter" data-duration="45">45 min</button>
+    <button class="duration-filter" data-duration="60">60 min+</button>
+  </div>
+</div>
+
+          <div class="map-card">
+            <div class="map-title">
+              <h2>Carte des praticiens</h2>
+              <button id="expandMapBtn">Agrandir</button>
+            </div>
+            <div id="doctorMap"></div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="map-modal hidden" id="mapModal">
+  <div class="map-modal-content">
+    <button class="close-map" id="closeMapBtn">×</button>
+    <h2>Localisation des praticiens</h2>
+    <div id="doctorMapLarge"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/catalogue.js"></script>
+</body>
+</html>
