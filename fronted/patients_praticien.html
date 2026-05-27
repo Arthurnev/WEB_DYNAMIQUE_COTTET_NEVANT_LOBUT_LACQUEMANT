@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Patients - VitaCare Campus | Dr. Martin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style_praticien.css">
+
+</head>
+<body>
+
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">V</div>
+            <span class="brand-name">VitaCare <small>Campus</small></span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
+            <a href="#"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            <a href="disponibilites_praticien.html"><i class="fas fa-clock"></i> Disponibilités</a>
+            <a href="patients_praticien.html" class="active"><i class="fas fa-users"></i> Patients</a>
+            <a href="activites_praticien.html"><i class="fas fa-heart"></i> Activités</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <a href="#">Nous contacter</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-right">
+                <span class="icon-btn"><i class="fas fa-bell"></i></span>
+                <span class="icon-btn"><i class="fas fa-shopping-cart"></i></span>
+                <div class="user-profile">
+                    <div class="avatar" id="avatar-initials">MM</div>
+                    <span class="user-name" id="user-name">Dr. Martin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="patients-header">
+                <div>
+                    <h1>Patients</h1>
+                    <p class="subtitle">Gérez vos patients et consultez leur historique</p>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Rechercher un patient..." onkeyup="rechercherPatient()">
+            </div>
+
+            <div id="patientsContainer" class="patients-grid">
+                <div style="text-align:center; padding:40px;">Chargement...</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    let allPatients = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        document.getElementById("user-name").textContent = "Dr. " + user.nom;
+        document.getElementById("avatar-initials").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+        await chargerPatients();
+    });
+
+    async function chargerPatients() {
+        const container = document.getElementById('patientsContainer');
+        try {
+            const res = await fetch('../backend/lister_patients.php', { credentials: 'include' });
+            const data = await res.json();
+            
+            if (!data.success) {
+                container.innerHTML = `<div class="empty-patients"><p>Erreur: ${data.error}</p></div>`;
+                return;
+            }
+            
+            allPatients = data.patients;
+            afficherPatients(allPatients);
+        } catch (error) {
+            container.innerHTML = `<div class="empty-patients"><p>Erreur: ${error.message}</p></div>`;
+        }
+    }
+
+    function afficherPatients(patients) {
+        const container = document.getElementById('patientsContainer');
+        
+        if (patients.length === 0) {
+            container.innerHTML = `
+                <div class="empty-patients">
+                    <i class="fas fa-user-friends"></i>
+                    <p>Aucun patient pour le moment</p>
+                    <p class="subtitle">Les patients apparaîtront ici après leur premier rendez-vous</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = patients.map(patient => {
+            const derniereVisite = patient.derniere_visite ? new Date(patient.derniere_visite).toLocaleDateString('fr-FR') : 'Aucune';
+            const telephone = patient.telephone || 'Non renseigné';
+            
+            return `
+                <div class="patient-card">
+                    <div class="patient-card-header">
+                        <div class="patient-avatar-large"><i class="fas fa-user-circle"></i></div>
+                        <div class="patient-info-large">
+                            <h3>${patient.prenom} ${patient.nom}</h3>
+                            <p><i class="fas fa-calendar-alt"></i> ${patient.nb_consultations} consultation${patient.nb_consultations > 1 ? 's' : ''}</p>
+                            <p><i class="fas fa-envelope"></i> ${patient.email}</p>
+                            <p><i class="fas fa-phone"></i> ${telephone}</p>
+                            <p><i class="fas fa-clock"></i> Dernière visite : ${derniereVisite}</p>
+                        </div>
+                    </div>
+                    <div class="patient-card-footer">
+                        <button class="btn-view-file" onclick="voirDossier(${patient.id})">
+                            <i class="fas fa-folder-open"></i> Voir le dossier
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function rechercherPatient() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = allPatients.filter(patient => 
+            patient.nom.toLowerCase().includes(searchTerm) || 
+            patient.prenom.toLowerCase().includes(searchTerm) ||
+            patient.email.toLowerCase().includes(searchTerm)
+        );
+        afficherPatients(filtered);
+    }
+
+    function voirDossier(patientId) {
+        window.location.href = `dossier_patient.html?id=${patientId}`;
+    }
+</script>
+
+</body>
+</html>
