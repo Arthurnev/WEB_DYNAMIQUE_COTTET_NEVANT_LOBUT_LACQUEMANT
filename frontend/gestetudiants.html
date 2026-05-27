@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare Campus – Gestion des Étudiants</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/gestetudiants.css">
+</head>
+<body>
+<div class="app">
+    
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">V</div>
+            <span>VitaCare Campus Admin</span>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</div>
+            <div class="nav-item"><i class="far fa-calendar-check"></i> Réservations</div>
+            <div class="nav-item"><i class="fas fa-pulse"></i> Activités & Programmes</div>
+            <div class="nav-item"><i class="fas fa-user-md"></i> Praticiens</div>
+            <div class="nav-item active"><i class="fas fa-graduation-cap"></i> Élèves</div>
+            <div class="nav-item"><i class="far fa-chart-bar"></i> Rapports statistiques</div>
+        </nav>
+        <div class="help-box">
+            <p><strong>Besoin d'aide ?</strong><br>L'assistance technique administrateur est à votre écoute.</p>
+            <a href="#" class="contact-btn">Contacter le support</a>
+        </div>
+    </aside>
+
+    <div class="main-container">
+        <header class="top-bar">
+            <div></div>
+            <div class="profile-area">
+                <div class="bell-icon"><i class="far fa-bell"></i><span class="bell-badge">3</span></div>
+                <div class="user-meta">
+                    <div class="avatar-circle">AD</div>
+                    <span>Administrateur</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-body admin-scroll-layout">
+            <div class="page-header-block">
+                <h1 class="page-title">Gestion des étudiants</h1>
+                <p class="page-subtitle">Gérez tous les étudiants inscrits sur la plateforme</p>
+            </div>
+            
+            <div class="filters-panel">
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher par nom, prénom, email...">
+                </div>
+                <select class="filter-select" id="campusFilter">
+                    <option value="all">Tous les campus</option>
+                    <option value="campus_a">Campus A</option>
+                    <option value="campus_b">Campus B</option>
+                    <option value="campus_c">Campus C</option>
+                </select>
+                <select class="filter-select" id="statutFilter">
+                    <option value="all">Tous les statuts</option>
+                    <option value="actif">Actif</option>
+                    <option value="inactif">Inactif</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Campus</th>
+                            <th>Filière</th>
+                            <th>Année</th>
+                            <th>Statut</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Rempli dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="floating-help-btn">?</div>
+
+<script src="js/gestetudiants.js"></script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare Campus – Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="app">
+    
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">V</div>
+            <span>VitaCare Campus Admin</span>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item active"><i class="fas fa-th-large"></i> Vue d'ensemble</div>
+            <div class="nav-item"><i class="far fa-calendar-check"></i> Réservations</div>
+            <div class="nav-item"><i class="fas fa-pulse"></i> Activités & Programmes</div>
+            <div class="nav-item"><i class="far fa-user"></i> Intervenants</div>
+            <div class="nav-item"><i class="fas fa-graduation-cap"></i> Élèves</div>
+            <div class="nav-item"><i class="far fa-chart-bar"></i> Rapports statistiques</div>
+        </nav>
+        <div class="help-box">
+            <p><strong>Besoin d'aide ?</strong><br>L'assistance technique administrateur est à votre écoute.</p>
+            <a href="#" class="contact-btn">Contacter le support</a>
+        </div>
+    </aside>
+
+    <div class="main-container">
+        <header class="top-bar">
+            <div></div>
+            <div class="profile-area">
+                <div class="bell-icon"><i class="far fa-bell"></i><span class="bell-badge">3</span></div>
+                <div class="user-meta">
+                    <div class="avatar-circle">AD</div>
+                    <span>Administrateur</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-body">
+            <div class="admin-header-flex">
+                <div>
+                    <h1 class="page-title">Vue d'ensemble des activités et indicateurs clés</h1>
+                    <p class="admin-subtitle">Tableau de bord administrateur</p>
+                </div>
+                <div>
+                    <select class="admin-dropdown-period" id="periodSelect">
+                        <option>Ce mois</option>
+                        <option>Cette semaine</option>
+                        <option>Cette année</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="kpi-row-grid">
+                <div class="kpi-minimal-card">
+                    <div class="kpi-icon-box box-blue"><i class="far fa-calendar-alt"></i></div>
+                    <div class="kpi-core-data"><span class="kpi-num">256</span><span class="kpi-txt">Réservations</span></div>
+                    <span class="kpi-badge-trend">📈 +18%</span>
+                </div>
+                <div class="kpi-minimal-card">
+                    <div class="kpi-icon-box box-green"><i class="fas fa-pulse"></i></div>
+                    <div class="kpi-core-data"><span class="kpi-num">42</span><span class="kpi-txt">Activités & programmes</span></div>
+                    <span class="kpi-badge-trend">📈 +5%</span>
+                </div>
+                <div class="kpi-minimal-card">
+                    <div class="kpi-icon-box box-purple"><i class="far fa-user"></i></div>
+                    <div class="kpi-core-data"><span class="kpi-num">18</span><span class="kpi-txt">Intervenants</span></div>
+                    <span class="kpi-badge-trend">📈 +2</span>
+                </div>
+                <div class="kpi-minimal-card">
+                    <div class="kpi-icon-box box-orange"><i class="fas fa-user-graduate"></i></div>
+                    <div class="kpi-core-data"><span class="kpi-num">324</span><span class="kpi-txt">Utilisateurs (élèves)</span></div>
+                    <span class="kpi-badge-trend">📈 +12%</span>
+                </div>
+            </div>
+
+            <div class="admin-two-col-layout">
+                <div class="admin-stack-column">
+                    <div class="dashboard-white-panel">
+                        <h2 class="panel-inner-title">Réservations par statut</h2>
+                        <div class="bars-progress-stack">
+                            <div class="bar-progress-item">
+                                <div class="bar-labels"><span>Confirmées</span><strong>142 (55%)</strong></div>
+                                <div class="bar-track"><div class="bar-fill fill-vitacare" style="width: 55%;"></div></div>
+                            </div>
+                            <div class="bar-progress-item">
+                                <div class="bar-labels"><span>En attente</span><strong>12 (5%)</strong></div>
+                                <div class="bar-track"><div class="bar-fill fill-orange" style="width: 5%;"></div></div>
+                            </div>
+                            <div class="bar-progress-item">
+                                <div class="bar-labels"><span>Passées</span><strong>84 (33%)</strong></div>
+                                <div class="bar-track"><div class="bar-fill fill-muted" style="width: 33%;"></div></div>
+                            </div>
+                            <div class="bar-progress-item">
+                                <div class="bar-labels"><span>Annulées</span><strong>18 (7%)</strong></div>
+                                <div class="bar-track"><div class="bar-fill fill-red" style="width: 7%;"></div></div>
+                            </div>
+                        </div>
+                        <div class="panel-total-row"><span>Total</span><strong>256</strong></div>
+                    </div>
+
+                    <div class="dashboard-white-panel">
+                        <div class="panel-inline-header">
+                            <h2 class="panel-inner-title">Demandes en attente</h2>
+                            <a href="#" class="panel-top-link">Voir tout</a>
+                        </div>
+                        <div class="rows-data-list">
+                            <div class="row-data-entry">
+                                <div class="entry-info"><strong>Sophie Martin</strong><span>Massage thérapeutique</span><small>24 mai 11:00</small></div>
+                                <span class="badge-tag tag-yellow">Réservation</span>
+                            </div>
+                            <div class="row-data-entry">
+                                <div class="entry-info"><strong>Thomas Leroy</strong><span>Atelier gestion du stress</span><small>17 mai 10:00</small></div>
+                                <span class="badge-tag tag-orange">Inscription</span>
+                            </div>
+                            <div class="row-data-entry">
+                                <div class="entry-info"><strong>Camille Dubois</strong><span>Consultation nutrition</span><small>20 mai 15:30</small></div>
+                                <span class="badge-tag tag-yellow">Réservation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-stack-column">
+                    <div class="dashboard-white-panel">
+                        <div class="panel-inline-header">
+                            <h2 class="panel-inner-title">Activités à venir</h2>
+                            <a href="#" class="panel-top-link">Voir toutes</a>
+                        </div>
+                        <div class="rows-data-list">
+                            <div class="row-data-entry">
+                                <div class="entry-info"><strong>Yoga doux</strong><small>24 mai – 18:30</small></div>
+                            </div>
+                            <div class="row-data-entry">
+                                <div class="entry-info"><strong>Atelier nutrition équilibrée</strong><small>25 mai – 14:00</small></div>
+                                <span class="text-counter-muted">12/20 inscrits</span>
+                            </div>
+                            <div class="row-data-entry">
+                                <div class="entry-info"><strong>Massage thérapeutique</strong><small>26 mai – 10:00</small></div>
+                                <span class="text-counter-muted">8/10 inscrits</span>
+                            </div>
+                            <div class="row-data-entry">
+                                <div class="entry-info"><strong>Méditation guidée</strong><small>27 mai – 16:00</small></div>
+                                <span class="text-counter-muted">15/25 inscrits</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-white-panel">
+                        <h2 class="panel-inner-title">Satisfaction moyenne</h2>
+                        <div class="satisfaction-layout-box">
+                            <div class="big-score-display">4.7 <span class="score-max-limit">sur 5</span></div>
+                            <div class="stars-gold-container">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="text-trend-green"><i class="fas fa-arrow-up"></i> +0.2 vs mois précédent</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-action-container">
+                <button class="btn-vitacare-action" id="exportBtn"><i class="fas fa-download"></i> Exporter le rapport</button>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>
