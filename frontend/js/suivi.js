@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
        UTILISATEUR CONNECTÉ
     ===================================================== */
 
-    const user = JSON.parse(localStorage.getItem("utilisateur"));
+    const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
         window.location.href = "login.html";

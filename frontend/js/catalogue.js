@@ -1,3 +1,40 @@
+document.addEventListener("DOMContentLoaded", () => {
+  afficherUtilisateur();
+  initCatalogue();
+  initFiltres();
+  initMap();
+});
+
+/* ================= UTILISATEUR ================= */
+
+function afficherUtilisateur() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const prenom = user.prenom || "";
+  const nom = user.nom || "";
+
+  const initials = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase();
+
+  document.getElementById("studentAvatar").textContent = initials || "?";
+  document.getElementById("studentName").textContent = `${prenom} ${nom}`.trim();
+}
+
+function toggleAccountMenu() {
+  document.getElementById("accountMenu").classList.toggle("hidden");
+}
+
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "accueil.html";
+}
+
+/* ================= DONNÉES TEMPORAIRES ================= */
+
 const services = [
   {
     nom: "Consultation médicale générale",
@@ -5,7 +42,7 @@ const services = [
     specialite: "Médecin généraliste",
     categorie: "medecine",
     modes: ["Présentiel", "Vidéo"],
-    duree: "30 min",
+    duree: 30,
     prix: "25 €",
     note: "4.8",
     avis: "124 avis",
@@ -20,7 +57,7 @@ const services = [
     specialite: "Psychologue",
     categorie: "bien_etre",
     modes: ["Vidéo", "Téléphone"],
-    duree: "45 min",
+    duree: 45,
     prix: "15 €",
     note: "4.9",
     avis: "87 avis",
@@ -35,7 +72,7 @@ const services = [
     specialite: "Nutritionniste",
     categorie: "nutrition",
     modes: ["Présentiel", "Vidéo"],
-    duree: "40 min",
+    duree: 40,
     prix: "30 €",
     note: "4.7",
     avis: "56 avis",
@@ -50,7 +87,7 @@ const services = [
     specialite: "Coach bien-être",
     categorie: "sport",
     modes: ["Présentiel"],
-    duree: "60 min",
+    duree: 60,
     prix: "20 €",
     note: "4.9",
     avis: "102 avis",
@@ -61,26 +98,67 @@ const services = [
   }
 ];
 
-const servicesList = document.getElementById("servicesList");
-const searchInput = document.getElementById("searchInput");
-const tabButtons = document.querySelectorAll(".catalogue-tabs button");
-
 let currentCategory = "all";
+let selectedModes = [];
+let selectedDuration = "all";
+
+/* ================= CATALOGUE ================= */
+
+function initCatalogue() {
+  const searchInput = document.getElementById("searchInput");
+  const tabButtons = document.querySelectorAll(".catalogue-tabs button");
+
+  searchInput.addEventListener("input", renderServices);
+
+  tabButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      tabButtons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      currentCategory = button.dataset.category;
+      renderServices();
+    });
+  });
+
+  renderServices();
+}
 
 function renderServices() {
+  const servicesList = document.getElementById("servicesList");
+  const searchInput = document.getElementById("searchInput");
   const search = searchInput.value.toLowerCase();
 
   const filtered = services.filter(service => {
-    const matchCategory = currentCategory === "all" || service.categorie === currentCategory;
+    const matchCategory =
+      currentCategory === "all" || service.categorie === currentCategory;
+
     const matchSearch =
       service.nom.toLowerCase().includes(search) ||
       service.praticien.toLowerCase().includes(search) ||
       service.specialite.toLowerCase().includes(search);
 
-    return matchCategory && matchSearch;
+    const matchModes =
+      selectedModes.length === 0 ||
+      selectedModes.some(mode => service.modes.includes(mode));
+
+    let matchDuration = true;
+
+    if (selectedDuration !== "all") {
+      if (selectedDuration === "15") matchDuration = service.duree <= 15;
+      if (selectedDuration === "30") matchDuration = service.duree <= 30;
+      if (selectedDuration === "45") matchDuration = service.duree <= 45;
+      if (selectedDuration === "60") matchDuration = service.duree >= 60;
+    }
+
+    return matchCategory && matchSearch && matchModes && matchDuration;
   });
 
   servicesList.innerHTML = "";
+
+  if (filtered.length === 0) {
+    servicesList.innerHTML = `<p class="empty-state">Aucun service trouvé.</p>`;
+    return;
+  }
 
   filtered.forEach(service => {
     const card = document.createElement("div");
@@ -102,7 +180,7 @@ function renderServices() {
         </div>
 
         <div class="service-info">
-          <span>🕒 ${service.duree}</span>
+          <span>🕒 ${service.duree} min</span>
           <strong>${service.prix}</strong>
         </div>
 
@@ -116,74 +194,95 @@ function renderServices() {
   });
 }
 
-tabButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    tabButtons.forEach(btn => btn.classList.remove("active"));
-    button.classList.add("active");
+/* ================= FILTRES ================= */
 
-    currentCategory = button.dataset.category;
-    renderServices();
+function initFiltres() {
+  const modeCheckboxes = document.querySelectorAll(".filter-mode");
+  const durationButtons = document.querySelectorAll(".duration-filter");
+
+  modeCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener("change", () => {
+      selectedModes = Array.from(modeCheckboxes)
+        .filter(input => input.checked)
+        .map(input => input.value);
+
+      renderServices();
+    });
   });
-});
 
-searchInput.addEventListener("input", renderServices);
+  durationButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      durationButtons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
 
-renderServices();
+      selectedDuration = button.dataset.duration;
+      renderServices();
+    });
+  });
+}
 
-/* MAP */
-let smallMap = L.map("doctorMap").setView([48.8566, 2.3522], 12);
+/* ================= MAP ================= */
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap"
-}).addTo(smallMap);
+function initMap() {
+  if (typeof L === "undefined") {
+    console.error("Leaflet n'est pas chargé.");
+    return;
+  }
 
-services.forEach(service => {
-  L.marker([service.lat, service.lng])
-    .addTo(smallMap)
-    .bindPopup(`
-      <strong>${service.praticien}</strong><br>
-      ${service.specialite}<br>
-      ${service.adresse}<br>
-      ${service.nom}
-    `);
-});
+  const smallMap = L.map("doctorMap").setView([48.8566, 2.3522], 12);
 
-const mapModal = document.getElementById("mapModal");
-const expandMapBtn = document.getElementById("expandMapBtn");
-const closeMapBtn = document.getElementById("closeMapBtn");
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap"
+  }).addTo(smallMap);
 
-let largeMapLoaded = false;
-let largeMap;
+  services.forEach(service => {
+    L.marker([service.lat, service.lng])
+      .addTo(smallMap)
+      .bindPopup(`
+        <strong>${service.praticien}</strong><br>
+        ${service.specialite}<br>
+        ${service.adresse}<br>
+        ${service.nom}
+      `);
+  });
 
-expandMapBtn.addEventListener("click", () => {
-  mapModal.classList.remove("hidden");
+  const mapModal = document.getElementById("mapModal");
+  const expandMapBtn = document.getElementById("expandMapBtn");
+  const closeMapBtn = document.getElementById("closeMapBtn");
 
-  setTimeout(() => {
-    if (!largeMapLoaded) {
-      largeMap = L.map("doctorMapLarge").setView([48.8566, 2.3522], 12);
+  let largeMapLoaded = false;
+  let largeMap;
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap"
-      }).addTo(largeMap);
+  expandMapBtn.addEventListener("click", () => {
+    mapModal.classList.remove("hidden");
 
-      services.forEach(service => {
-        L.marker([service.lat, service.lng])
-          .addTo(largeMap)
-          .bindPopup(`
-            <strong>${service.praticien}</strong><br>
-            ${service.specialite}<br>
-            ${service.adresse}<br>
-            ${service.nom}
-          `);
-      });
+    setTimeout(() => {
+      if (!largeMapLoaded) {
+        largeMap = L.map("doctorMapLarge").setView([48.8566, 2.3522], 12);
 
-      largeMapLoaded = true;
-    } else {
-      largeMap.invalidateSize();
-    }
-  }, 200);
-});
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap"
+        }).addTo(largeMap);
 
-closeMapBtn.addEventListener("click", () => {
-  mapModal.classList.add("hidden");
-});
+        services.forEach(service => {
+          L.marker([service.lat, service.lng])
+            .addTo(largeMap)
+            .bindPopup(`
+              <strong>${service.praticien}</strong><br>
+              ${service.specialite}<br>
+              ${service.adresse}<br>
+              ${service.nom}
+            `);
+        });
+
+        largeMapLoaded = true;
+      } else {
+        largeMap.invalidateSize();
+      }
+    }, 200);
+  });
+
+  closeMapBtn.addEventListener("click", () => {
+    mapModal.classList.add("hidden");
+  });
+}
