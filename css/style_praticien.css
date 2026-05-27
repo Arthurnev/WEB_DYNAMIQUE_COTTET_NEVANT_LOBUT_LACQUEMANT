@@ -1,114 +1,352 @@
-/* ===== DASHBOARD PRATICIEN ===== */
+/* ============================================================
+   STYLE.PRATICIEN.CSS - DESIGN COMPLET
+   Couleurs : vert #2e8b57, fond #f8fafc
+   ============================================================ */
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.dashboard-col-left {
+body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    background: #f8fafc;
+    color: #1f2937;
+}
+
+/* ========== LAYOUT GLOBAL ========== */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    background: #f8fafc;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+    width: 260px;
+    background: white;
+    border-right: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
+    position: fixed;
+    height: 100vh;
+}
+
+.sidebar-brand {
+    padding: 24px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    background: #2e8b57;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.brand-name {
+    font-weight: 800;
+    font-size: 18px;
+    color: #1f2937;
+}
+
+.brand-name small {
+    font-weight: 400;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.sidebar-nav {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-nav a {
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: #4b5563;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.sidebar-nav a i {
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-nav a:hover {
+    background: #f3f4f6;
+}
+
+.sidebar-nav a.active {
+    background: #eaf7f4;
+    color: #2e8b57;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 16px;
+}
+
+.help-box {
+    background: #eaf7f4;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+}
+
+.help-icon {
+    background: #2e8b57;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+}
+
+.help-box strong {
+    display: block;
+    font-size: 14px;
+}
+
+.help-box p {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 4px 0 8px;
+}
+
+.help-box a {
+    color: #2e8b57;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content {
+    margin-left: 260px;
+    flex: 1;
+    min-height: 100vh;
+}
+
+/* Topbar */
+.topbar {
+    height: 70px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 32px;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.icon-btn {
+    font-size: 20px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.icon-btn:hover {
+    color: #2e8b57;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    background: #2e8b57;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Page content */
+.page-content {
+    padding: 32px;
+}
+
+.page-header {
+    margin-bottom: 28px;
+}
+
+.page-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 15px;
+    margin-top: 6px;
+}
+
+/* ========== GRILLE À 3 COLONNES ========== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
 }
 
+.dashboard-col-left,
+.dashboard-col-middle,
 .dashboard-col-right {
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
+/* ========== CARTES GÉNÉRALES ========== */
 .dashboard-card {
     background: white;
-    border-radius: 16px;
-    padding: 24px;
+    border-radius: 20px;
+    padding: 20px 20px 24px;
     border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #eef3f8;
+    padding-bottom: 12px;
 }
 
 .card-header h2 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .card-header h2 i {
-    margin-right: 8px;
     color: #2e8b57;
 }
 
 .see-all {
     color: #2e8b57;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     text-decoration: none;
+    background: #eaf7f4;
+    padding: 5px 12px;
+    border-radius: 40px;
+    transition: all 0.2s;
 }
 
 .see-all:hover {
-    text-decoration: underline;
+    background: #d1fae5;
+    text-decoration: none;
 }
 
 .card-footer {
-    margin-top: 16px;
+    margin-top: 18px;
     text-align: center;
 }
 
-/* ===== AGENDA ===== */
-
+/* ========== AGENDA SEMAINE ========== */
 .agenda-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .agenda-day {
     display: flex;
     align-items: flex-start;
-    padding: 6px 0;
-    border-bottom: 1px solid #f3f4f6;
-}
-
-.agenda-day:last-child {
-    border-bottom: none;
+    gap: 12px;
 }
 
 .day-label {
-    font-weight: 600;
-    width: 50px;
-    color: #6b7280;
-    font-size: 14px;
+    font-weight: 800;
+    width: 42px;
+    font-size: 13px;
+    background: #f8fafc;
+    padding: 4px 0;
+    border-radius: 12px;
+    text-align: center;
+    color: #2e8b57;
 }
 
 .day-events {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .event-item {
-    font-size: 14px;
-    color: #374151;
-    padding: 2px 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1e293b;
+    background: #f1f9fe;
+    padding: 8px 12px;
+    border-radius: 14px;
+    border-left: 3px solid #2e8b57;
 }
 
-/* ===== PATIENTS ===== */
-
+/* ========== PATIENTS RÉCENTS ========== */
 .patient-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
 .patient-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid #f3f4f6;
+    gap: 14px;
+    padding: 8px 4px;
+    border-bottom: 1px solid #eff3f8;
 }
 
 .patient-item:last-child {
@@ -116,14 +354,15 @@
 }
 
 .patient-avatar {
-    width: 40px;
-    height: 40px;
-    background: #f3f4f6;
+    width: 44px;
+    height: 44px;
+    background: #eaf7f4;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #6b7280;
+    color: #2e8b57;
+    font-size: 22px;
 }
 
 .patient-info {
@@ -131,77 +370,74 @@
 }
 
 .patient-name {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
-    color: #1f2937;
 }
 
 .patient-detail {
-    font-size: 13px;
-    color: #6b7280;
+    font-size: 12px;
+    color: #6f8faa;
 }
 
 .patient-date {
-    font-size: 13px;
-    color: #9ca3af;
-    margin-right: 12px;
+    font-size: 11px;
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 30px;
+    color: #3b6e8f;
+    white-space: nowrap;
 }
 
 .patient-link {
-    color: #2e8b57;
+    font-size: 12px;
     font-weight: 600;
-    font-size: 13px;
+    color: #2e8b57;
     text-decoration: none;
+    background: #eaf7f4;
+    padding: 5px 12px;
+    border-radius: 30px;
+    transition: 0.2s;
 }
 
 .patient-link:hover {
-    text-decoration: underline;
+    background: #d1fae5;
 }
 
-/* ===== RÉSERVATIONS ===== */
-
+/* ========== RÉSERVATIONS DU JOUR ========== */
 .reservation-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
 .reservation-item {
+    background: white;
+    border: 1px solid #eef2f8;
+    border-radius: 16px;
+    padding: 14px 16px;
+    transition: 0.1s;
+}
+
+.reservation-header {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: #f9fafb;
-    border-radius: 12px;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
 
 .reservation-time {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 14px;
-    color: #1f2937;
-    width: 60px;
-}
-
-.reservation-info {
-    flex: 1;
-}
-
-.reservation-patient {
-    font-weight: 600;
-    font-size: 14px;
-    color: #1f2937;
-}
-
-.reservation-service {
-    font-size: 13px;
-    color: #6b7280;
+    background: #eaf7f4;
+    padding: 2px 12px;
+    border-radius: 30px;
+    color: #2e8b57;
 }
 
 .reservation-status {
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 40px;
+    font-size: 11px;
+    font-weight: 700;
 }
 
 .reservation-status.confirmed {
@@ -214,19 +450,33 @@
     color: #92400e;
 }
 
+.reservation-patient {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.reservation-service {
+    font-size: 12px;
+    color: #6c86a3;
+    margin: 5px 0 10px;
+}
+
 .reservation-actions {
     display: flex;
-    gap: 6px;
+    gap: 12px;
 }
 
 .btn-sm {
-    padding: 6px 14px;
     border: none;
-    border-radius: 20px;
-    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 40px;
     font-weight: 600;
+    font-size: 11px;
     cursor: pointer;
-    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
 }
 
 .btn-confirm {
@@ -235,79 +485,87 @@
 }
 
 .btn-confirm:hover {
-    background: #1f6b3f;
+    background: #1f6e43;
 }
 
 .btn-cancel {
     background: white;
-    color: #ef4444;
-    border: 1px solid #ef4444;
+    color: #dc2626;
+    border: 1px solid #f0cfc9;
 }
 
 .btn-cancel:hover {
     background: #fee2e2;
 }
 
-/* ===== DISPONIBILITÉS ===== */
-
+/* ========== DISPONIBILITÉS ========== */
 .disponibilite-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.dispo-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    border-radius: 8px;
-}
-
-.dispo-item.available {
-    background: #ecfdf5;
-}
-
-.dispo-date {
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.dispo-time {
-    color: #374151;
-}
-
-.dispo-status {
-    color: #065f46;
-    font-weight: 600;
-}
-
-/* ===== ACTIVITÉS ===== */
-
-.activite-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.activite-item {
+.dispo-item {
+    background: #fefce8;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border-left: 4px solid #facc15;
+}
+
+.dispo-date {
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.dispo-time {
+    font-size: 13px;
+    margin: 4px 0;
+    color: #4b5563;
+}
+
+.dispo-status {
+    font-size: 11px;
+    background: #d1fae5;
+    display: inline-block;
+    padding: 3px 14px;
+    border-radius: 30px;
+    font-weight: 600;
+    color: #065f46;
+}
+
+/* ========== ACTIVITÉS CRÉÉES ========== */
+.activite-list {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 12px;
-    background: #f9fafb;
-    border-radius: 12px;
+    gap: 16px;
+}
+
+.activite-item {
+    padding: 14px 0;
+    border-bottom: 1px solid #eff3f8;
+}
+
+.activite-item:last-child {
+    border-bottom: none;
 }
 
 .activite-nom {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
-    color: #1f2937;
+    margin-bottom: 5px;
 }
 
 .activite-detail {
-    font-size: 13px;
+    font-size: 12px;
     color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.activite-inscrits {
+    font-size: 12px;
+    font-weight: 500;
+    color: #2e8b57;
+    margin-bottom: 8px;
 }
 
 .activite-progress {
@@ -324,21 +582,72 @@
     border-radius: 999px;
 }
 
-/* ===== RESPONSIVE ===== */
+.btn-primary {
+    background: #2e8b57;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
 
-@media (max-width: 1024px) {
+.btn-primary:hover {
+    background: #1f6e43;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1100px) {
     .dashboard-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
 }
 
 @media (max-width: 768px) {
-    .reservation-item {
+    .sidebar {
+        display: none;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .page-content {
+        padding: 20px;
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .topbar {
+        padding: 12px 20px;
+    }
+    
+    .user-name {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .patient-date {
+        display: none;
+    }
+    
+    .reservation-actions {
         flex-wrap: wrap;
     }
-    .reservation-actions {
-        width: 100%;
-        justify-content: flex-end;
-        margin-top: 4px;
+    
+    .page-header h1 {
+        font-size: 22px;
     }
 }
