@@ -143,6 +143,6 @@ async function registerPraticien() {
 }
 
 function logout() {
-  localStorage.removeItem("user");
-  window.location.href = "login.html";
+  localStorage.removeItem("utilisateur");
+  window.location.href = "Accueil.html";
 }
