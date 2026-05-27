@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Dossier patient - VitaCare Campus</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style_praticien.css">
+
+</head>
+<body>
+
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">V</div>
+            <span class="brand-name">VitaCare <small>Campus</small></span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
+            <a href="#"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            <a href="disponibilites_praticien.html"><i class="fas fa-clock"></i> Disponibilités</a>
+            <a href="patients_praticien.html" class="active"><i class="fas fa-users"></i> Patients</a>
+            <a href="activites_praticien.html"><i class="fas fa-heart"></i> Activités</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <a href="#">Nous contacter</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-right">
+                <span class="icon-btn"><i class="fas fa-bell"></i></span>
+                <span class="icon-btn"><i class="fas fa-shopping-cart"></i></span>
+                <div class="user-profile">
+                    <div class="avatar" id="avatar-initials">MM</div>
+                    <span class="user-name" id="user-name">Dr. Martin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="dossier-header">
+                <div class="dossier-header-left">
+                    <button class="btn-back" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </button>
+                    <div id="patientInfo" class="patient-info-header"></div>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="consultations">Consultations</button>
+                <button class="tab-btn" data-tab="activites">Activités</button>
+                <button class="tab-btn" data-tab="commentaires">Commentaires</button>
+            </div>
+
+            <div id="tab-consultations" class="tab-panel active">
+                <div id="consultationsList" class="historique-list"></div>
+            </div>
+
+            <div id="tab-activites" class="tab-panel">
+                <div id="activitesList" class="historique-list"></div>
+            </div>
+
+            <div id="tab-commentaires" class="tab-panel">
+                <div id="commentairesList" class="historique-list"></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div id="commentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-comment-medical"></i> Ajouter un commentaire</h2>
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+        </div>
+        <form id="commentForm">
+            <input type="hidden" id="commentReservationId">
+            <div class="form-group">
+                <label>Commentaire</label>
+                <textarea id="commentText" rows="5" placeholder="Notes sur la consultation, observations, recommandations..." required></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel-modal" id="cancelModalBtn">Annuler</button>
+                <button type="submit" class="btn-submit">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let patientId = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) { window.location.href = "login.html"; return; }
+        document.getElementById("user-name").textContent = "Dr. " + user.nom;
+        document.getElementById("avatar-initials").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        patientId = urlParams.get('id');
+        if (!patientId) { window.location.href = "patients_praticien.html"; return; }
+        
+        await chargerDossier();
+        
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+                document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+                document.getElementById(`tab-${this.dataset.tab}`).classList.add("active");
+            });
+        });
+        
+        document.getElementById('closeModalBtn').onclick = () => document.getElementById('commentModal').classList.remove('open');
+        document.getElementById('cancelModalBtn').onclick = () => document.getElementById('commentModal').classList.remove('open');
+        document.getElementById('commentForm').onsubmit = ajouterCommentaire;
+        window.onclick = (event) => { if (event.target === document.getElementById('commentModal')) document.getElementById('commentModal').classList.remove('open'); };
+    });
+
+    async function chargerDossier() {
+        try {
+            const res = await fetch(`../backend/dossier_patient.php?id=${patientId}`, { credentials: 'include' });
+            const data = await res.json();
+            if (!data.success) { alert("Erreur: " + data.error); return; }
+            
+            document.getElementById('patientInfo').innerHTML = `<h2>${data.patient.prenom} ${data.patient.nom}</h2><p><i class="fas fa-envelope"></i> ${data.patient.email} | <i class="fas fa-phone"></i> ${data.patient.telephone || 'Non renseigné'}</p>`;
+            
+            afficherConsultations(data.consultations);
+            afficherActivites(data.activites);
+            afficherCommentaires(data.commentaires);
+        } catch (error) { console.error(error); }
+    }
+
+    function afficherConsultations(consultations) {
+        const container = document.getElementById('consultationsList');
+        if (consultations.length === 0) { container.innerHTML = '<div class="empty-state">Aucune consultation</div>'; return; }
+        container.innerHTML = consultations.map(cons => {
+            const date = new Date(cons.date);
+            const dateStr = date.toLocaleDateString('fr-FR');
+            const heureStr = cons.heure_debut.substring(0,5);
+            return `
+                <div class="historique-item">
+                    <div class="historique-date">${dateStr}</div>
+                    <div class="historique-info">
+                        <span class="historique-title">${cons.service_nom}</span>
+                        <span class="historique-time">${heureStr}</span>
+                        <span class="badge ${cons.statut === 'terminee' ? 'badge-termine' : 'badge-confirmed'}">${cons.statut === 'terminee' ? 'Terminée' : 'Confirmée'}</span>
+                    </div>
+                    <button class="btn-add-comment" onclick="ouvrirModalCommentaire(${cons.id}, '${dateStr}')">
+                        <i class="fas fa-comment"></i> Ajouter un commentaire
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function afficherActivites(activites) {
+        const container = document.getElementById('activitesList');
+        if (activites.length === 0) { container.innerHTML = '<div class="empty-state">Aucune activité inscrite</div>'; return; }
+        container.innerHTML = activites.map(act => {
+            const date = new Date(act.date_heure);
+            const dateStr = date.toLocaleDateString('fr-FR');
+            const heureStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            return `
+                <div class="historique-item">
+                    <div class="historique-date">${dateStr}</div>
+                    <div class="historique-info">
+                        <span class="historique-title">${act.activite_nom}</span>
+                        <span class="historique-time">${heureStr}</span>
+                        <span class="historique-lieu">${act.lieu}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function afficherCommentaires(commentaires) {
+        const container = document.getElementById('commentairesList');
+        if (commentaires.length === 0) { container.innerHTML = '<div class="empty-state">Aucun commentaire</div>'; return; }
+        container.innerHTML = commentaires.map(com => {
+            const date = new Date(com.created_at);
+            const dateStr = date.toLocaleDateString('fr-FR');
+            const dateConsultation = new Date(com.date_consultation).toLocaleDateString('fr-FR');
+            return `
+                <div class="commentaire-item">
+                    <div class="commentaire-header">
+                        <span><i class="far fa-calendar"></i> ${dateStr}</span>
+                        <span>Consultation du ${dateConsultation}</span>
+                    </div>
+                    <div class="commentaire-text">
+                        <i class="fas fa-quote-left"></i>
+                        <p>${escapeHtml(com.commentaire)}</p>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function ouvrirModalCommentaire(reservationId, dateStr) {
+        document.getElementById('commentReservationId').value = reservationId;
+        document.getElementById('commentText').value = '';
+        document.getElementById('commentModal').classList.add('open');
+    }
+
+    async function ajouterCommentaire(event) {
+        event.preventDefault();
+        const reservationId = document.getElementById('commentReservationId').value;
+        const commentaire = document.getElementById('commentText').value.trim();
+        if (!commentaire) { alert("Veuillez écrire un commentaire"); return; }
+        try {
+            const res = await fetch('../backend/ajouter_commentaire.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ reservation_id: reservationId, commentaire: commentaire })
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('commentModal').classList.remove('open');
+                await chargerDossier();
+            } else { alert("Erreur: " + data.error); }
+        } catch (error) { alert("Erreur de connexion"); }
+    }
+
+    function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+</script>
+
+</body>
+</html>
