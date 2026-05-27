@@ -1,0 +1,344 @@
+/* ===== DASHBOARD PRATICIEN ===== */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.dashboard-col-left {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.dashboard-col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e5e7eb;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.card-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.card-header h2 i {
+    margin-right: 8px;
+    color: #2e8b57;
+}
+
+.see-all {
+    color: #2e8b57;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.see-all:hover {
+    text-decoration: underline;
+}
+
+.card-footer {
+    margin-top: 16px;
+    text-align: center;
+}
+
+/* ===== AGENDA ===== */
+
+.agenda-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.agenda-day {
+    display: flex;
+    align-items: flex-start;
+    padding: 6px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.agenda-day:last-child {
+    border-bottom: none;
+}
+
+.day-label {
+    font-weight: 600;
+    width: 50px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.day-events {
+    flex: 1;
+}
+
+.event-item {
+    font-size: 14px;
+    color: #374151;
+    padding: 2px 0;
+}
+
+/* ===== PATIENTS ===== */
+
+.patient-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.patient-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.patient-item:last-child {
+    border-bottom: none;
+}
+
+.patient-avatar {
+    width: 40px;
+    height: 40px;
+    background: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+}
+
+.patient-info {
+    flex: 1;
+}
+
+.patient-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1f2937;
+}
+
+.patient-detail {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.patient-date {
+    font-size: 13px;
+    color: #9ca3af;
+    margin-right: 12px;
+}
+
+.patient-link {
+    color: #2e8b57;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.patient-link:hover {
+    text-decoration: underline;
+}
+
+/* ===== RÉSERVATIONS ===== */
+
+.reservation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reservation-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 12px;
+}
+
+.reservation-time {
+    font-weight: 700;
+    font-size: 14px;
+    color: #1f2937;
+    width: 60px;
+}
+
+.reservation-info {
+    flex: 1;
+}
+
+.reservation-patient {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1f2937;
+}
+
+.reservation-service {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.reservation-status {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.reservation-status.confirmed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.reservation-status.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.reservation-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-sm {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-confirm {
+    background: #2e8b57;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background: #1f6b3f;
+}
+
+.btn-cancel {
+    background: white;
+    color: #ef4444;
+    border: 1px solid #ef4444;
+}
+
+.btn-cancel:hover {
+    background: #fee2e2;
+}
+
+/* ===== DISPONIBILITÉS ===== */
+
+.disponibilite-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dispo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+.dispo-item.available {
+    background: #ecfdf5;
+}
+
+.dispo-date {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.dispo-time {
+    color: #374151;
+}
+
+.dispo-status {
+    color: #065f46;
+    font-weight: 600;
+}
+
+/* ===== ACTIVITÉS ===== */
+
+.activite-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.activite-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 12px;
+}
+
+.activite-nom {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1f2937;
+}
+
+.activite-detail {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.activite-progress {
+    width: 100%;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #2e8b57;
+    border-radius: 999px;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .reservation-item {
+        flex-wrap: wrap;
+    }
+    .reservation-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 4px;
+    }
+}
