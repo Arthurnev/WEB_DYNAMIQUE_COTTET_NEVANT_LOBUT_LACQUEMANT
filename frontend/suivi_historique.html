@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi & Historique - VitaCare</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="student-app">
+
+  <aside class="student-sidebar">
+    <div class="student-brand">
+      <div class="brand-icon">V</div>
+      <strong>VitaCare Campus</strong>
+    </div>
+
+    <nav class="student-menu">
+      <a href="index.html">▦ Dashboard</a>
+      <a href="catalogue.html">📖 Catalogue</a>
+      <a class="active" href="suivi_historique.html">📅 Suivi & historique</a>
+      <a href="activites.html">〽 Activités</a>
+      <a href="notifications.html">🔔 Notifications <span>3</span></a>
+    </nav>
+
+    <div class="student-help">
+      <div class="help-icon">?</div>
+      <strong>Besoin d'aide ?</strong>
+      <p>Notre équipe est là pour vous aider.</p>
+      <a href="#">Nous contacter</a>
+    </div>
+  </aside>
+
+  <main class="student-main">
+
+    <header class="student-topbar">
+      <div class="student-actions">
+        <span>🔔</span>
+        <span>🛒</span>
+
+        <div class="account-wrapper">
+          <button class="avatar-button" onclick="toggleAccountMenu()" type="button">
+            <div class="student-avatar" id="studentAvatar"></div>
+          </button>
+
+          <strong id="studentName"></strong>
+
+          <div class="account-menu hidden" id="accountMenu">
+            <a href="compte.html">⚙️ Mon compte</a>
+            <button class="logout-btn" onclick="logout()">🚪 Déconnexion</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="page-header">
+        <h1>Suivi & Historique</h1>
+        <p class="subtitle">Gérez vos rendez-vous, activités et consultez votre historique</p>
+      </div>
+
+      <div class="tabs-container">
+        <button class="tab-btn active" data-tab="vue-ensemble">Vue d'ensemble</button>
+        <button class="tab-btn" data-tab="rendez-vous">Rendez-vous</button>
+        <button class="tab-btn" data-tab="activites">Activités</button>
+        <button class="tab-btn" data-tab="historique">Historique des interactions</button>
+      </div>
+
+      <div class="tab-content-wrapper">
+
+        <div id="tab-vue-ensemble" class="tab-panel active">
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Prochains RDV</span>
+                <span class="stat-number" id="count-rdv">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-heart"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Activités inscrites</span>
+                <span class="stat-number" id="count-activites">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">RDV complétés</span>
+                <span class="stat-number" id="count-termines">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-header">
+              <h2>Prochains rendez-vous</h2>
+              <a href="#" class="see-all">Voir tout <i class="fas fa-chevron-right"></i></a>
+            </div>
+            <div id="prochains-list" class="list-container"></div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-header">
+              <h2>Intervenants consultés</h2>
+            </div>
+            <div id="intervenants-list" class="list-container"></div>
+          </div>
+
+        </div>
+
+        <div id="tab-rendez-vous" class="tab-panel">
+          <div class="section-title">À venir</div>
+          <div id="rdv-a-venir" class="list-container"></div>
+
+          <div class="section-subtitle">Passés</div>
+          <div id="rdv-passés" class="list-container"></div>
+        </div>
+
+        <div id="tab-activites" class="tab-panel">
+          <div class="section-title">Mes activités</div>
+          <div id="activites-list" class="list-container"></div>
+        </div>
+
+        <div id="tab-historique" class="tab-panel">
+          <div class="section-title">Historique des interactions</div>
+          <div id="historique-list" class="list-container"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/suivi.js"></script>
+
+</body>
+</html>
