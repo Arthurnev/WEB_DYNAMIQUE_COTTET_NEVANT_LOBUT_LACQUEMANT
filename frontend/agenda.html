@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare Campus – Agenda Pro</title>
+    <link rel="stylesheet" href="css/agenda.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="app">
+    <!-- SIDEBAR GAUCHE -->
+    <aside class="sidebar">
+        <div class="sidebar-logo"><div class="logo-icon">V</div>VitaCare Campus</div>
+        <nav class="nav-menu">
+            <div class="nav-item"><i class="fas fa-th-large"></i> Tableau de bord</div>
+            <div class="nav-item active"><i class="far fa-calendar-alt"></i> Agenda</div>
+            <div class="nav-item"><i class="far fa-clock"></i> Disponibilités</div>
+            <div class="nav-item"><i class="far fa-user"></i> Patients</div>
+            <div class="nav-item"><i class="fas fa-pulse"></i> Activités</div>
+        </nav>
+        <div class="help-box">
+            <p><strong>Besoin d'aide ?</strong><br>Notre équipe est disponible pour vous accompagner.</p>
+            <a href="#" class="contact-btn">Nous contacter</a>
+        </div>
+    </aside>
+
+    <!-- PARTIE PRINCIPALE -->
+    <div class="main-container">
+        <header class="top-bar">
+            <div></div>
+            <div class="profile-area">
+                <div class="bell-icon"><i class="far fa-bell"></i><span class="bell-badge">3</span></div>
+                <div class="user-meta">
+                    <div class="avatar-circle">MM</div>
+                    <span>Dr. Marie Martin</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-body">
+            <h1 class="page-title">Agenda</h1>
+
+            <div class="controls-action-bar">
+                <div class="view-pill-selector">
+                    <button class="pill-btn" data-view="day">Jour</button>
+                    <button class="pill-btn active" data-view="week">Semaine</button>
+                    <button class="pill-btn" data-view="month">Mois</button>
+                </div>
+                <div class="center-chronos">
+                    <button class="arrow-nav" id="prevPeriod"><i class="fas fa-chevron-left"></i></button>
+                    <button class="btn-today" id="jumpToday">Aujourd'hui</button>
+                    <button class="arrow-nav" id="nextPeriod"><i class="fas fa-chevron-right"></i></button>
+                    <span class="date-display-label" id="periodTitle">mai 2026</span>
+                </div>
+                <button class="action-add-btn">Ajouter une plage de disponibilité</button>
+            </div>
+
+            <div class="calendar-card" id="calendarCard"></div>
+        </main>
+    </div>
+</div>
+
+<script src="js/agenda.js"></script>
+</body>
+</html>
