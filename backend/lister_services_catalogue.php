@@ -15,7 +15,9 @@ try {
             u.nom AS praticien_nom,
             u.prenom AS praticien_prenom,
             u.specialite,
-            u.adresse_pro
+            u.adresse_pro,
+            u.latitude,
+            u.longitude
         FROM service s
         JOIN utilisateur u ON s.id_praticien = u.id
         JOIN creneau c ON c.id_service = s.id
