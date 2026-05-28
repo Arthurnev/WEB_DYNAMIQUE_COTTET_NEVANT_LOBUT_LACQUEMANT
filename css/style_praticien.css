@@ -1876,3 +1876,227 @@ body {
         align-self: flex-start;
     }
 }
+/* ============================================================
+   AGENDA.CSS - STYLES SPÉCIFIQUES
+   ============================================================ */
+
+.agenda-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.agenda-views {
+    display: flex;
+    gap: 8px;
+    background: white;
+    border-radius: 40px;
+    padding: 4px;
+    border: 1px solid #e5e7eb;
+}
+
+.view-btn {
+    padding: 8px 24px;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 40px;
+    transition: all 0.2s;
+}
+
+.view-btn.active {
+    background: #2e8b57;
+    color: white;
+}
+
+.agenda-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.agenda-nav button {
+    background: white;
+    border: 1px solid #e5e7eb;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.agenda-nav button:hover {
+    background: #eaf7f4;
+    border-color: #2e8b57;
+}
+
+.agenda-nav h2 {
+    font-size: 20px;
+    font-weight: 700;
+    min-width: 180px;
+    text-align: center;
+}
+
+.btn-add-dispo {
+    background: #2e8b57;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-add-dispo:hover {
+    background: #1f6e43;
+}
+
+.agenda-table-container {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #e5e7eb;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.agenda-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.agenda-table th {
+    padding: 16px 12px;
+    text-align: center;
+    font-weight: 700;
+    color: #1f2937;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f8fafc;
+}
+
+.agenda-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #f0f4f9;
+    vertical-align: top;
+    height: 80px;
+    background: white;
+}
+
+.agenda-table .time-col {
+    width: 80px;
+    text-align: center;
+    font-weight: 600;
+    color: #6b7280;
+    background: #f8fafc;
+    position: sticky;
+    left: 0;
+}
+
+/* Événements */
+.agenda-event {
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.agenda-event:hover {
+    transform: scale(1.02);
+}
+
+.event-disponible {
+    background: #f3f4f6;
+    border-left: 3px solid #9ca3af;
+}
+
+.event-disponible .event-title {
+    color: #4b5563;
+}
+
+.event-reservation {
+    background: #eaf7f4;
+    border-left: 3px solid #2e8b57;
+}
+
+.event-reservation .event-title {
+    color: #1f2937;
+}
+
+.event-activite {
+    background: #fef3c7;
+    border-left: 3px solid #f59e0b;
+}
+
+.event-activite .event-title {
+    color: #92400e;
+}
+
+.event-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.event-patient {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.event-time {
+    font-size: 10px;
+    margin-top: 4px;
+}
+
+.event-reservation .event-patient {
+    color: #2e8b57;
+}
+
+.event-disponible .event-patient {
+    color: #6b7280;
+}
+
+.event-activite .event-patient {
+    color: #f59e0b;
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 12px 24px;
+    border-radius: 40px;
+    color: white;
+    font-weight: 600;
+    z-index: 1100;
+    animation: slideIn 0.3s ease;
+}
+
+.toast.success { background: #2e8b57; }
+.toast.error { background: #dc2626; }
+.toast i { margin-right: 8px; }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .agenda-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
