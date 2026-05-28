@@ -65,7 +65,7 @@
     </main>
 </div>
 
-<!-- Modal -->
+<!-- Modal création activité -->
 <div id="activityModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -91,17 +91,17 @@
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Durée (minutes) *</label>
-                    <input type="number" id="activityDuration" value="60" required min="15" step="15">
+                    <label>Durée (minutes)</label>
+                    <input type="number" id="activityDuration" value="60" min="15" step="15">
                 </div>
                 <div class="form-group">
                     <label>Lieu *</label>
-                    <input type="text" id="activityLocation" required placeholder="Salle A - Campus Paris">
+                    <input type="text" id="activityLocation" required placeholder="Salle A">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Prix (€) - 0 pour gratuit</label>
+                    <label>Prix (€)</label>
                     <input type="number" id="activityPrice" value="0" min="0">
                 </div>
                 <div class="form-group">
@@ -127,191 +127,251 @@
     </div>
 </div>
 
-<script>
-    const CURRENT_PRATICIEN = 'Dr. Martin';
+<!-- Modal voir inscrits -->
+<div id="inscritsModal" class="modal">
+    <div class="modal-content" style="max-width: 550px;">
+        <div class="modal-header">
+            <h2><i class="fas fa-users"></i> Liste des inscrits</h2>
+            <button class="modal-close" id="closeInscritsModalBtn">&times;</button>
+        </div>
+        <div id="inscritsList" style="max-height: 400px; overflow-y: auto;">
+            <div style="text-align:center; padding:20px;">Chargement...</div>
+        </div>
+    </div>
+</div>
 
-    // Récupérer l'utilisateur connecté
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user.nom) {
+<script>
+    let currentUser = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        currentUser = user;
         document.getElementById("user-name").textContent = "Dr. " + user.nom;
         document.getElementById("avatar-initials").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
-    }
+        
+        await chargerActivites();
+        
+        document.getElementById('openModalBtn').onclick = openModal;
+        document.getElementById('closeModalBtn').onclick = closeModal;
+        document.getElementById('cancelModalBtn').onclick = closeModal;
+        document.getElementById('closeInscritsModalBtn').onclick = closeInscritsModal;
+        document.getElementById('activityForm').onsubmit = ajouterActivite;
+        
+        window.onclick = (event) => {
+            if (event.target === document.getElementById('activityModal')) closeModal();
+            if (event.target === document.getElementById('inscritsModal')) closeInscritsModal();
+        };
+    });
 
-    // ========== CHARGER DEPUIS LA BDD ==========
-    async function loadActivitiesFromDB() {
+    async function chargerActivites() {
+        const container = document.getElementById('activitiesContainer');
         try {
             const res = await fetch('../backend/lister_activites.php', { credentials: 'include' });
             const data = await res.json();
-            if (data.success) {
-                return data.activites;
+            
+            if (!data.success) {
+                container.innerHTML = `<div class="empty-activities"><p>Erreur: ${data.error}</p></div>`;
+                return;
             }
-            return [];
+            
+            const activites = data.activites;
+            
+            if (activites.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-activities">
+                        <i class="fas fa-calendar-plus"></i>
+                        <p>Vous n'avez pas encore créé d'activité</p>
+                        <button class="btn-create" onclick="document.getElementById('openModalBtn').click()">
+                            <i class="fas fa-plus"></i> Créer une activité
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = activites.map(activite => {
+                const date = new Date(activite.date_heure);
+                const dateStr = date.toLocaleDateString('fr-FR');
+                const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                const today = new Date();
+                const estActif = new Date(activite.date_heure) > today;
+                const statusClass = estActif ? 'status-active' : 'status-completed';
+                const statusLabel = estActif ? 'Actif' : 'Terminé';
+                const inscrits = activite.inscrits || 0;
+                const percent = (inscrits / activite.capacite_max) * 100;
+                const prixText = activite.prix == 0 ? 'Gratuit' : activite.prix + ' €';
+                
+                return `
+                    <div class="activity-card">
+                        <div class="activity-card-header">
+                            <div class="activity-title">${escapeHtml(activite.nom)}</div>
+                            <div class="activity-status ${statusClass}">${statusLabel}</div>
+                            <div class="activity-desc">${escapeHtml(activite.description || 'Aucune description')}</div>
+                        </div>
+                        <div class="activity-card-body">
+                            <div class="activity-details">
+                                <div class="detail-item"><i class="far fa-calendar-alt"></i><span>${dateStr} à ${timeStr}</span></div>
+                                <div class="detail-item"><i class="fas fa-map-marker-alt"></i><span>${escapeHtml(activite.lieu)}</span></div>
+                                <div class="detail-item"><i class="fas fa-tag"></i><span>${prixText}</span></div>
+                                <div class="detail-item"><i class="fas fa-users"></i><span>Capacité: ${activite.capacite_max} personnes</span></div>
+                            </div>
+                            <div class="inscription-info">
+                                <div class="inscrits-count">${inscrits}/${activite.capacite_max} inscrits</div>
+                                <div class="progress-bar-container"><div class="progress-fill" style="width: ${percent}%;"></div></div>
+                            </div>
+                        </div>
+                        <div class="activity-card-footer">
+                            <button class="btn-view" onclick="voirInscrits(${activite.id})"><i class="fas fa-users"></i> Voir les inscrits</button>
+                            <button class="btn-delete" onclick="supprimerActivite(${activite.id})"><i class="fas fa-trash-alt"></i> Supprimer</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         } catch (error) {
-            console.error("Erreur chargement:", error);
-            return [];
+            container.innerHTML = `<div class="empty-activities"><p>Erreur: ${error.message}</p></div>`;
         }
     }
 
-    // ========== SAUVEGARDER DANS LA BDD ==========
-    async function saveActivityToDB(activity) {
+    async function voirInscrits(activiteId) {
+        const modal = document.getElementById('inscritsModal');
+        const container = document.getElementById('inscritsList');
+        
+        modal.classList.add('open');
+        container.innerHTML = '<div style="text-align:center; padding:20px;">Chargement...</div>';
+        
+        try {
+            const res = await fetch(`../backend/lister_inscrits.php?activite_id=${activiteId}`, { credentials: 'include' });
+            const data = await res.json();
+            
+            if (!data.success) {
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:red;">Erreur: ${data.error}</div>`;
+                return;
+            }
+            
+            const inscrits = data.inscrits;
+            
+            if (inscrits.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px;">Aucun inscrit pour cette activité</div>';
+                return;
+            }
+            
+            let html = '<table style="width:100%; border-collapse:collapse;">';
+            html += '<thead><tr style="border-bottom:1px solid #e5e7eb;">';
+            html += '<th style="text-align:left; padding:10px;">Nom</th>';
+            html += '<th style="text-align:left; padding:10px;">Prénom</th>';
+            html += '<th style="text-align:left; padding:10px;">Email</th>';
+            html += '<th style="text-align:left; padding:10px;">Inscrit le</th>';
+            html += '</tr></thead><tbody>';
+            
+            inscrits.forEach(i => {
+                const dateInscrit = new Date(i.date_inscription).toLocaleDateString('fr-FR');
+                html += `<tr style="border-bottom:1px solid #f0f4f9;">`;
+                html += `<td style="padding:10px;">${escapeHtml(i.nom)}</td>`;
+                html += `<td style="padding:10px;">${escapeHtml(i.prenom)}</td>`;
+                html += `<td style="padding:10px;">${escapeHtml(i.email)}</td>`;
+                html += `<td style="padding:10px;">${dateInscrit}</td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        } catch (error) {
+            container.innerHTML = `<div style="text-align:center; padding:20px; color:red;">Erreur: ${error.message}</div>`;
+        }
+    }
+
+    function closeInscritsModal() {
+        document.getElementById('inscritsModal').classList.remove('open');
+    }
+
+    async function ajouterActivite(event) {
+        event.preventDefault();
+        
+        const titre = document.getElementById('activityTitle').value.trim();
+        const description = document.getElementById('activityDesc').value.trim();
+        const date = document.getElementById('activityDate').value;
+        const time = document.getElementById('activityTime').value;
+        const lieu = document.getElementById('activityLocation').value.trim();
+        const capacite = parseInt(document.getElementById('activityCapacity').value);
+        
+        if (!titre || !date || !time || !lieu || !capacite) {
+            showToast('Veuillez remplir tous les champs obligatoires', 'error');
+            return;
+        }
+        
         try {
             const res = await fetch('../backend/ajouter_activite.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify({
-                    nom: activity.title,
-                    description: activity.description,
-                    date_heure: `${activity.date} ${activity.time}`,
-                    capacite_max: activity.capacity,
-                    lieu: activity.location
+                    nom: titre,
+                    description: description,
+                    date_heure: `${date} ${time}:00`,
+                    lieu: lieu,
+                    capacite_max: capacite
                 })
             });
             const data = await res.json();
-            return data.success;
+            
+            if (data.success) {
+                showToast('Activité créée avec succès !', 'success');
+                closeModal();
+                document.getElementById('activityForm').reset();
+                await chargerActivites();
+            } else {
+                showToast('Erreur: ' + data.error, 'error');
+            }
         } catch (error) {
-            console.error("Erreur sauvegarde:", error);
-            return false;
+            showToast('Erreur de connexion', 'error');
         }
     }
 
-    // ========== SUPPRIMER DANS LA BDD ==========
-    async function deleteActivityFromDB(id) {
+    async function supprimerActivite(id) {
+        if (!confirm('Supprimer cette activité ?')) return;
+        
         try {
             const res = await fetch(`../backend/supprimer_activite.php?id=${id}`, { credentials: 'include' });
             const data = await res.json();
-            return data.success;
-        } catch (error) {
-            console.error("Erreur suppression:", error);
-            return false;
-        }
-    }
-
-    // ========== AFFICHER LES ACTIVITÉS ==========
-    async function renderActivities() {
-        const container = document.getElementById('activitiesContainer');
-        const activites = await loadActivitiesFromDB();
-        
-        if (activites.length === 0) {
-            container.innerHTML = `
-                <div class="empty-activities">
-                    <i class="fas fa-calendar-plus"></i>
-                    <p>Vous n'avez pas encore créé d'activité</p>
-                    <button class="btn-create" onclick="document.getElementById('openModalBtn').click()">
-                        <i class="fas fa-plus"></i> Créer une activité
-                    </button>
-                </div>
-            `;
-            return;
-        }
-        
-        container.innerHTML = activites.map(activite => {
-            const date = new Date(activite.date_heure);
-            const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-            const today = new Date();
-            const estActif = new Date(activite.date_heure) > today;
-            const statusClass = estActif ? 'status-active' : 'status-completed';
-            const statusLabel = estActif ? 'Actif' : 'Terminé';
-            const inscrits = activite.inscrits || 0;
-            const percent = (inscrits / activite.capacite_max) * 100;
             
-            return `
-                <div class="activity-card">
-                    <div class="activity-card-header">
-                        <div class="activity-title">${escapeHtml(activite.nom)}</div>
-                        <div class="activity-status ${statusClass}">${statusLabel}</div>
-                        <div class="activity-desc">${escapeHtml(activite.description || 'Aucune description')}</div>
-                    </div>
-                    <div class="activity-card-body">
-                        <div class="activity-details">
-                            <div class="detail-item"><i class="far fa-calendar-alt"></i><span>${dateStr} à ${timeStr}</span></div>
-                            <div class="detail-item"><i class="fas fa-map-marker-alt"></i><span>${escapeHtml(activite.lieu)}</span></div>
-                            <div class="detail-item"><i class="fas fa-users"></i><span>Capacité: ${activite.capacite_max} personnes</span></div>
-                        </div>
-                        <div class="inscription-info">
-                            <div class="inscrits-count">${inscrits}/${activite.capacite_max} inscrits</div>
-                            <div class="progress-bar-container"><div class="progress-fill" style="width: ${percent}%;"></div></div>
-                        </div>
-                    </div>
-                    <div class="activity-card-footer">
-                        <button class="btn-view" onclick="viewRegistrations(${activite.id})"><i class="fas fa-users"></i> Voir les inscrits</button>
-                        <button class="btn-delete" onclick="deleteActivity(${activite.id})"><i class="fas fa-trash-alt"></i> Supprimer</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    function viewRegistrations(id) {
-        alert("Fonctionnalité à venir - Liste des inscrits");
-    }
-
-    // ========== AJOUTER UNE ACTIVITÉ ==========
-    async function addActivity(event) {
-        event.preventDefault();
-        
-        const title = document.getElementById('activityTitle').value.trim();
-        const description = document.getElementById('activityDesc').value.trim();
-        const date = document.getElementById('activityDate').value;
-        const time = document.getElementById('activityTime').value;
-        const duration = parseInt(document.getElementById('activityDuration').value);
-        const location = document.getElementById('activityLocation').value.trim();
-        const price = parseInt(document.getElementById('activityPrice').value) || 0;
-        const capacity = parseInt(document.getElementById('activityCapacity').value);
-        const category = document.getElementById('activityCategory').value;
-        
-        if (!title || !date || !time || !location || !capacity) {
-            showToast('Veuillez remplir tous les champs obligatoires', 'error');
-            return;
-        }
-        
-        const newActivity = {
-            title: title,
-            description: description || '',
-            date: date,
-            time: time,
-            duration: duration,
-            location: location,
-            price: price,
-            capacity: capacity,
-            category: category
-        };
-        
-        const success = await saveActivityToDB(newActivity);
-        
-        if (success) {
-            showToast('Activité créée avec succès !', 'success');
-            closeModal();
-            document.getElementById('activityForm').reset();
-            document.getElementById('activityDuration').value = '60';
-            document.getElementById('activityPrice').value = '0';
-            document.getElementById('activityCapacity').value = '20';
-            await renderActivities();
-        } else {
-            showToast('Erreur lors de la création', 'error');
-        }
-    }
-
-    // ========== SUPPRIMER UNE ACTIVITÉ ==========
-    async function deleteActivity(id) {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cette activité ?')) {
-            const success = await deleteActivityFromDB(id);
-            if (success) {
-                showToast('Activité supprimée avec succès', 'success');
-                await renderActivities();
+            if (data.success) {
+                showToast('Activité supprimée', 'success');
+                await chargerActivites();
             } else {
-                showToast('Erreur lors de la suppression', 'error');
+                showToast('Erreur: ' + data.error, 'error');
             }
+        } catch (error) {
+            showToast('Erreur de connexion', 'error');
         }
     }
 
-    function showToast(message, type = 'success') {
+    function openModal() {
+        const modal = document.getElementById('activityModal');
+        modal.classList.add('open');
+        const defaultDate = new Date();
+        defaultDate.setDate(defaultDate.getDate() + 7);
+        document.getElementById('activityDate').value = defaultDate.toISOString().split('T')[0];
+        document.getElementById('activityTime').value = '14:00';
+        document.getElementById('activityDuration').value = '60';
+        document.getElementById('activityPrice').value = '0';
+        document.getElementById('activityCapacity').value = '20';
+    }
+
+    function closeModal() {
+        document.getElementById('activityModal').classList.remove('open');
+        document.getElementById('activityForm').reset();
+    }
+
+    function showToast(message, type) {
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
         document.body.appendChild(toast);
-        setTimeout(() => { toast.remove(); }, 3000);
+        setTimeout(() => toast.remove(), 3000);
     }
 
     function escapeHtml(text) {
@@ -320,38 +380,6 @@
         div.textContent = text;
         return div.innerHTML;
     }
-
-    // Modal
-    const modal = document.getElementById('activityModal');
-    const openBtn = document.getElementById('openModalBtn');
-    const closeBtn = document.getElementById('closeModalBtn');
-    const cancelBtn = document.getElementById('cancelModalBtn');
-    const form = document.getElementById('activityForm');
-
-    function openModal() {
-        modal.classList.add('open');
-        const defaultDate = new Date();
-        defaultDate.setDate(defaultDate.getDate() + 7);
-        document.getElementById('activityDate').value = defaultDate.toISOString().split('T')[0];
-        document.getElementById('activityTime').value = '14:00';
-    }
-
-    function closeModal() {
-        modal.classList.remove('open');
-        form.reset();
-    }
-
-    openBtn.onclick = openModal;
-    closeBtn.onclick = closeModal;
-    cancelBtn.onclick = closeModal;
-    form.onsubmit = addActivity;
-
-    window.onclick = (event) => {
-        if (event.target === modal) closeModal();
-    };
-
-    // Charger au démarrage
-    renderActivities();
 </script>
 
 <style>
