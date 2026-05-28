@@ -1,3 +1,4 @@
+// Données simulées
 let praticiens = [
     { id: 1, nom: "Martin", prenom: "Marie", specialite: "medecine_generale", email: "marie.martin@vitacare.fr", statut: "actif" },
     { id: 2, nom: "Durand", prenom: "Pierre", specialite: "nutrition", email: "pierre.durand@vitacare.fr", statut: "actif" },
@@ -23,12 +24,7 @@ function getStatutBadge(statut) {
 
 function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
+    return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'));
 }
 
 function renderTable() {
@@ -64,9 +60,7 @@ function renderTable() {
             <td>${escapeHtml(p.email)}</td>
             <td>${getStatutBadge(p.statut)}</td>
             <td style="text-align: center;">
-                <button class="btn-delete-action" data-id="${p.id}">
-                    <i class="far fa-trash-alt"></i>
-                </button>
+                <button class="btn-delete-action" data-id="${p.id}"><i class="far fa-trash-alt"></i></button>
             </td>
         `;
         tbody.appendChild(row);
@@ -74,12 +68,10 @@ function renderTable() {
 
     document.querySelectorAll('.btn-delete-action').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const id = parseInt(btn.getAttribute('data-id'));
-            if (confirm("Supprimer définitivement ce praticien ? Toutes ses données seront effacées.")) {
+            const id = parseInt(btn.dataset.id);
+            if (confirm("Supprimer définitivement ce praticien ?")) {
                 praticiens = praticiens.filter(p => p.id !== id);
                 renderTable();
-                alert("Praticien supprimé.");
             }
         });
     });
@@ -87,25 +79,11 @@ function renderTable() {
 
 document.addEventListener('DOMContentLoaded', () => {
     renderTable();
-
     document.getElementById('searchInput').addEventListener('input', renderTable);
     document.getElementById('specialiteFilter').addEventListener('change', renderTable);
     document.getElementById('statutFilter').addEventListener('change', renderTable);
 
-    const helpBtn = document.querySelector('.floating-help-btn');
-    if (helpBtn) {
-        helpBtn.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
-    }
-
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (!this.classList.contains('active')) {
-                alert(`Navigation vers "${this.innerText.trim()}" (simulation)`);
-            }
-        });
-    });
-
+    document.querySelector('.floating-help-btn')?.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
     document.querySelector('.bell-icon')?.addEventListener('click', () => alert("3 notifications non lues"));
     document.querySelector('.user-meta')?.addEventListener('click', () => alert("Profil administrateur"));
 });

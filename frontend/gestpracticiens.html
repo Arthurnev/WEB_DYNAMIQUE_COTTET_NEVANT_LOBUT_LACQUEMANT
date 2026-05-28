@@ -10,20 +10,19 @@
 </head>
 <body>
 <div class="app">
-    
-    <!-- Sidebar admin -->
+    <!-- SIDEBAR (identique à toutes les pages admin) -->
     <aside class="sidebar">
         <div class="sidebar-logo">
             <div class="logo-icon">V</div>
             <span>VitaCare Campus Admin</span>
         </div>
         <nav class="nav-menu">
-            <div class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</div>
-            <div class="nav-item"><i class="far fa-calendar-check"></i> Réservations</div>
-            <div class="nav-item"><i class="fas fa-pulse"></i> Activités & Programmes</div>
-            <div class="nav-item active"><i class="fas fa-user-md"></i> Praticiens</div>
-            <div class="nav-item"><i class="fas fa-graduation-cap"></i> Élèves</div>
-            <div class="nav-item"><i class="far fa-chart-bar"></i> Rapports statistiques</div>
+            <a href="admin.html" class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
+            <a href="reservations.html" class="nav-item"><i class="far fa-calendar-check"></i> Réservations</a>
+            <a href="programmes.html" class="nav-item"><i class="fas fa-pulse"></i> Activités & Programmes</a>
+            <a href="gestpracticiens.html" class="nav-item active"><i class="fas fa-user-md"></i> Intervenants</a>
+            <a href="gestetudiants.html" class="nav-item"><i class="fas fa-graduation-cap"></i> Étudiants</a>
+            <a href="stats.html" class="nav-item"><i class="far fa-chart-bar"></i> Rapports statistiques</a>
         </nav>
         <div class="help-box">
             <p><strong>Besoin d'aide ?</strong><br>L'assistance technique administrateur est à votre écoute.</p>
@@ -32,6 +31,7 @@
     </aside>
 
     <div class="main-container">
+        <!-- TOP BAR -->
         <header class="top-bar">
             <div></div>
             <div class="profile-area">
@@ -43,7 +43,8 @@
             </div>
         </header>
 
-        <main class="content-body">
+        <!-- CONTENU SPÉCIFIQUE : Gestion des praticiens -->
+        <main class="content-body admin-scroll-layout">
             <div class="page-header-block">
                 <h1 class="page-title">Gestion des praticiens</h1>
                 <p class="page-subtitle">Gérez tous les professionnels de santé inscrits sur la plateforme</p>

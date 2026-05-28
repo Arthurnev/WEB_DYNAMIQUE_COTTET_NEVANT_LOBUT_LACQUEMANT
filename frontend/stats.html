@@ -10,19 +10,18 @@
 </head>
 <body>
 <div class="app">
-    
     <aside class="sidebar">
         <div class="sidebar-logo">
             <div class="logo-icon">V</div>
             <span>VitaCare Campus Admin</span>
         </div>
         <nav class="nav-menu">
-            <div class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</div>
-            <div class="nav-item"><i class="far fa-calendar-check"></i> Réservations</div>
-            <div class="nav-item"><i class="fas fa-pulse"></i> Activités & Programmes</div>
-            <div class="nav-item"><i class="fas fa-user-md"></i> Praticiens</div>
-            <div class="nav-item"><i class="fas fa-graduation-cap"></i> Élèves</div>
-            <div class="nav-item active"><i class="far fa-chart-bar"></i> Rapports statistiques</div>
+            <a href="admin.html" class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
+            <a href="reservations.html" class="nav-item"><i class="far fa-calendar-check"></i> Réservations</a>
+            <a href="programmes.html" class="nav-item"><i class="fas fa-pulse"></i> Activités & Programmes</a>
+            <a href="gestpracticiens.html" class="nav-item"><i class="fas fa-user-md"></i> Intervenants</a>
+            <a href="gestetudiants.html" class="nav-item"><i class="fas fa-graduation-cap"></i> Étudiants</a>
+            <a href="stats.html" class="nav-item active"><i class="far fa-chart-bar"></i> Rapports statistiques</a>
         </nav>
         <div class="help-box">
             <p><strong>Besoin d'aide ?</strong><br>L'assistance technique administrateur est à votre écoute.</p>
@@ -45,42 +44,55 @@
         <main class="content-body admin-scroll-layout">
             <div class="page-header-block">
                 <h1 class="page-title">Rapports statistiques</h1>
-                <p class="page-subtitle">Indicateurs clés et statistiques de la plateforme</p>
+                <p class="page-subtitle">Statistiques et analyses de la plateforme</p>
             </div>
 
-            <!-- Sélecteur de période (optionnel) -->
-            <div class="period-selector">
-                <label for="periodSelect">Période :</label>
-                <select id="periodSelect" class="filter-select" style="width: auto;">
-                    <option value="month">Ce mois</option>
-                    <option value="year">Cette année</option>
-                </select>
+            <!-- 4 indicateurs clés (2 en haut, 2 en bas sur mobile, mais sur desktop 4 côte à côte) -->
+            <div class="stats-kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-value">256</div>
+                    <div class="kpi-label">Réservations totales</div>
+                    <div class="kpi-trend trend-up">📈 +18% vs mois précédent</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value">78%</div>
+                    <div class="kpi-label">Taux d'occupation</div>
+                    <div class="kpi-trend trend-up">📈 +5% vs mois précédent</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value">42</div>
+                    <div class="kpi-label">Nouveaux utilisateurs</div>
+                    <div class="kpi-trend trend-up">📈 +12% vs mois précédent</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value">4.7/5</div>
+                    <div class="kpi-label">Taux de satisfaction</div>
+                    <div class="kpi-trend trend-up">📈 +0.2 vs mois précédent</div>
+                </div>
             </div>
 
-            <!-- Grille des 4 blocs -->
-            <div class="stats-grid">
-                <!-- Bloc 1 : Évolution des réservations par mois -->
-                <div class="stat-card">
-                    <h3>📈 Évolution des réservations par mois</h3>
-                    <div class="chart-container" id="monthlyChart"></div>
+            <!-- Première ligne de deux blocs (Évolution + Répartition) -->
+            <div class="stats-two-col">
+                <div class="stats-card">
+                    <h3>Évolution des réservations par mois</h3>
+                    <div id="monthlyEvolution" class="monthly-evolution"></div>
                 </div>
-
-                <!-- Bloc 2 : Répartition par type de service -->
-                <div class="stat-card">
-                    <h3>🥧 Répartition par type de service</h3>
-                    <div class="pie-chart-container" id="serviceChart"></div>
+                <div class="stats-card">
+                    <h3>Répartition par type de service</h3>
+                    <div id="serviceRepartition" class="service-repartition"></div>
+                    <div class="service-total">Total <strong>338 réservations</strong></div>
                 </div>
+            </div>
 
-                <!-- Bloc 3 : Top 5 des praticiens -->
-                <div class="stat-card">
-                    <h3>🏆 Top 5 des praticiens les plus sollicités</h3>
-                    <ol class="top-list" id="topPraticiens"></ol>
+            <!-- Deuxième ligne de deux blocs (Top praticiens + Nouveaux utilisateurs) -->
+            <div class="stats-two-col">
+                <div class="stats-card">
+                    <h3>Top 5 des praticiens les plus sollicités</h3>
+                    <div id="topPracticiens" class="top-practiciens"></div>
                 </div>
-
-                <!-- Bloc 4 : Nouveaux utilisateurs par mois -->
-                <div class="stat-card">
-                    <h3>👥 Nouveaux utilisateurs par mois</h3>
-                    <div class="chart-container" id="usersChart"></div>
+                <div class="stats-card">
+                    <h3>Nouveaux utilisateurs par mois</h3>
+                    <div id="newUsers" class="new-users"></div>
                 </div>
             </div>
         </main>
@@ -89,7 +101,6 @@
 
 <div class="floating-help-btn">?</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="js/stats.js"></script>
 </body>
 </html>

@@ -1,149 +1,141 @@
-// Données conformes à l'image
-const monthlyReservations = {
-    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai'],
-    data: [45, 52, 48, 62, 58]
-};
-
-const serviceRepartition = {
-    labels: ['Consultations médicales', 'Nutrition', 'Sport & Fitness', 'Bien-être mental'],
-    data: [142, 85, 64, 47],
-    total: 338
-};
-
-const topPraticiens = [
-    { name: 'Dr. Marie Martin', count: 45 },
-    { name: 'Dr. Pierre Durand', count: 38 },
-    { name: 'Dr. Jean Petit', count: 32 },
-    { name: 'Dr. Sophie Leroy', count: 28 },
-    { name: 'Dr. Paul Lambert', count: 24 }
+// Données simulées – à remplacer par des appels API (fetch) plus tard
+const monthlyData = [
+    { month: "Jan", value: 45 },
+    { month: "Fév", value: 52 },
+    { month: "Mar", value: 48 },
+    { month: "Avr", value: 62 },
+    { month: "Mai", value: 58 }
 ];
 
-const newUsersByMonth = {
-    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai'],
-    data: [28, 35, 31, 39, 42]
-};
+const serviceData = [
+    { name: "Consultations médicales", value: 142, percent: 42 },
+    { name: "Nutrition", value: 85, percent: 25 },
+    { name: "Sport & Fitness", value: 64, percent: 19 },
+    { name: "Bien-être mental", value: 47, percent: 14 }
+];
 
-let monthlyChart, serviceChart, usersChart;
+const topPraticiensData = [
+    { name: "Dr. Marie Martin", count: 45 },
+    { name: "Dr. Pierre Durand", count: 38 },
+    { name: "Dr. Jean Petit", count: 32 },
+    { name: "Dr. Sophie Leroy", count: 28 },
+    { name: "Dr. Paul Lambert", count: 24 }
+];
 
-function renderMonthlyChart() {
-    const ctx = document.createElement('canvas');
-    const container = document.getElementById('monthlyChart');
+const newUsersData = [
+    { month: "Janvier", total: 28, praticiens: 6, maxTotal: 42 },
+    { month: "Février", total: 35, praticiens: 6, maxTotal: 42 },
+    { month: "Mars", total: 31, praticiens: 7, maxTotal: 42 },
+    { month: "Avril", total: 39, praticiens: 7, maxTotal: 42 },
+    { month: "Mai", total: 42, praticiens: 7, maxTotal: 42 }
+];
+
+// Évolution par mois avec jauge
+function renderMonthlyEvolution() {
+    const container = document.getElementById('monthlyEvolution');
+    if (!container) return;
+    const maxValue = Math.max(...monthlyData.map(d => d.value));
     container.innerHTML = '';
-    ctx.id = 'monthlyCanvas';
-    container.appendChild(ctx);
-    monthlyChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: monthlyReservations.labels,
-            datasets: [{
-                label: 'Réservations',
-                data: monthlyReservations.data,
-                backgroundColor: '#118a6b',
-                borderRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: { position: 'top' },
-                tooltip: { callbacks: { label: (ctx) => `${ctx.raw} réservations` } }
-            }
-        }
+    monthlyData.forEach(d => {
+        const percent = (d.value / maxValue) * 100;
+        const div = document.createElement('div');
+        div.className = 'month-item';
+        div.innerHTML = `
+            <div class="month-header">
+                <span>${d.month}</span>
+                <span class="month-value">${d.value} réservations</span>
+            </div>
+            <div class="month-bar-container">
+                <div class="month-bar" style="width: ${percent}%;"></div>
+            </div>
+        `;
+        container.appendChild(div);
     });
 }
 
-function renderServiceChart() {
-    const ctx = document.createElement('canvas');
-    const container = document.getElementById('serviceChart');
+// Répartition par service avec jauge (en pourcentage)
+function renderServiceRepartition() {
+    const container = document.getElementById('serviceRepartition');
+    if (!container) return;
     container.innerHTML = '';
-    ctx.id = 'serviceCanvas';
-    container.appendChild(ctx);
-    serviceChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: serviceRepartition.labels,
-            datasets: [{
-                data: serviceRepartition.data,
-                backgroundColor: ['#118a6b', '#f59e0b', '#3b82f6', '#8b5cf6'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' },
-                tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw / serviceRepartition.total * 100)}%)` } }
-            }
-        }
+    serviceData.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'service-item';
+        div.innerHTML = `
+            <div class="service-header">
+                <span>${s.name}</span>
+                <span class="service-value">${s.value} (${s.percent}%)</span>
+            </div>
+            <div class="service-bar-container">
+                <div class="service-bar" style="width: ${s.percent}%;"></div>
+            </div>
+        `;
+        container.appendChild(div);
     });
 }
 
-function renderTopPraticiens() {
-    const list = document.getElementById('topPraticiens');
-    list.innerHTML = '';
-    topPraticiens.forEach(p => {
-        const li = document.createElement('li');
-        li.innerHTML = `${p.name} <span class="count">${p.count}</span>`;
-        list.appendChild(li);
-    });
-}
-
-function renderUsersChart() {
-    const ctx = document.createElement('canvas');
-    const container = document.getElementById('usersChart');
+// Top 5 praticiens
+function renderTopPracticiens() {
+    const container = document.getElementById('topPracticiens');
+    if (!container) return;
+    const maxCount = Math.max(...topPraticiensData.map(p => p.count));
     container.innerHTML = '';
-    ctx.id = 'usersCanvas';
-    container.appendChild(ctx);
-    usersChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: newUsersByMonth.labels,
-            datasets: [{
-                label: 'Nouveaux utilisateurs',
-                data: newUsersByMonth.data,
-                borderColor: '#118a6b',
-                backgroundColor: 'rgba(17, 138, 107, 0.1)',
-                fill: true,
-                tension: 0.3,
-                pointBackgroundColor: '#118a6b',
-                pointRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                tooltip: { callbacks: { label: (ctx) => `${ctx.raw} utilisateurs` } }
-            }
-        }
+    topPraticiensData.forEach(p => {
+        const percent = (p.count / maxCount) * 100;
+        const div = document.createElement('div');
+        div.className = 'praticien-item';
+        div.innerHTML = `
+            <div class="praticien-header">
+                <span>${p.name}</span>
+                <span class="praticien-value">${p.count}</span>
+            </div>
+            <div class="praticien-bar-container">
+                <div class="praticien-bar" style="width: ${percent}%;"></div>
+            </div>
+        `;
+        container.appendChild(div);
     });
 }
 
-function updateAllStats() {
-    renderMonthlyChart();
-    renderServiceChart();
-    renderTopPraticiens();
-    renderUsersChart();
+// Nouveaux utilisateurs par mois
+function renderNewUsers() {
+    const container = document.getElementById('newUsers');
+    if (!container) return;
+    const maxTotal = Math.max(...newUsersData.map(u => u.total));
+    container.innerHTML = '';
+    newUsersData.forEach(u => {
+        const percent = (u.total / maxTotal) * 100;
+        const div = document.createElement('div');
+        div.className = 'user-month';
+        div.innerHTML = `
+            <div class="user-month-header">
+                <strong>${u.month}</strong>
+                <span>${u.total} utilisateurs</span>
+            </div>
+            <div class="user-month-detail">
+                <span>Praticiens: ${u.praticiens}</span>
+                <span>Élèves: ${u.total - u.praticiens}</span>
+            </div>
+            <div class="user-month-bar">
+                <div class="user-month-fill" style="width: ${percent}%;"></div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
 }
 
-// Gestion période (simulation)
-document.getElementById('periodSelect')?.addEventListener('change', (e) => {
-    alert(`Changement de période : ${e.target.value} (simulation)`);
-    // Ici on pourrait recharger les données dynamiquement
-});
-
+// Initialisation
 document.addEventListener('DOMContentLoaded', () => {
-    updateAllStats();
+    renderMonthlyEvolution();
+    renderServiceRepartition();
+    renderTopPracticiens();
+    renderNewUsers();
 
+    // Interactions communes (aide, cloche, profil)
     const helpBtn = document.querySelector('.floating-help-btn');
     if (helpBtn) helpBtn.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
-
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (!this.classList.contains('active')) alert(`Navigation vers "${this.innerText.trim()}" (simulation)`);
-        });
-    });
-    document.querySelector('.bell-icon')?.addEventListener('click', () => alert("3 notifications non lues"));
-    document.querySelector('.user-meta')?.addEventListener('click', () => alert("Profil administrateur"));
+    const bell = document.querySelector('.bell-icon');
+    if (bell) bell.addEventListener('click', () => alert("Vous avez 3 notifications non lues"));
+    const userMeta = document.querySelector('.user-meta');
+    if (userMeta) userMeta.addEventListener('click', () => alert("Profil administrateur"));
 });

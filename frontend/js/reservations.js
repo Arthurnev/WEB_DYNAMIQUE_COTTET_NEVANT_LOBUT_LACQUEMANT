@@ -1,4 +1,4 @@
-// Données initiales (simulation)
+// Données simulées
 let reservations = [
     { id: 1, etudiant: "Jean Dupont", praticien: "Dr. Marie Martin", service: "Consultation médicale", date: "28/05/2026", horaire: "09:00", statut: "confirm" },
     { id: 2, etudiant: "Sophie Martin", praticien: "Dr. Pierre Durand", service: "Suivi nutritionnel", date: "28/05/2026", horaire: "14:00", statut: "pending" },
@@ -7,7 +7,6 @@ let reservations = [
     { id: 5, etudiant: "Thomas Bernard", praticien: "Dr. Pierre Durand", service: "Consultation nutrition", date: "27/05/2026", horaire: "11:00", statut: "cancelled" }
 ];
 
-// Fonction pour générer le badge de statut
 function getStatusBadge(statut) {
     switch(statut) {
         case 'confirm': return '<span class="status-badge status-confirm">Confirmée</span>';
@@ -18,18 +17,11 @@ function getStatusBadge(statut) {
     }
 }
 
-// Échappement basique pour éviter les injections HTML
 function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
+    return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'));
 }
 
-// Fonction principale de filtrage et d'affichage
 function renderTable() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
     const statusFilter = document.getElementById('statusFilter').value;
@@ -64,73 +56,31 @@ function renderTable() {
             <td>${escapeHtml(res.horaire)}</td>
             <td>${getStatusBadge(res.statut)}</td>
             <td style="text-align: center;">
-                <button class="btn-delete-action" data-id="${res.id}">
-                    <i class="far fa-trash-alt"></i>
-                </button>
+                <button class="btn-delete-action" data-id="${res.id}"><i class="far fa-trash-alt"></i></button>
             </td>
         `;
         tbody.appendChild(row);
     });
 
-    // Réattacher les événements de suppression
     document.querySelectorAll('.btn-delete-action').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const id = parseInt(btn.getAttribute('data-id'));
-            if (confirm("Êtes-vous sûr de vouloir supprimer cette réservation ? Cette action est irréversible.")) {
+            const id = parseInt(btn.dataset.id);
+            if (confirm("Supprimer définitivement cette réservation ?")) {
                 reservations = reservations.filter(r => r.id !== id);
                 renderTable();
-                alert("Réservation supprimée avec succès.");
             }
         });
     });
 }
 
-// Initialisation au chargement du DOM
 document.addEventListener('DOMContentLoaded', () => {
     renderTable();
+    document.getElementById('searchInput').addEventListener('input', renderTable);
+    document.getElementById('statusFilter').addEventListener('change', renderTable);
+    document.getElementById('praticienFilter').addEventListener('change', renderTable);
 
-    // Écouteurs des filtres
-    const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
-    const praticienFilter = document.getElementById('praticienFilter');
-
-    if (searchInput) searchInput.addEventListener('input', renderTable);
-    if (statusFilter) statusFilter.addEventListener('change', renderTable);
-    if (praticienFilter) praticienFilter.addEventListener('change', renderTable);
-
-    // Bouton d'aide flottant
-    const helpBtn = document.querySelector('.floating-help-btn');
-    if (helpBtn) {
-        helpBtn.addEventListener('click', () => {
-            alert("Contactez le support : support@vitacare-campus.fr");
-        });
-    }
-
-    // Simulation de navigation dans la sidebar
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (!this.classList.contains('active')) {
-                alert(`Navigation vers "${this.innerText.trim()}" (simulation)`);
-            }
-        });
-    });
-
-    // Clic sur la cloche de notification
-    const bell = document.querySelector('.bell-icon');
-    if (bell) {
-        bell.addEventListener('click', () => {
-            alert("Vous avez 3 notifications non lues");
-        });
-    }
-
-    // Clic sur le profil utilisateur
-    const userMeta = document.querySelector('.user-meta');
-    if (userMeta) {
-        userMeta.addEventListener('click', () => {
-            alert("Profil administrateur");
-        });
-    }
+    // Interactions (cloche, aide, etc.)
+    document.querySelector('.floating-help-btn')?.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
+    document.querySelector('.bell-icon')?.addEventListener('click', () => alert("3 notifications non lues"));
+    document.querySelector('.user-meta')?.addEventListener('click', () => alert("Profil administrateur"));
 });
