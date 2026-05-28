@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Récupérer l'utilisateur connecté
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) {
         window.location.href = "login.html";
@@ -7,21 +6,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     document.getElementById("user-name").textContent = user.prenom + " " + user.nom;
 
-    // Initialiser le dropdown
     initNotifDropdown();
 
-    // Charger les notifications si on est sur la page notifications.html
     if (window.location.pathname.includes("notifications.html")) {
         chargerNotificationsPage();
     }
 });
 
-// ===== MENU DÉROULANT =====
-
 function initNotifDropdown() {
     const bell = document.getElementById("notif-bell");
     const dropdown = document.getElementById("notif-dropdown");
-
     if (!bell || !dropdown) return;
 
     bell.addEventListener("click", function (e) {
@@ -41,18 +35,15 @@ function initNotifDropdown() {
 
 async function chargerNotificationsDropdown() {
     try {
-        const res = await fetch("../backend/notifications.php");
+        const res = await fetch("../backend/notifications.php", { credentials: 'include' });
         const data = await res.json();
-
         if (!data.success) {
             console.error("Erreur:", data.error);
             return;
         }
-
         const notifications = data.notifications;
         afficherDropdownNotifications(notifications);
         mettreAJourCompteurs(notifications);
-
     } catch (error) {
         console.error("Erreur de chargement:", error);
     }
@@ -61,21 +52,13 @@ async function chargerNotificationsDropdown() {
 function afficherDropdownNotifications(notifications) {
     const container = document.getElementById("notif-dropdown-list");
     if (!container) return;
-
     container.innerHTML = "";
 
-    // Trier par date (plus récentes d'abord)
     notifications.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    // Limiter à 5 notifications
     const max = notifications.slice(0, 5);
 
     if (max.length === 0) {
-        container.innerHTML = `
-            <div style="padding:20px; text-align:center; color:#9ca3af;">
-                <p>Aucune notification</p>
-            </div>
-        `;
+        container.innerHTML = `<div style="padding:20px; text-align:center; color:#9ca3af;"><p>Aucune notification</p></div>`;
         return;
     }
 
@@ -87,6 +70,9 @@ function afficherDropdownNotifications(notifications) {
         const dateObj = new Date(notif.date);
         const dateStr = dateObj.toLocaleDateString("fr-FR", { day: 'numeric', month: 'numeric' });
         const heureStr = dateObj.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' });
+        
+        // Utiliser message comme titre
+        const titre = notif.message.length > 50 ? notif.message.substring(0, 50) + '...' : notif.message;
 
         const html = `
             <div class="${itemClass}" onclick="ouvrirNotification(${notif.id})">
@@ -94,8 +80,8 @@ function afficherDropdownNotifications(notifications) {
                     <i class="fas ${getIconFaDropdown(notif.type)}"></i>
                 </div>
                 <div class="notif-dropdown-content">
-                    <div class="notif-dropdown-title">${notif.titre}</div>
-                    <div class="notif-dropdown-message">${notif.message}</div>
+                    <div class="notif-dropdown-title">${escapeHtml(titre)}</div>
+                    <div class="notif-dropdown-message">${escapeHtml(notif.message)}</div>
                     <div class="notif-dropdown-date">${dateStr} à ${heureStr}</div>
                 </div>
                 ${!estLu ? '<div class="notif-dot"></div>' : ''}
@@ -135,14 +121,11 @@ function mettreAJourCompteurs(notifications) {
 }
 
 async function ouvrirNotification(id) {
-    // Marquer comme lu dans le menu
     await marquerCommeLuDropdown(id);
-    // Rediriger vers la page notifications
     window.location.href = "notifications.html";
 }
 
 async function marquerCommeLuDropdown(id) {
-    // 1. Marquer comme lu dans le DOM (visuel immédiat)
     const item = document.querySelector(`.notif-dropdown-item[onclick="ouvrirNotification(${id})"]`);
     if (item) {
         item.classList.remove("unread");
@@ -151,11 +134,11 @@ async function marquerCommeLuDropdown(id) {
         if (dot) dot.style.display = "none";
     }
     
-    // 2. Envoyer la demande au backend
     try {
-        const res = await fetch("../backend/marquer_notification_lue.php", {
+        const res = await fetch("../backend/marquer_notification_lu.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: 'include',
             body: JSON.stringify({ id: id })
         });
         const data = await res.json();
@@ -166,7 +149,6 @@ async function marquerCommeLuDropdown(id) {
         console.error("Erreur réseau:", error);
     }
     
-    // 3. Mettre à jour le compteur
     const counter = document.getElementById("topbar-notif-count");
     if (counter) {
         let current = parseInt(counter.textContent) || 0;
@@ -181,7 +163,6 @@ async function marquerCommeLuDropdown(id) {
 async function marquerToutLuDropdown() {
     if (!confirm("Marquer toutes les notifications comme lues ?")) return;
     
-    // Marquer toutes les notifications comme lues dans le DOM
     document.querySelectorAll(".notif-dropdown-item.unread").forEach(item => {
         item.classList.remove("unread");
         item.classList.add("read");
@@ -189,11 +170,10 @@ async function marquerToutLuDropdown() {
         if (dot) dot.style.display = "none";
     });
     
-    // Envoyer la demande au backend
     try {
         const res = await fetch("../backend/marquer_tout_lu.php", {
             method: "POST",
-            headers: { "Content-Type": "application/json" }
+            credentials: 'include'
         });
         const data = await res.json();
         if (!data.success) {
@@ -203,7 +183,6 @@ async function marquerToutLuDropdown() {
         console.error("Erreur réseau:", error);
     }
     
-    // Mettre à jour le compteur
     const counter = document.getElementById("topbar-notif-count");
     if (counter) {
         counter.textContent = "0";
@@ -211,22 +190,17 @@ async function marquerToutLuDropdown() {
     }
 }
 
-// ===== PAGE NOTIFICATIONS (pleine page) =====
-
 async function chargerNotificationsPage() {
     try {
-        const res = await fetch("../backend/notifications.php");
+        const res = await fetch("../backend/notifications.php", { credentials: 'include' });
         const data = await res.json();
-
         if (!data.success) {
             console.error("Erreur:", data.error);
             return;
         }
-
         const notifications = data.notifications;
         afficherNotificationsPage(notifications);
         mettreAJourCompteurs(notifications);
-
     } catch (error) {
         console.error("Erreur de chargement:", error);
     }
@@ -235,26 +209,23 @@ async function chargerNotificationsPage() {
 function afficherNotificationsPage(notifications) {
     const container = document.getElementById("notifications-list");
     if (!container) return;
-
     container.innerHTML = "";
 
-    // Trier par date (plus récentes d'abord)
     notifications.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     if (notifications.length === 0) {
-        container.innerHTML = `
-            <div style="text-align:center; padding:60px 20px; color:#9ca3af;">
-                <i class="fas fa-bell-slash" style="font-size:48px; margin-bottom:16px; color:#d1d5db;"></i>
-                <p style="font-size:18px; font-weight:600; color:#6b7280;">Aucune notification</p>
-                <p style="font-size:14px; margin-top:4px;">Vous n'avez aucune notification pour le moment.</p>
-            </div>
-        `;
+        container.innerHTML = `<div style="text-align:center; padding:60px 20px; color:#9ca3af;">
+            <i class="fas fa-bell-slash" style="font-size:48px; margin-bottom:16px; color:#d1d5db;"></i>
+            <p style="font-size:18px; font-weight:600; color:#6b7280;">Aucune notification</p>
+        </div>`;
         return;
     }
 
-    // Mettre à jour le compteur de la page
     const nonLues = notifications.filter(n => n.lu == 0).length;
-    document.getElementById("unread-count").textContent = nonLues + " notification" + (nonLues > 1 ? "s" : "") + " non lue" + (nonLues > 1 ? "s" : "");
+    const unreadEl = document.getElementById("unread-count");
+    if (unreadEl) {
+        unreadEl.textContent = nonLues + " notification" + (nonLues > 1 ? "s" : "") + (nonLues === 0 ? " non lue" : " non lues");
+    }
 
     notifications.forEach(notif => {
         const estLu = notif.lu == 1;
@@ -262,8 +233,10 @@ function afficherNotificationsPage(notifications) {
         const iconClass = getIconClassPage(notif.type);
 
         const dateObj = new Date(notif.date);
-        const dateStr = dateObj.toLocaleDateString("fr-FR", { day: 'numeric', month: 'numeric', year: 'numeric' });
+        const dateStr = dateObj.toLocaleDateString("fr-FR");
         const heureStr = dateObj.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' });
+        
+        const titre = notif.message.length > 60 ? notif.message.substring(0, 60) + '...' : notif.message;
 
         const html = `
             <div class="${cardClass}" data-id="${notif.id}">
@@ -271,8 +244,8 @@ function afficherNotificationsPage(notifications) {
                     <i class="fas ${getIconFaPage(notif.type)}"></i>
                 </div>
                 <div class="notif-content">
-                    <div class="notif-title">${notif.titre}</div>
-                    <div class="notif-message">${notif.message}</div>
+                    <div class="notif-title">${escapeHtml(titre)}</div>
+                    <div class="notif-message">${escapeHtml(notif.message)}</div>
                     <div class="notif-date">
                         <i class="far fa-calendar"></i> ${dateStr} à ${heureStr}
                     </div>
@@ -313,14 +286,14 @@ function getIconFaPage(type) {
 
 async function marquerCommeLuPage(id) {
     try {
-        const res = await fetch("../backend/marquer_notification_lue.php", {
+        const res = await fetch("../backend/marquer_notification_lu.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: 'include',
             body: JSON.stringify({ id: id })
         });
         const data = await res.json();
         if (data.success) {
-            // Recharger les notifications
             chargerNotificationsPage();
         } else {
             alert("Erreur : " + data.error);
@@ -335,7 +308,7 @@ async function marquerToutLuPage() {
     try {
         const res = await fetch("../backend/marquer_tout_lu.php", {
             method: "POST",
-            headers: { "Content-Type": "application/json" }
+            credentials: 'include'
         });
         const data = await res.json();
         if (data.success) {
@@ -346,4 +319,11 @@ async function marquerToutLuPage() {
     } catch (error) {
         console.error("Erreur:", error);
     }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }

@@ -144,5 +144,5 @@ async function registerPraticien() {
 
 function logout() {
   localStorage.removeItem("user");
-  window.location.href = "login.html";
+  window.location.href = "accueil.html";
 }
