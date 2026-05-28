@@ -801,134 +801,171 @@ textarea {
 /* ===================== 7. CATALOGUE ===================== */
 
 .catalogue-page {
-  padding: 34px;
+  padding: 26px 32px;
+}
+
+.catalogue-header {
+  margin-bottom: 24px;
 }
 
 .catalogue-header h1 {
-  font-size: 38px;
+  font-size: 44px;
+  font-weight: 800;
   color: var(--text-dark);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .catalogue-header p {
   color: var(--text-soft);
-  margin-bottom: 22px;
+  font-size: 17px;
+}
+
+.catalogue-search {
+  margin-bottom: 28px;
 }
 
 .catalogue-search input {
   width: 100%;
-  max-width: 640px;
-  padding: 17px 20px;
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
+  max-width: 700px;
+  height: 58px;
+  border-radius: 20px;
+  border: 2px solid #d1fae5;
+  background: white;
+  padding: 0 22px;
   font-size: 16px;
   outline: none;
-  background: var(--white);
+  transition: 0.2s;
 }
 
 .catalogue-search input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(46, 139, 87, 0.12);
+  box-shadow: 0 0 0 5px rgba(46, 139, 87, 0.12);
 }
 
 .catalogue-tabs {
   display: flex;
-  gap: 26px;
-  border-bottom: 1px solid var(--border);
-  margin: 30px 0;
+  gap: 30px;
+  margin-bottom: 34px;
+  border-bottom: 1px solid #d1fae5;
+  overflow-x: auto;
 }
 
 .catalogue-tabs button {
   border: none;
   background: transparent;
-  padding: 16px 26px;
-  font-weight: 800;
+  padding: 16px 0;
   font-size: 16px;
+  font-weight: 700;
   color: #334155;
   cursor: pointer;
+  position: relative;
+  white-space: nowrap;
 }
 
-.catalogue-tabs button.active,
-.catalogue-tabs button:hover {
-  background: var(--primary-light);
+.catalogue-tabs button.active {
   color: var(--primary);
-  border-bottom: 3px solid var(--primary);
+}
+
+.catalogue-tabs button.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--primary);
 }
 
 .catalogue-layout {
   display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 30px;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 26px;
+  align-items: start;
 }
 
 .services-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(220px, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(3, minmax(230px, 1fr));
+  gap: 24px;
 }
 
 .catalogue-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 20px;
+  background: white;
+  border: 1px solid #d1fae5;
+  border-radius: 24px;
   overflow: hidden;
-  min-height: 580px;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-soft);
+  min-height: 510px;
+  box-shadow: 0 12px 30px rgba(46, 139, 87, 0.08);
+  transition: 0.2s;
+}
+
+.catalogue-card:hover {
+  transform: translateY(-4px);
 }
 
 .catalogue-card-image {
-  height: 150px;
-  background: var(--primary-light);
+  height: 155px;
+  background: #eaf7ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
+  overflow: hidden;
+}
+
+.service-icon-main {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: white;
+  color: var(--primary);
+  font-size: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.service-icon-main {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--white);
-  color: var(--primary);
-  font-size: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.catalogue-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .service-badge {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 16px;
+  right: 16px;
   background: var(--primary);
-  color: var(--white);
+  color: white;
   font-size: 13px;
   font-weight: 800;
-  padding: 7px 14px;
+  padding: 7px 13px;
   border-radius: 999px;
+  z-index: 2;
 }
 
 .catalogue-card-content {
-  padding: 24px;
+  padding: 22px;
   flex: 1;
 }
 
 .catalogue-card-content h2 {
-  font-size: 23px;
-  color: var(--text);
-  margin-bottom: 16px;
+  font-size: 21px;
+  line-height: 1.3;
+  margin-bottom: 15px;
+  color: var(--text-dark);
 }
 
 .praticien {
-  color: #334155;
-  font-weight: 600;
+  font-size: 17px;
   margin-bottom: 4px;
 }
 
 .specialite {
+  font-size: 15px;
   color: var(--text-soft);
   margin-bottom: 16px;
 }
@@ -936,16 +973,17 @@ textarea {
 .service-modes {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: 9px;
+  margin-bottom: 20px;
 }
 
 .service-modes span {
   background: #f1f5f9;
   color: #334155;
-  padding: 7px 10px;
-  border-radius: 8px;
+  padding: 7px 11px;
+  border-radius: 10px;
   font-size: 13px;
+  font-weight: 600;
 }
 
 .service-info {
@@ -955,30 +993,38 @@ textarea {
   margin-bottom: 16px;
 }
 
+.service-info span {
+  color: #334155;
+}
+
 .service-info strong {
-  font-size: 22px;
+  font-size: 24px;
+  color: var(--text-dark);
 }
 
 .service-note {
-  color: var(--text);
-  font-weight: 700;
+  font-size: 15px;
+  color: #334155;
 }
 
 .service-note span {
-  color: var(--text-soft);
-  font-weight: 400;
+  color: #64748b;
 }
 
 .details-btn {
-  display: block;
-  margin: 0 24px 24px;
+  margin: 0 22px 22px;
+  padding: 14px;
+  border-radius: 15px;
   text-align: center;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: var(--white);
   text-decoration: none;
-  padding: 15px;
-  border-radius: 14px;
+  color: white;
   font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  transition: 0.2s;
+}
+
+.details-btn:hover {
+  transform: translateY(-2px);
 }
 
 .catalogue-side {
@@ -989,78 +1035,86 @@ textarea {
 
 .filters-card,
 .map-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: var(--shadow-soft);
+  background: white;
+  border-radius: 24px;
+  border: 1px solid #d1fae5;
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(46, 139, 87, 0.08);
 }
 
 .filters-card h2,
 .map-card h2 {
-  color: var(--text-dark);
+  font-size: 26px;
   margin-bottom: 20px;
+  color: var(--text-dark);
 }
 
 .filters-card h3 {
-  margin: 22px 0 12px;
+  margin: 22px 0 14px;
+  font-size: 17px;
 }
 
 .filters-card label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
 }
 
 .duration-filters {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 .duration-filters button {
   border: none;
-  padding: 12px;
-  border-radius: 12px;
-  font-weight: 800;
+  background: #f1f5f9;
+  padding: 13px;
+  border-radius: 14px;
+  font-weight: 700;
   cursor: pointer;
+  transition: 0.2s;
 }
 
-.duration-filters .active {
+.duration-filters button.active,
+.duration-filters button:hover {
   background: var(--primary);
-  color: var(--white);
+  color: white;
 }
 
 .map-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 18px;
 }
 
 .map-title button {
   border: none;
   background: var(--primary-light);
   color: var(--primary);
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-weight: 800;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 700;
   cursor: pointer;
 }
 
 #doctorMap {
-  height: 280px;
-  border-radius: 16px;
+  height: 250px;
+  border-radius: 18px;
   overflow: hidden;
 }
 
 .map-modal {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  z-index: 9999;
+  background: rgba(15, 23, 42, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 9999;
 }
 
 .map-modal.hidden {
@@ -1068,33 +1122,34 @@ textarea {
 }
 
 .map-modal-content {
-  width: 85%;
-  height: 82%;
-  background: var(--white);
-  border-radius: 24px;
-  padding: 24px;
+  width: 90%;
+  max-width: 1100px;
+  background: white;
+  border-radius: 28px;
+  padding: 28px;
   position: relative;
 }
 
 .close-map {
   position: absolute;
   top: 18px;
-  right: 22px;
+  right: 18px;
   border: none;
-  background: var(--primary-light);
-  color: var(--primary);
-  width: 38px;
-  height: 38px;
+  background: #fee2e2;
+  color: #991b1b;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   font-size: 24px;
   cursor: pointer;
 }
 
 #doctorMapLarge {
-  height: calc(100% - 55px);
-  border-radius: 18px;
+  height: 650px;
+  border-radius: 20px;
   overflow: hidden;
 }
+
 
 /* =========================================================
    SUIVI & HISTORIQUE - VITACARE VERSION CLEAN
@@ -1735,10 +1790,6 @@ textarea {
   }
 }
 
-n-icon.nouveaute {
-    background: #dbeafe;
-    color: #1e40af;
-}
 
 /* =========================================================
    NOTIFICATIONS - VITACARE
@@ -2063,4 +2114,130 @@ n-icon.nouveaute {
   display: block;
   margin-top: 5px;
   font-size: 14px;
+}
+
+.catalogue-card-image {
+  height: 130px;
+  background: #eaf7ef;
+  position: relative;
+  overflow: hidden;
+}
+
+.catalogue-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* =========================================================
+   RESPONSIVE CATALOGUE FINAL
+   ========================================================= */
+
+@media (max-width: 1300px) {
+  .services-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1000px) {
+  .catalogue-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .services-list {
+    grid-template-columns: 1fr;
+  }
+
+  .catalogue-header h1 {
+    font-size: 34px;
+  }
+
+  .catalogue-page {
+    padding: 22px 18px;
+  }
+
+  .catalogue-search input {
+    max-width: 100%;
+  }
+
+  .notif-filters-container {
+    flex-direction: column;
+  }
+}
+
+.contact-toggle {
+  border: none;
+  background: transparent;
+  color: #2e8b57;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 6px;
+}
+
+.contact-toggle:hover {
+  text-decoration: underline;
+}
+
+.contact-box {
+  margin-top: 14px;
+  background: white;
+  border: 1px solid #d1fae5;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 8px 18px rgba(46, 139, 87, 0.08);
+}
+
+.contact-box p {
+  margin-bottom: 10px;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.contact-box p:last-child {
+  margin-bottom: 0;
+}
+
+.contact-note {
+  color: #64748b !important;
+  font-size: 13px !important;
+}
+
+.cart-link {
+  text-decoration: none;
+  font-size: 22px;
+  transition: 0.2s;
+}
+
+.cart-link:hover {
+  transform: scale(1.1);
+}
+
+.services-list{
+  display:block !important;
+}
+
+.catalogue-card{
+  display:flex !important;
+  background:white !important;
+  border:2px solid red !important;
+  min-height:200px !important;
+  margin-bottom:20px !important;
+  opacity:1 !important;
+  visibility:visible !important;
+}
+.catalogue-card-image .service-icon-main {
+  display: none;
+}
+
+.catalogue-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
