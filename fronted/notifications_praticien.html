@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Notifications - VitaCare Campus</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style_praticien.css">
+    <link rel="stylesheet" href="../css/notifications.css">
+</head>
+<body>
+
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">V</div>
+            <span class="brand-name">VitaCare <small>Campus</small></span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
+            <a href="agenda_praticien.html"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            <a href="disponibilites_praticien.html"><i class="fas fa-clock"></i> Disponibilités</a>
+            <a href="patients_praticien.html"><i class="fas fa-users"></i> Patients</a>
+            <a href="activites_praticien.html"><i class="fas fa-heart"></i> Activités</a>
+            <a href="notifications_praticien.html" class="active"><i class="fas fa-bell"></i> Notifications <span class="badge" id="sidebar-notif-count">0</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <a href="#">Nous contacter</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-right">
+                <div class="user-profile">
+                    <div class="avatar" id="avatar-initials">MM</div>
+                    <span class="user-name" id="user-name">Dr. Martin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="notif-page-container">
+                <div class="page-header">
+                    <h1>Notifications</h1>
+                    <p class="subtitle" id="unread-count-text">0 notification non lue</p>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 20px;">
+                    <div class="notif-filters">
+                        <button class="filter-btn active" data-filter="all">Toutes</button>
+                        <button class="filter-btn" data-filter="rappel">Rappels</button>
+                        <button class="filter-btn" data-filter="confirmation">Confirmations</button>
+                        <button class="filter-btn" data-filter="annulation">Annulations</button>
+                        <button class="filter-btn" data-filter="info">Informations</button>
+                    </div>
+                    <button class="mark-all-read" onclick="marquerToutLu()">Tout marquer comme lu</button>
+                </div>
+
+                <div id="notifications-list" class="notif-list">
+                    <div style="text-align:center; padding:40px;">Chargement...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    let allNotifications = [];
+    let currentFilter = 'all';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        document.getElementById("user-name").textContent = "Dr. " + user.nom;
+        document.getElementById("avatar-initials").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+        
+        await chargerNotifications();
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                afficherNotifications();
+            });
+        });
+    });
+
+    async function chargerNotifications() {
+        try {
+            const res = await fetch('../backend/notifications.php', { credentials: 'include' });
+            const data = await res.json();
+            
+            if (data.success) {
+                allNotifications = data.notifications;
+                mettreAJourCompteurSidebar();
+                afficherNotifications();
+            } else {
+                document.getElementById('notifications-list').innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><p>Erreur: ${data.error}</p></div>`;
+            }
+        } catch (error) {
+            document.getElementById('notifications-list').innerHTML = `<div class="empty-state"><i class="fas fa-wifi"></i><p>Erreur de connexion</p></div>`;
+        }
+    }
+
+    function afficherNotifications() {
+        const container = document.getElementById('notifications-list');
+        let filtered = allNotifications;
+        
+        if (currentFilter !== 'all') {
+            filtered = allNotifications.filter(n => n.type === currentFilter);
+        }
+        
+        const nonLues = allNotifications.filter(n => n.lu == 0).length;
+        const unreadText = document.getElementById('unread-count-text');
+        if (unreadText) {
+            unreadText.textContent = nonLues + ' notification' + (nonLues > 1 ? 's' : '') + (nonLues === 0 ? ' non lue' : ' non lues');
+        }
+        
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><p>Aucune notification</p></div>`;
+            return;
+        }
+        
+        container.innerHTML = filtered.map(notif => {
+            const estLu = notif.lu == 1;
+            const cardClass = estLu ? 'notif-card read' : 'notif-card unread';
+            let iconClass = 'info';
+            let iconFa = 'fa-info-circle';
+            
+            switch(notif.type) {
+                case 'rappel':
+                    iconClass = 'rappel';
+                    iconFa = 'fa-bell';
+                    break;
+                case 'confirmation':
+                    iconClass = 'confirmation';
+                    iconFa = 'fa-check-circle';
+                    break;
+                case 'annulation':
+                    iconClass = 'annulation';
+                    iconFa = 'fa-times-circle';
+                    break;
+                default:
+                    iconClass = 'info';
+                    iconFa = 'fa-info-circle';
+            }
+            
+            const date = new Date(notif.date);
+            const dateStr = date.toLocaleDateString('fr-FR');
+            const heureStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            
+            const titre = notif.message.length > 60 ? notif.message.substring(0, 60) + '...' : notif.message;
+            
+            return `
+                <div class="${cardClass}" data-id="${notif.id}">
+                    <div class="notif-icon ${iconClass}">
+                        <i class="fas ${iconFa}"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-title">${escapeHtml(titre)}</div>
+                        <div class="notif-message">${escapeHtml(notif.message)}</div>
+                        <div class="notif-date">
+                            <i class="far fa-calendar"></i> ${dateStr} à ${heureStr}
+                        </div>
+                        ${!estLu ? `
+                            <div class="notif-actions">
+                                <button class="notif-action-btn" onclick="marquerCommeLu(${notif.id})">
+                                    <i class="fas fa-check"></i> Marquer comme lu
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${!estLu ? '<div class="notif-dot"></div>' : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    function mettreAJourCompteurSidebar() {
+        const nonLues = allNotifications.filter(n => n.lu == 0).length;
+        const sidebarBadge = document.getElementById('sidebar-notif-count');
+        if (sidebarBadge) {
+            if (nonLues > 0) {
+                sidebarBadge.textContent = nonLues;
+                sidebarBadge.style.display = 'inline-block';
+            } else {
+                sidebarBadge.style.display = 'none';
+            }
+        }
+    }
+
+    async function marquerCommeLu(id) {
+        try {
+            const res = await fetch('../backend/marquer_notification_lu.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ id: id })
+            });
+            const data = await res.json();
+            if (data.success) {
+                await chargerNotifications();
+            }
+        } catch (error) {
+            console.error("Erreur:", error);
+        }
+    }
+
+    async function marquerToutLu() {
+        try {
+            const res = await fetch('../backend/marquer_tout_lu.php', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            const data = await res.json();
+            if (data.success) {
+                await chargerNotifications();
+            }
+        } catch (error) {
+            console.error("Erreur:", error);
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+</body>
+</html>
