@@ -3,20 +3,16 @@ function showMessage(text, type) {
   if (!msg) return;
   msg.textContent = text;
   msg.className = "message " + type;
+  msg.style.display = "block"; // ← ligne ajoutée
 }
 
-function switchTab(role) {
+function switchTab(role, el) {         // ← reçoit l'élément
   document.getElementById("form-etudiant").style.display =
     role === "etudiant" ? "block" : "none";
-
   document.getElementById("form-praticien").style.display =
     role === "praticien" ? "block" : "none";
-
-  document.querySelectorAll(".tab").forEach((tab) => {
-    tab.classList.remove("active");
-  });
-
-  event.target.classList.add("active");
+  document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+  el.classList.add("active");          // ← utilise el
 }
 
 async function login() {
@@ -143,6 +139,6 @@ async function registerPraticien() {
 }
 
 function logout() {
-  localStorage.removeItem("utilisateur");
+  localStorage.removeItem("user");
   window.location.href = "Accueil.html";
 }

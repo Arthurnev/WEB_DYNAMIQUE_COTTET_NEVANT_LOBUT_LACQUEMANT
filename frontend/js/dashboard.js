@@ -19,3 +19,14 @@ document.addEventListener("DOMContentLoaded", () => {
 function toggleAccountMenu() {
   document.getElementById("accountMenu").classList.toggle("hidden");
 }
+function toggleContactBox() {
+  const box = document.getElementById("contactBox");
+  if (box) box.classList.toggle("hidden");
+}
+function toggleContactBox() {
+  const box = document.getElementById("contactBox");
+
+  if (box) {
+    box.classList.toggle("hidden");
+  }
+}

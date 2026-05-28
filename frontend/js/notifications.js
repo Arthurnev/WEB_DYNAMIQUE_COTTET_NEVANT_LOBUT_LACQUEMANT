@@ -388,3 +388,9 @@ function getIconFa(type) {
       return "fa-info-circle";
   }
 }
+function toggleContactBox() {
+  const box = document.getElementById("contactBox");
+  if (box) {
+    box.classList.toggle("hidden");
+  }
+}
