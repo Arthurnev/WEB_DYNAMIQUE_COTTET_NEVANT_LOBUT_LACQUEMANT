@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -18,17 +17,25 @@
 
     <nav class="student-menu">
       <a class="active" href="index.html">▦ Dashboard</a>
-      <a href="#">📖 Catalogue</a>
-      <a href="#">📅 Suivi & historique</a>
-      <a href="#">〽 Activités</a>
-      <a href="#">🔔 Notifications <span>3</span></a>
+      <a href="catalogue.html">📖 Catalogue</a>
+      <a href="suivi_historique.html">📅 Suivi & historique</a>
+      <a href="activites.html">〽 Activités</a>
+      <a href="notifications.html">🔔 Notifications <span>3</span></a>
     </nav>
 
     <div class="student-help">
       <div class="help-icon">?</div>
       <strong>Besoin d'aide ?</strong>
       <p>Notre équipe est là pour vous aider.</p>
-      <a href="#">Nous contacter</a>
+      <button class="contact-toggle" onclick="toggleContactBox()">
+  Nous contacter
+</button>
+
+<div class="contact-box hidden" id="contactBox">
+  <p><strong>📞 Téléphone</strong><br>01 23 45 67 89</p>
+  <p><strong>✉️ Email</strong><br>contact@vitacare-campus.fr</p>
+  <p class="contact-note">Réponse sous 24h ouvrées.</p>
+</div>
     </div>
   </aside>
 
@@ -36,17 +43,33 @@
 
     <header class="student-topbar">
       <div class="student-actions">
-        <span>🔔</span>
-        <span>🛒</span>
-        <div class="student-avatar">JD</div>
-        <strong>Jean Dupont</strong>
-      </div>
+       
+  <span>🔔</span>
+
+  <a href="panier.html" class="cart-link">
+    🛒
+  </a>
+        <div class="account-wrapper">
+  <button class="avatar-button" onclick="toggleAccountMenu()">
+    <div class="student-avatar" id="studentAvatar"></div>
+  </button>
+
+  <strong id="studentName"></strong>
+
+  <div class="account-menu hidden" id="accountMenu">
+  <a href="compte.html">⚙️ Mon compte</a>
+
+  <button class="logout-btn" onclick="logout()">
+    🚪 Déconnexion
+  </button>
+</div>
+</div>
     </header>
 
     <section class="student-welcome">
-      <h1>Bonjour, Jean 👋</h1>
+      <h1>Bonjour, <span id="welcomeName">Jean</span> 👋</h1>
       <p>Voici un aperçu de votre santé et bien-être</p>
-      <button>+ Prendre un rendez-vous</button>
+      <button onclick="window.location.href='catalogue.html'">+ Prendre un rendez-vous</button>
     </section>
 
     <section class="student-grid">
@@ -54,7 +77,7 @@
       <div class="student-card">
         <div class="card-title">
           <h2>📅 Prochains rendez-vous</h2>
-          <a href="#">Voir tout ›</a>
+          <a href="suivi_historique.html">Voir tout ›</a>
         </div>
 
         <div class="appointment-item">
@@ -91,7 +114,7 @@
       <div class="student-card">
         <div class="card-title">
           <h2>💚 Activités recommandées</h2>
-          <a href="#">Voir tout ›</a>
+          <a href="activites.html">Voir tout ›</a>
         </div>
         <p>Yoga, Pilates, méditation</p>
       </div>
@@ -99,7 +122,7 @@
       <div class="student-card">
         <div class="card-title">
           <h2>🔔 Notifications récentes</h2>
-          <a href="#">Voir tout ›</a>
+          <a href="notifications.html">Voir tout ›</a>
         </div>
         <p>Votre prochain rendez-vous est confirmé.</p>
       </div>
@@ -110,6 +133,7 @@
 
 </div>
 
-<script src="../js/auth.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
 </body>
 </html>

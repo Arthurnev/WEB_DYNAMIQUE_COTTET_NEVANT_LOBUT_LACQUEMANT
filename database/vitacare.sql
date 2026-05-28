@@ -21,6 +21,8 @@ SET time_zone = "+00:00";
 -- Base de données : `vitacare`
 --
 
+
+
 -- --------------------------------------------------------
 
 --
@@ -132,11 +134,7 @@ CREATE TABLE `reservation` (
   `id_panier` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
 
---
--- Structure de la table `service`
---
 
 CREATE TABLE `service` (
   `id` int(11) NOT NULL,
@@ -159,11 +157,6 @@ INSERT INTO `service` (`id`, `nom`, `description`, `duree_min`, `prix`, `categor
 (4, 'Séance de relaxation', 'Sophrologie et relaxation guidée', 60, 20.00, 'bien_etre', 3),
 (5, 'Coaching bien-être', 'Programme personnalisé bien-être', 60, 50.00, 'bien_etre', 2);
 
--- --------------------------------------------------------
-
---
--- Structure de la table `utilisateur`
---
 
 CREATE TABLE `utilisateur` (
   `id` int(11) NOT NULL,
@@ -171,26 +164,97 @@ CREATE TABLE `utilisateur` (
   `prenom` varchar(100) NOT NULL,
   `email` varchar(150) NOT NULL,
   `mot_de_passe` varchar(255) NOT NULL,
-  `role` enum('etudiant','praticien','admin') NOT NULL DEFAULT 'etudiant',
+
+  `role` enum('etudiant','praticien','admin')
+  NOT NULL DEFAULT 'etudiant',
+
   `created_at` datetime DEFAULT current_timestamp(),
+
   `telephone` varchar(20) DEFAULT NULL,
   `adresse_pro` varchar(255) DEFAULT NULL,
   `specialite` varchar(100) DEFAULT NULL,
   `diplome` varchar(150) DEFAULT NULL,
-  `numero_rpps` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `numero_rpps` varchar(50) DEFAULT NULL,
 
---
--- Déchargement des données de la table `utilisateur`
---
+  `filiere` varchar(100) DEFAULT NULL,
+  `annee` varchar(50) DEFAULT NULL,
+  `campus` varchar(100) DEFAULT NULL
 
-INSERT INTO `utilisateur` (`id`, `nom`, `prenom`, `email`, `mot_de_passe`, `role`, `created_at`, `telephone`, `adresse_pro`, `specialite`, `diplome`, `numero_rpps`) VALUES
-(2, 'Martin', 'Sophie', 'sophie@vitacare.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'praticien', '2026-05-25 22:45:30', NULL, NULL, NULL, NULL, NULL),
-(3, 'Garnier', 'Elise', 'elise@vitacare.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'praticien', '2026-05-25 22:45:30', NULL, NULL, NULL, NULL, NULL),
-(4, 'Dupont', 'Julie', 'julie@ece.fr', '$2y$10$.wuP75m6qNvOeHVYJzhPseNfYUfja/NPMIzO/sVH.Raf0gnlRkZSi', 'etudiant', '2026-05-25 22:45:30', NULL, NULL, NULL, NULL, NULL),
-(5, 'Leroy', 'Thomas', 'thomas@ece.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'etudiant', '2026-05-25 22:45:30', NULL, NULL, NULL, NULL, NULL),
-(6, 'Lobut', 'Juliette', 'juliette.lobut@edu.ece.fr', '$2y$10$Sd.0VXP9lIVUeqVyoJyH/u4z9tH5mbMBZhq2NqsfWCLA8FaIh1OtC', 'praticien', '2026-05-26 10:33:21', NULL, NULL, NULL, NULL, NULL),
-(7, 'Lobut', 'Juliette', 'juliette.lobut@icloud.com', '$2y$10$FvdWQsZsT7q4BW3jq4uo.uN5hho3vteB1E5bh5WQn0THAyIWm6RZK', 'praticien', '2026-05-26 10:50:00', NULL, NULL, NULL, NULL, NULL);
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
+
+
+INSERT INTO `utilisateur`
+(
+  `id`,
+  `nom`,
+  `prenom`,
+  `email`,
+  `mot_de_passe`,
+  `role`,
+  `created_at`,
+  `telephone`,
+  `adresse_pro`,
+  `specialite`,
+  `diplome`,
+  `numero_rpps`,
+  `filiere`,
+  `annee`,
+  `campus`
+)
+
+VALUES
+
+(2, 'Martin', 'Sophie',
+'sophie@vitacare.fr',
+'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+'praticien',
+'2026-05-25 22:45:30',
+NULL, NULL, NULL, NULL, NULL,
+NULL, NULL, NULL),
+
+(3, 'Garnier', 'Elise',
+'elise@vitacare.fr',
+'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+'praticien',
+'2026-05-25 22:45:30',
+NULL, NULL, NULL, NULL, NULL,
+NULL, NULL, NULL),
+
+(4, 'Dupont', 'Julie',
+'julie@ece.fr',
+'$2y$10$.wuP75m6qNvOeHVYJzhPseNfYUfja/NPMIzO/sVH.Raf0gnlRkZSi',
+'etudiant',
+'2026-05-25 22:45:30',
+NULL, NULL, NULL, NULL, NULL,
+'Informatique', 'ING3', 'Paris'),
+
+(5, 'Leroy', 'Thomas',
+'thomas@ece.fr',
+'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+'etudiant',
+'2026-05-25 22:45:30',
+NULL, NULL, NULL, NULL, NULL,
+'Santé', 'Master 1', 'Lyon'),
+
+(6, 'Lobut', 'Juliette',
+'juliette.lobut@edu.ece.fr',
+'$2y$10$Sd.0VXP9lIVUeqVyoJyH/u4z9tH5mbMBZhq2NqsfWCLA8FaIh1OtC',
+'praticien',
+'2026-05-26 10:33:21',
+NULL, NULL, NULL, NULL, NULL,
+NULL, NULL, NULL),
+
+(7, 'Lobut', 'Juliette',
+'juliette.lobut@icloud.com',
+'$2y$10$FvdWQsZsT7q4BW3jq4uo.uN5hho3vteB1E5bh5WQn0THAyIWm6RZK',
+'praticien',
+'2026-05-26 10:50:00',
+NULL, NULL, NULL, NULL, NULL,
+NULL, NULL, NULL);
+
+
 
 --
 -- Index pour les tables déchargées
@@ -359,7 +423,51 @@ ALTER TABLE `reservation`
 --
 ALTER TABLE `service`
   ADD CONSTRAINT `service_ibfk_1` FOREIGN KEY (`id_praticien`) REFERENCES `utilisateur` (`id`) ON DELETE CASCADE;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `service`
+--
+
+CREATE TABLE inscription_activite (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_activite INT NOT NULL,
+  id_etudiant INT NOT NULL,
+  date_inscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  UNIQUE KEY unique_inscription (id_activite, id_etudiant),
+
+  FOREIGN KEY (id_activite) REFERENCES activite(id) ON DELETE CASCADE,
+  FOREIGN KEY (id_etudiant) REFERENCES utilisateur(id) ON DELETE CASCADE
+);
+
+CREATE TABLE panier_activite (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+
+  id_etudiant INT NOT NULL,
+
+  id_activite INT NOT NULL,
+
+  date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  UNIQUE KEY unique_panier_activite (id_etudiant, id_activite),
+
+  FOREIGN KEY (id_etudiant)
+    REFERENCES utilisateur(id)
+    ON DELETE CASCADE,
+
+  FOREIGN KEY (id_activite)
+    REFERENCES activite(id)
+    ON DELETE CASCADE
+);
+
+
+
+
 COMMIT;
+
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

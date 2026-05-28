@@ -1,4 +1,4 @@
-// Données simulées
+// Données statiques
 let reservations = [
     { id: 1, etudiant: "Jean Dupont", praticien: "Dr. Marie Martin", service: "Consultation médicale", date: "28/05/2026", horaire: "09:00", statut: "confirm" },
     { id: 2, etudiant: "Sophie Martin", praticien: "Dr. Pierre Durand", service: "Suivi nutritionnel", date: "28/05/2026", horaire: "14:00", statut: "pending" },
@@ -79,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('statusFilter').addEventListener('change', renderTable);
     document.getElementById('praticienFilter').addEventListener('change', renderTable);
 
-    // Interactions (cloche, aide, etc.)
     document.querySelector('.floating-help-btn')?.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
     document.querySelector('.bell-icon')?.addEventListener('click', () => alert("3 notifications non lues"));
     document.querySelector('.user-meta')?.addEventListener('click', () => alert("Profil administrateur"));

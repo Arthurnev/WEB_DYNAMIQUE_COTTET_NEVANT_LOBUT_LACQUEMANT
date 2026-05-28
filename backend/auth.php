@@ -19,7 +19,8 @@ try {
             $prenom = trim($data["prenom"] ?? "");
             $email = trim($data["email"] ?? "");
             $password = $data["mot_de_passe"] ?? "";
-            $role = $data["role"] ?? "etudiant";
+            
+            $role = "etudiant";
 
             if (!$nom || !$prenom || !$email || !$password) {
                 echo json_encode([
@@ -32,15 +33,20 @@ try {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 echo json_encode([
                     "success" => false,
-                    "error" => "Email invalide"
+                    "error" => "Format d'email invalide"
                 ]);
                 exit;
+            }
+
+            // DÉTECTION DE L'ADRESSE ADMIN
+            if (substr(strtolower($email), -12) === "@vitacare.fr") {
+                $role = "admin";
             }
 
             if (strlen($password) < 6) {
                 echo json_encode([
                     "success" => false,
-                    "error" => "Mot de passe trop court"
+                    "error" => "Le mot de passe doit contenir au moins 6 caractères"
                 ]);
                 exit;
             }
@@ -60,8 +66,8 @@ try {
 
             $stmt = $pdo->prepare("
                 INSERT INTO utilisateur 
-                (nom, prenom, email, mot_de_passe, role)
-                VALUES (?, ?, ?, ?, ?)
+                (nom, prenom, email, mot_de_passe, role, created_at, telephone, adresse_pro)
+                VALUES (?, ?, ?, ?, ?, NOW(), NULL, NULL)
             ");
 
             $stmt->execute([
@@ -130,19 +136,8 @@ try {
 
             $stmt = $pdo->prepare("
                 INSERT INTO utilisateur
-                (
-                    nom,
-                    prenom,
-                    email,
-                    mot_de_passe,
-                    role,
-                    telephone,
-                    adresse_pro,
-                    specialite,
-                    diplome,
-                    numero_rpps
-                )
-                VALUES (?, ?, ?, ?, 'praticien', ?, ?, ?, ?, ?)
+                (nom, prenom, email, mot_de_passe, role, created_at, telephone, adresse_pro, specialite, diplome, numero_rpps)
+                VALUES (?, ?, ?, ?, 'praticien', NOW(), ?, ?, ?, ?, ?)
             ");
 
             $stmt->execute([
@@ -159,7 +154,7 @@ try {
 
             echo json_encode([
                 "success" => true,
-                "message" => "Compte praticien créé"
+                "message" => "Compte praticien créé avec succès"
             ]);
             break;
 
@@ -197,8 +192,18 @@ try {
             $_SESSION["email"] = $user["email"];
             $_SESSION["role"] = $user["role"];
 
+            // ✅ CORRECTION : redirection vers admin.html (et non admin_vue_densemble.html)
+            $redirectPage = "espace_etudiant.html";
+
+            if ($user["role"] === "admin") {
+                $redirectPage = "admin.html";
+            } elseif ($user["role"] === "praticien") {
+                $redirectPage = "espace_praticien.html";
+            }
+
             echo json_encode([
                 "success" => true,
+                "redirect" => $redirectPage,
                 "user" => [
                     "id" => $user["id"],
                     "nom" => $user["nom"],

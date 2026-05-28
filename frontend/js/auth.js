@@ -3,20 +3,16 @@ function showMessage(text, type) {
   if (!msg) return;
   msg.textContent = text;
   msg.className = "message " + type;
+  msg.style.display = "block";
 }
 
-function switchTab(role) {
+function switchTab(role, el) {
   document.getElementById("form-etudiant").style.display =
     role === "etudiant" ? "block" : "none";
-
   document.getElementById("form-praticien").style.display =
     role === "praticien" ? "block" : "none";
-
-  document.querySelectorAll(".tab").forEach((tab) => {
-    tab.classList.remove("active");
-  });
-
-  event.target.classList.add("active");
+  document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+  el.classList.add("active");
 }
 
 async function login() {
@@ -40,8 +36,9 @@ async function login() {
     if (data.success) {
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      // ✅ Redirection corrigée pour l'administrateur
       if (data.user.role === "admin") {
-        window.location.href = "dashboard_admin.html";
+        window.location.href = "admin.html";
       } else if (data.user.role === "praticien") {
         window.location.href = "dashboard_praticien.html";
       } else {
@@ -144,5 +141,5 @@ async function registerPraticien() {
 
 function logout() {
   localStorage.removeItem("user");
-  window.location.href = "login.html";
+  window.location.href = "Accueil.html";
 }

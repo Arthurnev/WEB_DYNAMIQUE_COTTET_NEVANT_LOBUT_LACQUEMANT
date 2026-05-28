@@ -35,7 +35,7 @@ body {
     height: 100vh;
 }
 
-/* ========= SIDEBAR (identique) ========= */
+/* ========= SIDEBAR ========= */
 .sidebar {
     width: 280px;
     background: white;
@@ -121,7 +121,6 @@ body {
     font-weight: 600;
 }
 
-/* ========= CONTENEUR PRINCIPAL ========= */
 .main-container {
     margin-left: 280px;
     flex: 1;
@@ -296,7 +295,6 @@ body {
     background-color: rgba(17, 138, 107, 0.02);
 }
 
-/* Badges de statut */
 .status-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -321,7 +319,6 @@ body {
     color: var(--status-danger-text);
 }
 
-/* Bouton suppression */
 .btn-delete-action {
     background: none;
     border: none;
