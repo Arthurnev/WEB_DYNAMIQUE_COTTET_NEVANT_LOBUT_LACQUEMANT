@@ -213,7 +213,7 @@
         html += '</tr></thead><tbody>';
         
         for (let h of heures) {
-            html += `<tr><td class="time-col">${h}</td>`;
+            html += `<td><td class="time-col">${h}</td>`;
             for (let i = 0; i < 7; i++) {
                 const jour = new Date(debutSemaine);
                 jour.setDate(debutSemaine.getDate() + i);
@@ -241,7 +241,7 @@
                     const debut = evt.heure_debut ? evt.heure_debut.substring(0,5) : h;
                     
                     html += `
-                        <div class="${classe}">
+                        <div class="${classe}" onclick="voirDetails(${evt.id}, '${evt.type}')">
                             <div class="event-title">${escapeHtml(evt.titre || 'Sans titre')}</div>
                             <div class="event-patient">${icone} ${escapeHtml(patient)}</div>
                             <div class="event-time">${debut} - ${fin}</div>
@@ -287,7 +287,7 @@
                 const debut = evt.heure_debut ? evt.heure_debut.substring(0,5) : h;
                 
                 html += `
-                    <div class="${classe}">
+                    <div class="${classe}" onclick="voirDetails(${evt.id}, '${evt.type}')">
                         <div class="event-title">${escapeHtml(evt.titre || 'Sans titre')}</div>
                         <div class="event-patient">${icone} ${escapeHtml(patient)}</div>
                         <div class="event-time">${debut} - ${fin}</div>
@@ -323,7 +323,7 @@
                 else if (evt.type === 'reservation') classe = 'event-reservation';
                 else if (evt.type === 'activite') classe = 'event-activite';
                 
-                html += `<div class="agenda-event ${classe}" style="font-size:10px; padding:4px; margin-top:4px;">
+                html += `<div class="agenda-event ${classe}" style="font-size:10px; padding:4px; margin-top:4px;" onclick="voirDetails(${evt.id}, '${evt.type}')">
                             <div>${escapeHtml((evt.titre || 'Sans titre').substring(0, 15))}${(evt.titre || '').length > 15 ? '...' : ''}</div>
                          </div>`;
             }
@@ -334,7 +334,7 @@
             
             const currentDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), d);
             if (currentDay.getDay() === 0 && d !== lastDay.getDate()) {
-                html += '</tr><td>';
+                html += '</tr><tr>';
             }
         }
         
@@ -348,6 +348,18 @@
         html += '</tr></tbody></table>';
         container.innerHTML = html;
     }
+
+    // ========== FONCTION POUR REDIRIGER VERS LES DÉTAILS ==========
+    function voirDetails(id, type) {
+    console.log("Clic sur ID:", id, "Type:", type);
+    if (type === 'reservation') {
+        window.location.href = `details_rendezvous.html?id=${id}`;
+    } else if (type === 'activite') {
+        window.location.href = `details_activite.html?id=${id}`;
+    } else {
+        alert('Plage de disponibilité');
+    }
+}
 
     async function ajouterDisponibilite(event) {
         event.preventDefault();
