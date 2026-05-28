@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gestion des disponibilités - VitaCare Campus | Dr. Martin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style_praticien.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">V</div>
+            <span class="brand-name">VitaCare <small>Campus</small></span>
+        </div>
+       <nav class="sidebar-nav">
+  <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
+  <a href="agenda_praticien.html"><i class="fas fa-calendar-alt"></i> Agenda</a>
+  <a href="disponibilites_praticien.html" class="active"><i class="fas fa-clock"></i> Disponibilités</a>
+  <a href="patients_praticien.html"><i class="fas fa-users"></i> Patients</a>
+  <a href="activites_praticien.html"><i class="fas fa-heart"></i> Activités</a>
+</nav>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <a href="#">Nous contacter</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-right">
+                <span class="icon-btn"><i class="fas fa-bell"></i></span>
+                <span class="icon-btn"><i class="fas fa-shopping-cart"></i></span>
+                <div class="user-profile">
+                    <div class="avatar" id="avatar-initials">MM</div>
+                    <span class="user-name" id="user-name">Dr. Martin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="disponibilites-header">
+                <div>
+                    <h1>Gestion des disponibilités</h1>
+                    <p class="subtitle">Gérez vos plages horaires disponibles pour les réservations</p>
+                </div>
+                <button class="btn-add" id="openModalBtn">
+                    <i class="fas fa-plus"></i> Ajouter une disponibilité
+                </button>
+            </div>
+
+            <div id="disponibilitesContainer" class="disponibilites-table">
+                <div style="text-align:center; padding:40px;">Chargement...</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div id="dispoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-plus-circle"></i> Nouvelle disponibilité</h2>
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+        </div>
+        <form id="dispoForm">
+            <div class="form-group">
+                <label>Date *</label>
+                <input type="date" id="dispoDate" required>
+            </div>
+            <div class="form-group">
+                <label>Répétition</label>
+                <select id="dispoRepetition">
+                    <option value="unique">Une seule fois</option>
+                    <option value="hebdomadaire">Hebdomadaire</option>
+                    <option value="mensuelle">Mensuelle</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Heure de début *</label>
+                    <input type="time" id="dispoHeureDebut" required>
+                </div>
+                <div class="form-group">
+                    <label>Heure de fin *</label>
+                    <input type="time" id="dispoHeureFin" required>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel-modal" id="cancelModalBtn">Annuler</button>
+                <button type="submit" class="btn-submit">Ajouter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        currentUser = user;
+        document.getElementById("user-name").textContent = "Dr. " + user.nom;
+        document.getElementById("avatar-initials").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+        
+        await chargerDisponibilites();
+        
+        document.getElementById('openModalBtn').onclick = openModal;
+        document.getElementById('closeModalBtn').onclick = closeModal;
+        document.getElementById('cancelModalBtn').onclick = closeModal;
+        document.getElementById('dispoForm').onsubmit = ajouterDisponibilite;
+        
+        window.onclick = (event) => {
+            const modal = document.getElementById('dispoModal');
+            if (event.target === modal) closeModal();
+        };
+    });
+
+    async function chargerDisponibilites() {
+        const container = document.getElementById('disponibilitesContainer');
+        try {
+            const res = await fetch('../backend/lister_disponibilites.php', { credentials: 'include' });
+            const data = await res.json();
+            
+            if (!data.success) {
+                container.innerHTML = `<div class="empty-disponibilites"><p>Erreur: ${data.error}</p></div>`;
+                return;
+            }
+            
+            const disponibilites = data.disponibilites;
+            
+            if (disponibilites.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-disponibilites">
+                        <i class="fas fa-calendar-plus"></i>
+                        <p>Vous n'avez pas encore créé de disponibilité</p>
+                        <button class="btn-add" onclick="document.getElementById('openModalBtn').click()">
+                            <i class="fas fa-plus"></i> Ajouter une disponibilité
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr><th>Date</th><th>Horaire</th><th>Répétition</th><th>Statut</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            disponibilites.forEach(dispo => {
+                const date = new Date(dispo.date);
+                const dateStr = date.toLocaleDateString('fr-FR');
+                const heureDebut = dispo.heure_debut.substring(0, 5);
+                const heureFin = dispo.heure_fin.substring(0, 5);
+                
+                let statutClass = '';
+                let statutLabel = '';
+                let actions = '';
+                
+                if (dispo.statut === 'disponible') {
+                    statutClass = 'statut-libre';
+                    statutLabel = 'Libre';
+                    actions = `<button class="btn-delete-dispo" onclick="supprimerDisponibilite(${dispo.id})"><i class="fas fa-trash-alt"></i></button>`;
+                } else if (dispo.statut === 'reserve') {
+                    statutClass = 'statut-reserve';
+                    statutLabel = 'Réservé';
+                    actions = '<span class="disabled-action">Non modifiable</span>';
+                } else {
+                    statutClass = 'statut-bloque';
+                    statutLabel = 'Bloqué';
+                    actions = `<button class="btn-delete-dispo" onclick="supprimerDisponibilite(${dispo.id})"><i class="fas fa-trash-alt"></i></button>`;
+                }
+                
+                html += `
+                    <tr>
+                        <td>${dateStr}</td>
+                        <td>${heureDebut} - ${heureFin}</td>
+                        <td>Unique</td>
+                        <td><span class="${statutClass}">${statutLabel}</span></td>
+                        <td>${actions}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody>`;
+            container.innerHTML = html;
+            
+        } catch (error) {
+            container.innerHTML = `<div class="empty-disponibilites"><p>Erreur: ${error.message}</p></div>`;
+        }
+    }
+
+    async function ajouterDisponibilite(event) {
+        event.preventDefault();
+        
+        const date = document.getElementById('dispoDate').value;
+        const repetition = document.getElementById('dispoRepetition').value;
+        const heureDebut = document.getElementById('dispoHeureDebut').value;
+        const heureFin = document.getElementById('dispoHeureFin').value;
+        
+        if (!date || !heureDebut || !heureFin) {
+            showToast('Veuillez remplir tous les champs obligatoires', 'error');
+            return;
+        }
+        
+        if (heureDebut >= heureFin) {
+            showToast('L\'heure de fin doit être après l\'heure de début', 'error');
+            return;
+        }
+        
+        try {
+            const res = await fetch('../backend/ajouter_disponibilite.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    date: date,
+                    heure_debut: heureDebut,
+                    heure_fin: heureFin,
+                    repetition: repetition
+                })
+            });
+            
+            const data = await res.json();
+            
+            if (data.success) {
+                showToast('Disponibilité ajoutée avec succès !', 'success');
+                closeModal();
+                document.getElementById('dispoForm').reset();
+                await chargerDisponibilites();
+            } else {
+                showToast('Erreur: ' + data.error, 'error');
+            }
+        } catch (error) {
+            showToast('Erreur de connexion', 'error');
+        }
+    }
+
+    async function supprimerDisponibilite(id) {
+        if (!confirm('Supprimer cette disponibilité ?')) return;
+        
+        try {
+            const res = await fetch(`../backend/supprimer_disponibilite.php?id=${id}`, { credentials: 'include' });
+            const data = await res.json();
+            
+            if (data.success) {
+                showToast('Disponibilité supprimée', 'success');
+                await chargerDisponibilites();
+            } else {
+                showToast('Erreur: ' + data.error, 'error');
+            }
+        } catch (error) {
+            showToast('Erreur de connexion', 'error');
+        }
+    }
+
+    function openModal() {
+        const modal = document.getElementById('dispoModal');
+        modal.classList.add('open');
+        const today = new Date();
+        today.setDate(today.getDate() + 1);
+        document.getElementById('dispoDate').value = today.toISOString().split('T')[0];
+        document.getElementById('dispoHeureDebut').value = '09:00';
+        document.getElementById('dispoHeureFin').value = '12:00';
+    }
+
+    function closeModal() {
+        document.getElementById('dispoModal').classList.remove('open');
+        document.getElementById('dispoForm').reset();
+    }
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3000);
+    }
+</script>
+
+</body>
+</html>

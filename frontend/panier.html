@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Panier - VitaCare</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="student-app">
+
+  <aside class="student-sidebar">
+    <div class="student-brand">
+      <div class="brand-icon">V</div>
+      <strong>VitaCare Campus</strong>
+    </div>
+
+    <nav class="student-menu">
+      <a href="index.html">▦ Dashboard</a>
+      <a href="catalogue.html">📖 Catalogue</a>
+      <a href="suivi_historique.html">📅 Suivi & historique</a>
+      <a href="activites.html">〽 Activités</a>
+      <a href="notifications.html">🔔 Notifications</a>
+    </nav>
+
+    <div class="student-help">
+      <div class="help-icon">?</div>
+      <strong>Besoin d'aide ?</strong>
+      <p>Notre équipe est là pour vous aider.</p>
+    </div>
+  </aside>
+
+  <main class="student-main">
+
+    <header class="student-topbar">
+      <div class="student-actions">
+        <span>🔔</span>
+        <span>🛒</span>
+
+        <div class="account-wrapper">
+          <button class="avatar-button" onclick="toggleAccountMenu()" type="button">
+            <div class="student-avatar" id="studentAvatar"></div>
+          </button>
+
+          <strong id="studentName"></strong>
+
+          <div class="account-menu hidden" id="accountMenu">
+            <a href="compte.html">⚙️ Mon compte</a>
+            <button class="logout-btn" onclick="logout()">🚪 Déconnexion</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="page-content">
+
+      <div class="page-header">
+        <h1>Mon panier</h1>
+        <p class="subtitle">Retrouvez ici les activités en attente de validation.</p>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>Activités ajoutées</h2>
+        </div>
+
+        <div id="panierList" class="list-container">
+          <p class="empty-state">Chargement...</p>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <button class="btn-primary" onclick="validerPanierActivite()">
+            Payer maintenant
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  chargerPanierActivite();
+});
+
+async function chargerPanierActivite() {
+  const container = document.getElementById("panierList");
+
+  try {
+    const res = await fetch("../backend/lister_panier_activite.php", {
+      credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      container.innerHTML = `<p class="empty-state">Erreur : ${data.error}</p>`;
+      return;
+    }
+
+    if (data.panier.length === 0) {
+      container.innerHTML = `<p class="empty-state">Ton panier est vide.</p>`;
+      return;
+    }
+
+    container.innerHTML = data.panier.map(item => {
+      const date = new Date(item.date_heure);
+
+      const dateStr = date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+
+      const heureStr = date.toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      return `
+        <div class="rdv-card">
+          <div class="rdv-card-header">
+            <div>
+              <div class="rdv-title">${item.nom}</div>
+              <div class="rdv-subtitle">${item.description || "Activité bien-être"}</div>
+            </div>
+            <span class="badge badge-en-attente">En attente</span>
+          </div>
+
+          <div class="rdv-details">
+            <span>📅 ${dateStr} à ${heureStr}</span>
+            <span>📍 ${item.lieu}</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    container.innerHTML = `<p class="empty-state">Erreur de connexion au serveur.</p>`;
+  }
+}
+
+async function validerPanierActivite() {
+  if (!confirm("Confirmer le paiement et l'inscription ?")) {
+    return;
+  }
+
+  try {
+    const res = await fetch("../backend/valider_panier_activite.php", {
+      method: "POST",
+      credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Paiement validé ! Inscription confirmée.");
+      chargerPanierActivite();
+    } else {
+      alert(data.error);
+    }
+
+  } catch (error) {
+    alert("Erreur de connexion");
+  }
+}
+</script>
+
+</body>
+</html>
