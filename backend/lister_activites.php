@@ -1,18 +1,30 @@
 <?php
 header("Content-Type: application/json");
-
 require_once 'config.php';
 
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(["success" => false, "error" => "Non connecté"]);
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'praticien') {
+    echo json_encode(["success" => false, "error" => "Non autorisé"]);
     exit();
 }
 
-$stmt = $pdo->prepare("SELECT * FROM activite WHERE id_praticien = ? ORDER BY date_heure ASC");
-$stmt->execute([$_SESSION['user_id']]);
-$activites = $stmt->fetchAll();
+$praticien_id = $_SESSION['user_id'];
 
-echo json_encode(["success" => true, "activites" => $activites]);
+try {
+    $stmt = $pdo->prepare("
+        SELECT a.*, 
+        COALESCE(a.prix, 0) as prix,
+        (SELECT COUNT(*) FROM inscription i WHERE i.id_activite = a.id) as inscrits
+        FROM activite a
+        WHERE a.id_praticien = ?
+        ORDER BY a.date_heure ASC
+    ");
+    $stmt->execute([$praticien_id]);
+    $activites = $stmt->fetchAll();
+    
+    echo json_encode(["success" => true, "activites" => $activites]);
+} catch (PDOException $e) {
+    echo json_encode(["success" => false, "error" => $e->getMessage()]);
+}
 ?>
