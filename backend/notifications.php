@@ -1,7 +1,6 @@
 <?php
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-require_once "config.php";
+require_once 'config.php';
 
 session_start();
 if (!isset($_SESSION["user_id"])) {
@@ -13,19 +12,19 @@ $id_utilisateur = $_SESSION["user_id"];
 
 try {
     $stmt = $pdo->prepare("
-        SELECT id, titre, message, type, lu, created_at as date
+        SELECT id, message, type, lu, created_at as date
         FROM notification
         WHERE id_utilisateur = ?
         ORDER BY created_at DESC
     ");
     $stmt->execute([$id_utilisateur]);
     $notifications = $stmt->fetchAll();
-
+    
     echo json_encode([
         "success" => true,
         "notifications" => $notifications
     ]);
-} catch (Exception $e) {
+} catch (PDOException $e) {
     echo json_encode(["success" => false, "error" => $e->getMessage()]);
 }
 ?>
