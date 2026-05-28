@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Activités - VitaCare</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="student-app">
+
+  <!-- SIDEBAR -->
+  <aside class="student-sidebar">
+
+    <div class="student-brand">
+      <div class="brand-icon">V</div>
+      <strong>VitaCare Campus</strong>
+    </div>
+
+    <nav class="student-menu">
+      <a href="index.html">▦ Dashboard</a>
+
+      <a href="catalogue.html">
+        📖 Catalogue
+      </a>
+
+      <a href="suivi_historique.html">
+        📅 Suivi & historique
+      </a>
+
+      <a class="active" href="activites.html">
+        〽 Activités
+      </a>
+
+      <a href="notifications.html">
+        🔔 Notifications
+      </a>
+    </nav>
+
+    <!-- AIDE -->
+    <div class="student-help">
+
+      <div class="help-icon">?</div>
+
+      <strong>Besoin d'aide ?</strong>
+
+      <p>
+        Notre équipe est là pour vous aider.
+      </p>
+
+      <button
+        type="button"
+        class="contact-toggle"
+        id="contactToggle"
+      >
+        Nous contacter
+      </button>
+
+      <div class="contact-box hidden" id="contactBox">
+
+        <p>
+          <strong>📞 Téléphone</strong><br>
+          01 23 45 67 89
+        </p>
+
+        <p>
+          <strong>✉️ Email</strong><br>
+          contact@vitacare-campus.fr
+        </p>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="student-main">
+
+    <!-- TOPBAR -->
+    <header class="student-topbar">
+
+      <div class="student-actions">
+
+        <span>🔔</span>
+
+        <a href="panier.html" class="cart-link">🛒</a>
+
+        <div class="account-wrapper">
+
+          <button class="avatar-button"
+                  onclick="toggleAccountMenu()"
+                  type="button">
+
+            <div class="student-avatar"
+                 id="studentAvatar">
+            </div>
+
+          </button>
+
+          <strong id="studentName"></strong>
+
+          <div class="account-menu hidden"
+               id="accountMenu">
+
+            <a href="compte.html">
+              ⚙️ Mon compte
+            </a>
+
+            <button class="logout-btn"
+                    onclick="logout()">
+              🚪 Déconnexion
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- CONTENU -->
+    <section class="catalogue-page">
+
+      <div class="catalogue-header">
+
+        <div>
+
+          <h1>
+            Activités & bien-être
+          </h1>
+
+          <p>
+            Découvrez les activités proposées par les praticiens du campus.
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- LISTE DES ACTIVITES -->
+      <div id="activitesEtudiantList"
+           class="services-list">
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<!-- JS -->
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/activites.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const button = document.getElementById("contactToggle");
+  const box = document.getElementById("contactBox");
+
+  if (button && box) {
+
+    button.addEventListener("click", function () {
+
+      box.classList.toggle("hidden");
+
+    });
+
+  }
+
+});
+</script>
+
+</body>
+</html>
