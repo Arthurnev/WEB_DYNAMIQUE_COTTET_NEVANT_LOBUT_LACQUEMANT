@@ -30,7 +30,7 @@
                 <div class="help-icon"><i class="fas fa-question"></i></div>
                 <strong>Besoin d'aide ?</strong>
                 <p>Notre équipe est là pour vous aider.</p>
-                <a href="#">Nous contacter</a>
+                <a href="aide_praticien.html">Nous contacter</a>
             </div>
         </div>
     </aside>
@@ -279,7 +279,7 @@
             html += '<th style="text-align:left; padding:10px;">Prénom</th>';
             html += '<th style="text-align:left; padding:10px;">Email</th>';
             html += '<th style="text-align:left; padding:10px;">Inscrit le</th>';
-            html += '<tr></thead><tbody>';
+            html += '</table></thead><tbody>';
             
             inscrits.forEach(i => {
                 const dateInscrit = new Date(i.date_inscription).toLocaleDateString('fr-FR');
