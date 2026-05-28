@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   afficherUtilisateurCatalogue();
   initCatalogue();
   initFiltres();
+  initMap();
 });
 
 function afficherUtilisateurCatalogue() {
@@ -139,6 +140,49 @@ function initCatalogue() {
 
   renderServices();
 }
+
+function initMap() {
+  if (typeof L === "undefined") return;
+
+  const mapElement = document.getElementById("doctorMap");
+  if (!mapElement) return;
+
+  const smallMap = L.map("doctorMap").setView([48.8566, 2.3522], 12);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap"
+  }).addTo(smallMap);
+
+  services.forEach(service => {
+    const lat = service.lat || 48.8566;
+    const lng = service.lng || 2.3522;
+
+    L.marker([lat, lng])
+      .addTo(smallMap)
+      .bindPopup(`
+        <strong>${service.praticien}</strong><br>
+        ${service.specialite}<br>
+        ${service.nom}
+      `);
+  });
+
+  const modal = document.getElementById("mapModal");
+  const expandBtn = document.getElementById("expandMapBtn");
+  const closeBtn = document.getElementById("closeMapBtn");
+
+  if (expandBtn && modal) {
+    expandBtn.addEventListener("click", () => {
+      modal.classList.remove("hidden");
+    });
+  }
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener("click", () => {
+      modal.classList.add("hidden");
+    });
+  }
+}
+
 
 function initFiltres() {
 

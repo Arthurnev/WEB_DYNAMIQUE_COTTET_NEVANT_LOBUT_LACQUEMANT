@@ -856,14 +856,14 @@ textarea {
   padding: 16px 0;
   font-size: 16px;
   font-weight: 700;
-  color: #334155;
+  color: #111;
   cursor: pointer;
   position: relative;
   white-space: nowrap;
 }
 
 .catalogue-tabs button.active {
-  color: var(--primary);
+  color: #111;
 }
 
 .catalogue-tabs button.active::after {
@@ -874,31 +874,37 @@ textarea {
   width: 100%;
   height: 3px;
   border-radius: 999px;
-  background: var(--primary);
+  background: #111;
 }
+
+/* ===== LAYOUT ===== */
 
 .catalogue-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 310px;
-  gap: 26px;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
   align-items: start;
 }
 
+/* ===== CARTES COTE A COTE ===== */
+
 .services-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(230px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 26px;
 }
+
+/* ===== CARD ===== */
 
 .catalogue-card {
   background: white;
-  border: 1px solid #d1fae5;
+  border: 1px solid #e5e7eb;
   border-radius: 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 510px;
-  box-shadow: 0 12px 30px rgba(46, 139, 87, 0.08);
+  min-height: 500px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
   transition: 0.2s;
 }
 
@@ -907,38 +913,39 @@ textarea {
 }
 
 .catalogue-card-image {
-  height: 155px;
-  background: #eaf7ef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 180px;
+  background: #f3f4f6;
   position: relative;
   overflow: hidden;
-}
-
-.service-icon-main {
-  width: 92px;
-  height: 92px;
-  border-radius: 50%;
-  background: white;
-  color: var(--primary);
-  font-size: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .catalogue-card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+/* ===== ICONE NOIR & BLANC ===== */
+
+.service-icon-main {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: white;
+  color: #111;
+  border: 2px solid #111;
+  font-size: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .service-badge {
   position: absolute;
   top: 16px;
   right: 16px;
-  background: var(--primary);
+  background: #111;
   color: white;
   font-size: 13px;
   font-weight: 800;
@@ -956,17 +963,18 @@ textarea {
   font-size: 21px;
   line-height: 1.3;
   margin-bottom: 15px;
-  color: var(--text-dark);
+  color: #111;
 }
 
 .praticien {
   font-size: 17px;
   margin-bottom: 4px;
+  color: #111;
 }
 
 .specialite {
   font-size: 15px;
-  color: var(--text-soft);
+  color: #666;
   margin-bottom: 16px;
 }
 
@@ -978,8 +986,8 @@ textarea {
 }
 
 .service-modes span {
-  background: #f1f5f9;
-  color: #334155;
+  background: #f3f4f6;
+  color: #111;
   padding: 7px 11px;
   border-radius: 10px;
   font-size: 13px;
@@ -994,21 +1002,21 @@ textarea {
 }
 
 .service-info span {
-  color: #334155;
+  color: #111;
 }
 
 .service-info strong {
   font-size: 24px;
-  color: var(--text-dark);
+  color: #111;
 }
 
 .service-note {
   font-size: 15px;
-  color: #334155;
+  color: #111;
 }
 
 .service-note span {
-  color: #64748b;
+  color: #666;
 }
 
 .details-btn {
@@ -1019,39 +1027,44 @@ textarea {
   text-decoration: none;
   color: white;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: #111;
   transition: 0.2s;
 }
 
 .details-btn:hover {
+  background: #222;
   transform: translateY(-2px);
 }
+
+/* ===== SIDEBAR ===== */
 
 .catalogue-side {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 320px;
 }
 
 .filters-card,
 .map-card {
   background: white;
   border-radius: 24px;
-  border: 1px solid #d1fae5;
+  border: 1px solid #e5e7eb;
   padding: 22px;
-  box-shadow: 0 12px 30px rgba(46, 139, 87, 0.08);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
 }
 
 .filters-card h2,
 .map-card h2 {
   font-size: 26px;
   margin-bottom: 20px;
-  color: var(--text-dark);
+  color: #111;
 }
 
 .filters-card h3 {
   margin: 22px 0 14px;
   font-size: 17px;
+  color: #111;
 }
 
 .filters-card label {
@@ -1060,7 +1073,10 @@ textarea {
   gap: 10px;
   margin-bottom: 12px;
   cursor: pointer;
+  color: #111;
 }
+
+/* ===== DUREE ===== */
 
 .duration-filters {
   display: grid;
@@ -1070,19 +1086,22 @@ textarea {
 
 .duration-filters button {
   border: none;
-  background: #f1f5f9;
+  background: #f3f4f6;
   padding: 13px;
   border-radius: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: 0.2s;
+  color: #111;
 }
 
 .duration-filters button.active,
 .duration-filters button:hover {
-  background: var(--primary);
+  background: #111;
   color: white;
 }
+
+/* ===== MAP ===== */
 
 .map-title {
   display: flex;
@@ -1093,8 +1112,8 @@ textarea {
 
 .map-title button {
   border: none;
-  background: var(--primary-light);
-  color: var(--primary);
+  background: #111;
+  color: white;
   padding: 10px 14px;
   border-radius: 12px;
   font-weight: 700;
@@ -1102,7 +1121,7 @@ textarea {
 }
 
 #doctorMap {
-  height: 250px;
+  height: 260px;
   border-radius: 18px;
   overflow: hidden;
 }
@@ -1135,8 +1154,8 @@ textarea {
   top: 18px;
   right: 18px;
   border: none;
-  background: #fee2e2;
-  color: #991b1b;
+  background: #111;
+  color: white;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -1148,6 +1167,36 @@ textarea {
   height: 650px;
   border-radius: 20px;
   overflow: hidden;
+}
+
+/* ===== BESOIN D'AIDE ===== */
+
+.student-help {
+  margin-top: auto;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1200px) {
+
+  .services-list {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+
+  .catalogue-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .catalogue-side {
+    width: 100%;
+  }
+
+  .services-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 
