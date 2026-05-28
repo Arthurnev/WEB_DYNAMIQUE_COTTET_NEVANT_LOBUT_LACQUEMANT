@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Agenda - VitaCare Campus | Dr. Martin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style_praticien.css">
+    <link rel="stylesheet" href="../css/agenda.css">
+</head>
+<body>
+
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">V</div>
+            <span class="brand-name">VitaCare <small>Campus</small></span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
+            <a href="agenda_praticien.html" class="active"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            <a href="disponibilites_praticien.html"><i class="fas fa-clock"></i> Disponibilités</a>
+            <a href="patients_praticien.html"><i class="fas fa-users"></i> Patients</a>
+            <a href="activites_praticien.html"><i class="fas fa-heart"></i> Activités</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <a href="#">Nous contacter</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-right">
+                <span class="icon-btn"><i class="fas fa-bell"></i></span>
+                <span class="icon-btn"><i class="fas fa-shopping-cart"></i></span>
+                <div class="user-profile">
+                    <div class="avatar" id="avatar-initials">MM</div>
+                    <span class="user-name" id="user-name">Dr. Martin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="agenda-header">
+                <div class="agenda-views">
+                    <button class="view-btn" data-view="day">Jour</button>
+                    <button class="view-btn active" data-view="week">Semaine</button>
+                    <button class="view-btn" data-view="month">Mois</button>
+                </div>
+                <div class="agenda-nav">
+                    <button id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+                    <h2 id="currentDate"></h2>
+                    <button id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+                    <button id="todayBtn" style="width:auto; border-radius:40px; padding:0 16px;">Aujourd'hui</button>
+                </div>
+                <button class="btn-add-dispo" id="openModalBtn">
+                    <i class="fas fa-plus"></i> Ajouter une plage de disponibilité
+                </button>
+            </div>
+
+            <div id="agendaContainer" class="agenda-table-container">
+                <div style="text-align:center; padding:40px;">Chargement...</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div id="dispoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-plus-circle"></i> Ajouter une disponibilité</h2>
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+        </div>
+        <form id="dispoForm">
+            <div class="form-group">
+                <label>Date *</label>
+                <input type="date" id="dispoDate" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Heure de début *</label>
+                    <input type="time" id="dispoHeureDebut" required>
+                </div>
+                <div class="form-group">
+                    <label>Heure de fin *</label>
+                    <input type="time" id="dispoHeureFin" required>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel-modal" id="cancelModalBtn">Annuler</button>
+                <button type="submit" class="btn-submit">Ajouter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentDate = new Date();
+    let currentView = 'week';
+    let events = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        document.getElementById("user-name").textContent = "Dr. " + user.nom;
+        document.getElementById("avatar-initials").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+        
+        await chargerEvenements();
+        
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentView = this.dataset.view;
+                afficherAgenda();
+            });
+        });
+        
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentView === 'week') currentDate.setDate(currentDate.getDate() - 7);
+            else if (currentView === 'day') currentDate.setDate(currentDate.getDate() - 1);
+            else currentDate.setMonth(currentDate.getMonth() - 1);
+            afficherAgenda();
+        });
+        
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentView === 'week') currentDate.setDate(currentDate.getDate() + 7);
+            else if (currentView === 'day') currentDate.setDate(currentDate.getDate() + 1);
+            else currentDate.setMonth(currentDate.getMonth() + 1);
+            afficherAgenda();
+        });
+        
+        document.getElementById('todayBtn').addEventListener('click', () => {
+            currentDate = new Date();
+            afficherAgenda();
+        });
+        
+        document.getElementById('openModalBtn').onclick = openModal;
+        document.getElementById('closeModalBtn').onclick = closeModal;
+        document.getElementById('cancelModalBtn').onclick = closeModal;
+        document.getElementById('dispoForm').onsubmit = ajouterDisponibilite;
+        
+        window.onclick = (event) => {
+            if (event.target === document.getElementById('dispoModal')) closeModal();
+        };
+    });
+
+    async function chargerEvenements() {
+        try {
+            const res = await fetch('../backend/lister_evenements.php', { credentials: 'include' });
+            const data = await res.json();
+            console.log("Données reçues:", data);
+            
+            if (data.success) {
+                events = data.evenements;
+                console.log("Nombre d'événements:", events.length);
+                afficherAgenda();
+            } else {
+                document.getElementById('agendaContainer').innerHTML = `<div style="text-align:center; padding:40px; color:red;">Erreur: ${data.error}</div>`;
+            }
+        } catch (error) {
+            console.error("Erreur:", error);
+            document.getElementById('agendaContainer').innerHTML = `<div style="text-align:center; padding:40px; color:red;">Erreur de connexion</div>`;
+        }
+    }
+
+    function afficherAgenda() {
+        if (currentView === 'week') afficherSemaine();
+        else if (currentView === 'day') afficherJour();
+        else afficherMois();
+        
+        const mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+        const jours = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+        
+        if (currentView === 'day') {
+            document.getElementById('currentDate').textContent = `${jours[currentDate.getDay()]} ${currentDate.getDate()} ${mois[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+        } else if (currentView === 'week') {
+            const debutSemaine = new Date(currentDate);
+            debutSemaine.setDate(currentDate.getDate() - currentDate.getDay() + 1);
+            const finSemaine = new Date(debutSemaine);
+            finSemaine.setDate(debutSemaine.getDate() + 6);
+            document.getElementById('currentDate').textContent = `${debutSemaine.getDate()} ${mois[debutSemaine.getMonth()]} - ${finSemaine.getDate()} ${mois[finSemaine.getMonth()]} ${currentDate.getFullYear()}`;
+        } else {
+            document.getElementById('currentDate').textContent = `${mois[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+        }
+    }
+
+    function afficherSemaine() {
+        const container = document.getElementById('agendaContainer');
+        const debutSemaine = new Date(currentDate);
+        debutSemaine.setDate(currentDate.getDate() - currentDate.getDay() + 1);
+        
+        const joursSemaine = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+        const heures = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+        
+        let html = '<table class="agenda-table"><thead><tr><th class="time-col"></th>';
+        
+        for (let i = 0; i < 7; i++) {
+            const jour = new Date(debutSemaine);
+            jour.setDate(debutSemaine.getDate() + i);
+            html += `<th>${joursSemaine[i]} ${jour.getDate()}</th>`;
+        }
+        html += '</tr></thead><tbody>';
+        
+        for (let h of heures) {
+            html += `<tr><td class="time-col">${h}</td>`;
+            for (let i = 0; i < 7; i++) {
+                const jour = new Date(debutSemaine);
+                jour.setDate(debutSemaine.getDate() + i);
+                const dateStr = jour.toISOString().split('T')[0];
+                const evenementsDuJour = events.filter(e => e.date === dateStr && (e.heure_debut || '').substring(0,5) === h);
+                
+                html += '<td>';
+                for (let evt of evenementsDuJour) {
+                    let classe = 'agenda-event';
+                    let icone = '';
+                    
+                    if (evt.type === 'disponible') {
+                        classe += ' event-disponible';
+                        icone = '🕐';
+                    } else if (evt.type === 'reservation') {
+                        classe += ' event-reservation';
+                        icone = '👤';
+                    } else if (evt.type === 'activite') {
+                        classe += ' event-activite';
+                        icone = '❤️';
+                    }
+                    
+                    const patient = evt.patient || 'Libre';
+                    const fin = evt.heure_fin ? evt.heure_fin.substring(0,5) : '';
+                    const debut = evt.heure_debut ? evt.heure_debut.substring(0,5) : h;
+                    
+                    html += `
+                        <div class="${classe}">
+                            <div class="event-title">${escapeHtml(evt.titre || 'Sans titre')}</div>
+                            <div class="event-patient">${icone} ${escapeHtml(patient)}</div>
+                            <div class="event-time">${debut} - ${fin}</div>
+                        </div>
+                    `;
+                }
+                html += '</td>';
+            }
+            html += '</tr>';
+        }
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function afficherJour() {
+        const container = document.getElementById('agendaContainer');
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const heures = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+        const joursSemaine = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+        
+        let html = `<table class="agenda-table"><thead><tr><th class="time-col">Heure</th><th>${joursSemaine[currentDate.getDay()]} ${currentDate.getDate()}</th></tr></thead><tbody>`;
+        
+        for (let h of heures) {
+            const evenementsDuJour = events.filter(e => e.date === dateStr && (e.heure_debut || '').substring(0,5) === h);
+            html += `<tr><td class="time-col">${h}</td><td>`;
+            for (let evt of evenementsDuJour) {
+                let classe = 'agenda-event';
+                let icone = '';
+                
+                if (evt.type === 'disponible') {
+                    classe += ' event-disponible';
+                    icone = '🕐';
+                } else if (evt.type === 'reservation') {
+                    classe += ' event-reservation';
+                    icone = '👤';
+                } else if (evt.type === 'activite') {
+                    classe += ' event-activite';
+                    icone = '❤️';
+                }
+                
+                const patient = evt.patient || 'Libre';
+                const fin = evt.heure_fin ? evt.heure_fin.substring(0,5) : '';
+                const debut = evt.heure_debut ? evt.heure_debut.substring(0,5) : h;
+                
+                html += `
+                    <div class="${classe}">
+                        <div class="event-title">${escapeHtml(evt.titre || 'Sans titre')}</div>
+                        <div class="event-patient">${icone} ${escapeHtml(patient)}</div>
+                        <div class="event-time">${debut} - ${fin}</div>
+                    </div>
+                `;
+            }
+            html += `</td></tr>`;
+        }
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function afficherMois() {
+        const container = document.getElementById('agendaContainer');
+        const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        const startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
+        
+        let html = '<table class="agenda-table"><thead><tr><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th><th>Sam</th><th>Dim</th></tr></thead><tbody><tr>';
+        
+        for (let i = 0; i < startOffset; i++) {
+            html += '<td style="background:#f8fafc;"></td>';
+        }
+        
+        for (let d = 1; d <= lastDay.getDate(); d++) {
+            const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const evenementsDuJour = events.filter(e => e.date === dateStr);
+            
+            html += `<td style="vertical-align:top; height:100px;"><strong>${d}</strong>`;
+            for (let evt of evenementsDuJour.slice(0, 2)) {
+                let classe = '';
+                if (evt.type === 'disponible') classe = 'event-disponible';
+                else if (evt.type === 'reservation') classe = 'event-reservation';
+                else if (evt.type === 'activite') classe = 'event-activite';
+                
+                html += `<div class="agenda-event ${classe}" style="font-size:10px; padding:4px; margin-top:4px;">
+                            <div>${escapeHtml((evt.titre || 'Sans titre').substring(0, 15))}${(evt.titre || '').length > 15 ? '...' : ''}</div>
+                         </div>`;
+            }
+            if (evenementsDuJour.length > 2) {
+                html += `<div style="font-size:10px; color:#6b7280; margin-top:4px;">+${evenementsDuJour.length-2} autres</div>`;
+            }
+            html += '</td>';
+            
+            const currentDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), d);
+            if (currentDay.getDay() === 0 && d !== lastDay.getDate()) {
+                html += '</tr><td>';
+            }
+        }
+        
+        const remainingCells = 7 - ((startOffset + lastDay.getDate()) % 7);
+        if (remainingCells !== 7) {
+            for (let i = 0; i < remainingCells; i++) {
+                html += '<td style="background:#f8fafc;"></td>';
+            }
+        }
+        
+        html += '</tr></tbody></table>';
+        container.innerHTML = html;
+    }
+
+    async function ajouterDisponibilite(event) {
+        event.preventDefault();
+        
+        const date = document.getElementById('dispoDate').value;
+        const heureDebut = document.getElementById('dispoHeureDebut').value;
+        const heureFin = document.getElementById('dispoHeureFin').value;
+        
+        if (!date || !heureDebut || !heureFin) {
+            showToast('Veuillez remplir tous les champs', 'error');
+            return;
+        }
+        
+        try {
+            const res = await fetch('../backend/ajouter_disponibilite.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ date: date, heure_debut: heureDebut, heure_fin: heureFin })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast('Disponibilité ajoutée', 'success');
+                closeModal();
+                await chargerEvenements();
+            } else {
+                showToast('Erreur: ' + data.error, 'error');
+            }
+        } catch (error) {
+            showToast('Erreur de connexion', 'error');
+        }
+    }
+
+    function openModal() {
+        const modal = document.getElementById('dispoModal');
+        modal.classList.add('open');
+        const today = new Date();
+        document.getElementById('dispoDate').value = today.toISOString().split('T')[0];
+        document.getElementById('dispoHeureDebut').value = '09:00';
+        document.getElementById('dispoHeureFin').value = '12:00';
+    }
+
+    function closeModal() {
+        document.getElementById('dispoModal').classList.remove('open');
+        document.getElementById('dispoForm').reset();
+    }
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+</body>
+</html>
