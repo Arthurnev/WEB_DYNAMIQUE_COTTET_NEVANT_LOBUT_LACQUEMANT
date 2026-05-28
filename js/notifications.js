@@ -41,9 +41,8 @@ async function chargerNotificationsDropdown() {
             console.error("Erreur:", data.error);
             return;
         }
-        const notifications = data.notifications;
-        afficherDropdownNotifications(notifications);
-        mettreAJourCompteurs(notifications);
+        afficherDropdownNotifications(data.notifications);
+        mettreAJourCompteurs(data.notifications);
     } catch (error) {
         console.error("Erreur de chargement:", error);
     }
@@ -65,19 +64,38 @@ function afficherDropdownNotifications(notifications) {
     max.forEach(notif => {
         const estLu = notif.lu == 1;
         const itemClass = estLu ? "notif-dropdown-item read" : "notif-dropdown-item unread";
-        const iconClass = getIconClassDropdown(notif.type);
+        let iconClass = "info";
+        let iconFa = "fa-info-circle";
+        
+        switch(notif.type) {
+            case 'rappel':
+                iconClass = "rappel";
+                iconFa = "fa-bell";
+                break;
+            case 'confirmation':
+                iconClass = "confirmation";
+                iconFa = "fa-check-circle";
+                break;
+            case 'annulation':
+                iconClass = "annulation";
+                iconFa = "fa-times-circle";
+                break;
+            default:
+                iconClass = "info";
+                iconFa = "fa-info-circle";
+        }
 
         const dateObj = new Date(notif.date);
         const dateStr = dateObj.toLocaleDateString("fr-FR", { day: 'numeric', month: 'numeric' });
         const heureStr = dateObj.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' });
         
-        // Utiliser message comme titre
+        // Utiliser message comme titre (pas titre)
         const titre = notif.message.length > 50 ? notif.message.substring(0, 50) + '...' : notif.message;
 
         const html = `
-            <div class="${itemClass}" onclick="ouvrirNotification(${notif.id})">
+            <div class="${itemClass}" onclick="marquerCommeLu(${notif.id})">
                 <div class="notif-dropdown-icon ${iconClass}">
-                    <i class="fas ${getIconFaDropdown(notif.type)}"></i>
+                    <i class="fas ${iconFa}"></i>
                 </div>
                 <div class="notif-dropdown-content">
                     <div class="notif-dropdown-title">${escapeHtml(titre)}</div>
@@ -91,49 +109,16 @@ function afficherDropdownNotifications(notifications) {
     });
 }
 
-function getIconClassDropdown(type) {
-    switch(type) {
-        case 'rappel': return 'rappel';
-        case 'confirmation': return 'confirmation';
-        case 'annulation': return 'annulation';
-        case 'nouveaute': return 'nouveaute';
-        default: return 'info';
-    }
-}
-
-function getIconFaDropdown(type) {
-    switch(type) {
-        case 'rappel': return 'fa-bell';
-        case 'confirmation': return 'fa-check-circle';
-        case 'annulation': return 'fa-times-circle';
-        case 'nouveaute': return 'fa-star';
-        default: return 'fa-info-circle';
-    }
-}
-
 function mettreAJourCompteurs(notifications) {
     const nonLues = notifications.filter(n => n.lu == 0).length;
     const counter = document.getElementById("topbar-notif-count");
     if (counter) {
         counter.textContent = nonLues;
-        counter.style.display = nonLues > 0 ? 'block' : 'none';
+        counter.style.display = nonLues > 0 ? 'inline-block' : 'none';
     }
 }
 
-async function ouvrirNotification(id) {
-    await marquerCommeLuDropdown(id);
-    window.location.href = "notifications.html";
-}
-
-async function marquerCommeLuDropdown(id) {
-    const item = document.querySelector(`.notif-dropdown-item[onclick="ouvrirNotification(${id})"]`);
-    if (item) {
-        item.classList.remove("unread");
-        item.classList.add("read");
-        const dot = item.querySelector(".notif-dot");
-        if (dot) dot.style.display = "none";
-    }
-    
+async function marquerCommeLu(id) {
     try {
         const res = await fetch("../backend/marquer_notification_lu.php", {
             method: "POST",
@@ -142,33 +127,22 @@ async function marquerCommeLuDropdown(id) {
             body: JSON.stringify({ id: id })
         });
         const data = await res.json();
-        if (!data.success) {
-            console.error("Erreur backend:", data.error);
+        if (data.success) {
+            // Recharger les notifications
+            chargerNotificationsDropdown();
+            if (window.location.pathname.includes("notifications.html")) {
+                chargerNotificationsPage();
+            }
+        } else {
+            console.error("Erreur:", data.error);
         }
     } catch (error) {
         console.error("Erreur réseau:", error);
     }
-    
-    const counter = document.getElementById("topbar-notif-count");
-    if (counter) {
-        let current = parseInt(counter.textContent) || 0;
-        if (current > 0) {
-            current--;
-            counter.textContent = current;
-            if (current === 0) counter.style.display = "none";
-        }
-    }
 }
 
-async function marquerToutLuDropdown() {
+async function marquerToutLu() {
     if (!confirm("Marquer toutes les notifications comme lues ?")) return;
-    
-    document.querySelectorAll(".notif-dropdown-item.unread").forEach(item => {
-        item.classList.remove("unread");
-        item.classList.add("read");
-        const dot = item.querySelector(".notif-dot");
-        if (dot) dot.style.display = "none";
-    });
     
     try {
         const res = await fetch("../backend/marquer_tout_lu.php", {
@@ -176,17 +150,16 @@ async function marquerToutLuDropdown() {
             credentials: 'include'
         });
         const data = await res.json();
-        if (!data.success) {
-            console.error("Erreur backend:", data.error);
+        if (data.success) {
+            chargerNotificationsDropdown();
+            if (window.location.pathname.includes("notifications.html")) {
+                chargerNotificationsPage();
+            }
+        } else {
+            console.error("Erreur:", data.error);
         }
     } catch (error) {
         console.error("Erreur réseau:", error);
-    }
-    
-    const counter = document.getElementById("topbar-notif-count");
-    if (counter) {
-        counter.textContent = "0";
-        counter.style.display = "none";
     }
 }
 
@@ -198,9 +171,8 @@ async function chargerNotificationsPage() {
             console.error("Erreur:", data.error);
             return;
         }
-        const notifications = data.notifications;
-        afficherNotificationsPage(notifications);
-        mettreAJourCompteurs(notifications);
+        afficherNotificationsPage(data.notifications);
+        mettreAJourCompteurs(data.notifications);
     } catch (error) {
         console.error("Erreur de chargement:", error);
     }
@@ -214,10 +186,7 @@ function afficherNotificationsPage(notifications) {
     notifications.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     if (notifications.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:60px 20px; color:#9ca3af;">
-            <i class="fas fa-bell-slash" style="font-size:48px; margin-bottom:16px; color:#d1d5db;"></i>
-            <p style="font-size:18px; font-weight:600; color:#6b7280;">Aucune notification</p>
-        </div>`;
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><p>Aucune notification</p></div>`;
         return;
     }
 
@@ -230,18 +199,38 @@ function afficherNotificationsPage(notifications) {
     notifications.forEach(notif => {
         const estLu = notif.lu == 1;
         const cardClass = estLu ? "notif-card read" : "notif-card unread";
-        const iconClass = getIconClassPage(notif.type);
+        let iconClass = "info";
+        let iconFa = "fa-info-circle";
+        
+        switch(notif.type) {
+            case 'rappel':
+                iconClass = "rappel";
+                iconFa = "fa-bell";
+                break;
+            case 'confirmation':
+                iconClass = "confirmation";
+                iconFa = "fa-check-circle";
+                break;
+            case 'annulation':
+                iconClass = "annulation";
+                iconFa = "fa-times-circle";
+                break;
+            default:
+                iconClass = "info";
+                iconFa = "fa-info-circle";
+        }
 
         const dateObj = new Date(notif.date);
         const dateStr = dateObj.toLocaleDateString("fr-FR");
         const heureStr = dateObj.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' });
         
+        // Utiliser message comme titre (pas titre)
         const titre = notif.message.length > 60 ? notif.message.substring(0, 60) + '...' : notif.message;
 
         const html = `
             <div class="${cardClass}" data-id="${notif.id}">
                 <div class="notif-icon ${iconClass}">
-                    <i class="fas ${getIconFaPage(notif.type)}"></i>
+                    <i class="fas ${iconFa}"></i>
                 </div>
                 <div class="notif-content">
                     <div class="notif-title">${escapeHtml(titre)}</div>
@@ -251,7 +240,7 @@ function afficherNotificationsPage(notifications) {
                     </div>
                     ${!estLu ? `
                         <div class="notif-actions">
-                            <button class="notif-action-btn" onclick="marquerCommeLuPage(${notif.id})">
+                            <button class="notif-action-btn" onclick="marquerCommeLu(${notif.id})">
                                 <i class="fas fa-check"></i> Marquer comme lu
                             </button>
                         </div>
@@ -262,63 +251,6 @@ function afficherNotificationsPage(notifications) {
         `;
         container.innerHTML += html;
     });
-}
-
-function getIconClassPage(type) {
-    switch(type) {
-        case 'rappel': return 'rappel';
-        case 'confirmation': return 'confirmation';
-        case 'annulation': return 'annulation';
-        case 'nouveaute': return 'nouveaute';
-        default: return 'info';
-    }
-}
-
-function getIconFaPage(type) {
-    switch(type) {
-        case 'rappel': return 'fa-bell';
-        case 'confirmation': return 'fa-check-circle';
-        case 'annulation': return 'fa-times-circle';
-        case 'nouveaute': return 'fa-star';
-        default: return 'fa-info-circle';
-    }
-}
-
-async function marquerCommeLuPage(id) {
-    try {
-        const res = await fetch("../backend/marquer_notification_lu.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
-            body: JSON.stringify({ id: id })
-        });
-        const data = await res.json();
-        if (data.success) {
-            chargerNotificationsPage();
-        } else {
-            alert("Erreur : " + data.error);
-        }
-    } catch (error) {
-        console.error("Erreur:", error);
-    }
-}
-
-async function marquerToutLuPage() {
-    if (!confirm("Marquer toutes les notifications comme lues ?")) return;
-    try {
-        const res = await fetch("../backend/marquer_tout_lu.php", {
-            method: "POST",
-            credentials: 'include'
-        });
-        const data = await res.json();
-        if (data.success) {
-            chargerNotificationsPage();
-        } else {
-            alert("Erreur : " + data.error);
-        }
-    } catch (error) {
-        console.error("Erreur:", error);
-    }
 }
 
 function escapeHtml(text) {
