@@ -8,8 +8,36 @@ require_once "config.php";
 
 $action = $_GET["action"] ?? "";
 
-try {
+function geocoderAdresse($adresse) {
+    if (empty($adresse)) {
+        return [null, null];
+    }
 
+    $url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" . urlencode($adresse);
+
+    $opts = [
+        "http" => [
+            "header" => "User-Agent: VitaCareCampus/1.0\r\n"
+        ]
+    ];
+
+    $context = stream_context_create($opts);
+    $response = @file_get_contents($url, false, $context);
+
+    if ($response === false) {
+        return [null, null];
+    }
+
+    $data = json_decode($response, true);
+
+    if (!empty($data[0]["lat"]) && !empty($data[0]["lon"])) {
+        return [$data[0]["lat"], $data[0]["lon"]];
+    }
+
+    return [null, null];
+}
+
+try {
     switch ($action) {
 
         case "register":
@@ -22,26 +50,17 @@ try {
             $role = $data["role"] ?? "etudiant";
 
             if (!$nom || !$prenom || !$email || !$password) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Tous les champs sont obligatoires"
-                ]);
+                echo json_encode(["success" => false, "error" => "Tous les champs sont obligatoires"]);
                 exit;
             }
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Email invalide"
-                ]);
+                echo json_encode(["success" => false, "error" => "Email invalide"]);
                 exit;
             }
 
             if (strlen($password) < 6) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Mot de passe trop court"
-                ]);
+                echo json_encode(["success" => false, "error" => "Mot de passe trop court"]);
                 exit;
             }
 
@@ -49,10 +68,7 @@ try {
             $check->execute([$email]);
 
             if ($check->fetch()) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Cet email est déjà utilisé"
-                ]);
+                echo json_encode(["success" => false, "error" => "Cet email est déjà utilisé"]);
                 exit;
             }
 
@@ -64,18 +80,9 @@ try {
                 VALUES (?, ?, ?, ?, ?)
             ");
 
-            $stmt->execute([
-                $nom,
-                $prenom,
-                $email,
-                $hash,
-                $role
-            ]);
+            $stmt->execute([$nom, $prenom, $email, $hash, $role]);
 
-            echo json_encode([
-                "success" => true,
-                "message" => "Compte créé avec succès"
-            ]);
+            echo json_encode(["success" => true, "message" => "Compte créé avec succès"]);
             break;
 
         case "register_praticien":
@@ -92,26 +99,17 @@ try {
             $rpps = trim($data["rpps"] ?? "");
 
             if (!$nom || !$prenom || !$email || !$password || !$specialite) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Champs obligatoires manquants"
-                ]);
+                echo json_encode(["success" => false, "error" => "Champs obligatoires manquants"]);
                 exit;
             }
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Email invalide"
-                ]);
+                echo json_encode(["success" => false, "error" => "Email invalide"]);
                 exit;
             }
 
             if (strlen($password) < 6) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Mot de passe trop court"
-                ]);
+                echo json_encode(["success" => false, "error" => "Mot de passe trop court"]);
                 exit;
             }
 
@@ -119,30 +117,22 @@ try {
             $check->execute([$email]);
 
             if ($check->fetch()) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Cet email est déjà utilisé"
-                ]);
+                echo json_encode(["success" => false, "error" => "Cet email est déjà utilisé"]);
                 exit;
             }
+
+            [$latitude, $longitude] = geocoderAdresse($adresse);
 
             $hash = password_hash($password, PASSWORD_DEFAULT);
 
             $stmt = $pdo->prepare("
                 INSERT INTO utilisateur
                 (
-                    nom,
-                    prenom,
-                    email,
-                    mot_de_passe,
-                    role,
-                    telephone,
-                    adresse_pro,
-                    specialite,
-                    diplome,
-                    numero_rpps
+                    nom, prenom, email, mot_de_passe, role,
+                    telephone, adresse_pro, specialite, diplome, numero_rpps,
+                    latitude, longitude
                 )
-                VALUES (?, ?, ?, ?, 'praticien', ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, 'praticien', ?, ?, ?, ?, ?, ?, ?)
             ");
 
             $stmt->execute([
@@ -154,13 +144,63 @@ try {
                 $adresse,
                 $specialite,
                 $diplome,
-                $rpps
+                $rpps,
+                $latitude,
+                $longitude
             ]);
 
-            echo json_encode([
-                "success" => true,
-                "message" => "Compte praticien créé"
+            $id_praticien = $pdo->lastInsertId();
+
+            $nom_service = "Consultation";
+            $description_service = "Consultation avec un professionnel de santé";
+            $categorie = "consultation";
+            $duree = 30;
+            $prix = 25.00;
+
+            if ($specialite === "psychologie") {
+                $nom_service = "Soutien psychologique";
+                $categorie = "therapie";
+                $duree = 45;
+                $prix = 15.00;
+            }
+
+            if ($specialite === "nutrition") {
+                $nom_service = "Consultation nutritionnelle";
+                $categorie = "nutrition";
+                $duree = 40;
+                $prix = 30.00;
+            }
+
+            if ($specialite === "sport") {
+                $nom_service = "Séance de coaching sportif";
+                $categorie = "sport";
+                $duree = 60;
+                $prix = 20.00;
+            }
+
+            if ($specialite === "bien_etre") {
+                $nom_service = "Séance bien-être";
+                $categorie = "bien_etre";
+                $duree = 60;
+                $prix = 20.00;
+            }
+
+            $service = $pdo->prepare("
+                INSERT INTO service
+                (nom, description, duree_min, prix, categorie, id_praticien)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+
+            $service->execute([
+                $nom_service,
+                $description_service,
+                $duree,
+                $prix,
+                $categorie,
+                $id_praticien
             ]);
+
+            echo json_encode(["success" => true, "message" => "Compte praticien créé"]);
             break;
 
         case "login":
@@ -172,10 +212,7 @@ try {
             $password = $data["mot_de_passe"] ?? "";
 
             if (!$email || !$password) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Email et mot de passe obligatoires"
-                ]);
+                echo json_encode(["success" => false, "error" => "Email et mot de passe obligatoires"]);
                 exit;
             }
 
@@ -184,10 +221,7 @@ try {
             $user = $stmt->fetch();
 
             if (!$user || !password_verify($password, $user["mot_de_passe"])) {
-                echo json_encode([
-                    "success" => false,
-                    "error" => "Email ou mot de passe incorrect"
-                ]);
+                echo json_encode(["success" => false, "error" => "Email ou mot de passe incorrect"]);
                 exit;
             }
 
@@ -213,17 +247,11 @@ try {
             session_start();
             session_destroy();
 
-            echo json_encode([
-                "success" => true,
-                "message" => "Déconnecté"
-            ]);
+            echo json_encode(["success" => true, "message" => "Déconnecté"]);
             break;
 
         default:
-            echo json_encode([
-                "success" => false,
-                "error" => "Action inconnue"
-            ]);
+            echo json_encode(["success" => false, "error" => "Action inconnue"]);
             break;
     }
 
