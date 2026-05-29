@@ -1,25 +1,40 @@
 <?php
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
 require_once "config.php";
 
 session_start();
+
+// Vérifier que l'utilisateur est connecté (praticien ou étudiant)
 if (!isset($_SESSION["user_id"])) {
     echo json_encode(["success" => false, "error" => "Non connecté"]);
     exit;
 }
 
-$id_etudiant = $_SESSION["user_id"];
 $data = json_decode(file_get_contents("php://input"), true);
 $id_reservation = $data["id"] ?? 0;
 
+$user_id = $_SESSION["user_id"];
+$user_role = $_SESSION["role"];
+
 try {
-    // Vérifier que la réservation appartient bien à l'étudiant
-    $stmt = $pdo->prepare("
-        SELECT id FROM reservation 
-        WHERE id = ? AND id_etudiant = ? AND statut = 'confirmee'
-    ");
-    $stmt->execute([$id_reservation, $id_etudiant]);
+    // Vérifier que la réservation existe
+    if ($user_role === 'praticien') {
+        // Vérifier que le créneau appartient au praticien
+        $stmt = $pdo->prepare("
+            SELECT r.id FROM reservation r
+            JOIN creneau c ON r.id_creneau = c.id
+            WHERE r.id = ? AND c.id_praticien = ? AND r.statut = 'confirmee'
+        ");
+        $stmt->execute([$id_reservation, $user_id]);
+    } else {
+        // Étudiant : vérifier que la réservation lui appartient
+        $stmt = $pdo->prepare("
+            SELECT id FROM reservation 
+            WHERE id = ? AND id_etudiant = ? AND statut = 'confirmee'
+        ");
+        $stmt->execute([$id_reservation, $user_id]);
+    }
+    
     if (!$stmt->fetch()) {
         echo json_encode(["success" => false, "error" => "Réservation introuvable ou déjà annulée"]);
         exit;
