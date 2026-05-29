@@ -5,10 +5,7 @@ require_once "config.php";
 session_start();
 
 if (!isset($_SESSION["user_id"])) {
-    echo json_encode([
-        "success" => false,
-        "error" => "Non connecté"
-    ]);
+    echo json_encode(["success" => false, "error" => "Non connecté"]);
     exit;
 }
 
@@ -34,11 +31,11 @@ try {
     $id_panier = $panier["id"];
 
     $stmt = $pdo->prepare("
-        SELECT r.id, r.id_creneau
-        FROM reservation r
-        WHERE r.id_panier = ?
-        AND r.id_etudiant = ?
-        AND r.statut = 'en_attente'
+        SELECT id
+        FROM reservation
+        WHERE id_panier = ?
+        AND id_etudiant = ?
+        AND statut = 'en_attente'
     ");
     $stmt->execute([$id_panier, $id_etudiant]);
     $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -54,13 +51,6 @@ try {
             WHERE id = ?
         ");
         $stmt->execute([$reservation["id"]]);
-
-        $stmt = $pdo->prepare("
-            UPDATE creneau
-            SET statut = 'reserve'
-            WHERE id = ?
-        ");
-        $stmt->execute([$reservation["id_creneau"]]);
     }
 
     $stmt = $pdo->prepare("
@@ -83,9 +73,6 @@ try {
         $pdo->rollBack();
     }
 
-    echo json_encode([
-        "success" => false,
-        "error" => $e->getMessage()
-    ]);
+    echo json_encode(["success" => false, "error" => $e->getMessage()]);
 }
 ?>
