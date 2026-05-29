@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VitaCare Campus – Gestion des Programmes</title>
+    <title>VitaCare Campus – Programmes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/programmes.css">
 </head>
 <body>
 <div class="app">
-    <!-- SIDEBAR (identique à toutes les pages admin) -->
     <aside class="sidebar">
-        <div class="sidebar-logo">
-            <div class="logo-icon">V</div>
-            <span>VitaCare Campus Admin</span>
-        </div>
+        <div class="sidebar-logo"><div class="logo-icon">V</div><span>VitaCare Campus Admin</span></div>
         <nav class="nav-menu">
             <a href="admin.html" class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
             <a href="reservations.html" class="nav-item"><i class="far fa-calendar-check"></i> Réservations</a>
-            <a href="programmes.html" class="nav-item active"><i class="fas fa-pulse"></i> Activités & Programmes</a>
+            <a href="programmes.html" class="nav-item active"><i class="fas fa-pulse"></i> Programmes</a>
             <a href="gestpracticiens.html" class="nav-item"><i class="fas fa-user-md"></i> Intervenants</a>
             <a href="gestetudiants.html" class="nav-item"><i class="fas fa-graduation-cap"></i> Étudiants</a>
             <a href="stats.html" class="nav-item"><i class="far fa-chart-bar"></i> Rapports statistiques</a>
@@ -31,7 +27,6 @@
     </aside>
 
     <div class="main-container">
-        <!-- TOP BAR -->
         <header class="top-bar">
             <div></div>
             <div class="profile-area">
@@ -43,49 +38,34 @@
             </div>
         </header>
 
-        <!-- CONTENU SPÉCIFIQUE : Gestion des programmes -->
         <main class="content-body admin-scroll-layout">
             <div class="page-header-block">
-                <h1 class="page-title">Gestion des programmes et activités</h1>
-                <p class="page-subtitle">Gérez tous les ateliers, cours et événements de la plateforme</p>
+                <h1 class="page-title">Programmes et activités</h1>
+                <p class="page-subtitle">Liste des ateliers, cours et événements</p>
             </div>
-            
+
+            <!-- Barre de recherche -->
             <div class="filters-panel">
                 <div class="search-wrapper">
                     <i class="fas fa-search"></i>
-                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher par nom, intervenant, catégorie...">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher par nom, description, intervenant...">
                 </div>
-                <select class="filter-select" id="categorieFilter">
-                    <option value="all">Toutes les catégories</option>
-                    <option value="sport">Sport & Fitness</option>
-                    <option value="bienetre">Bien-être mental</option>
-                    <option value="nutrition">Nutrition</option>
-                </select>
-                <select class="filter-select" id="statutFilter">
-                    <option value="all">Tous les statuts</option>
-                    <option value="a_venir">À venir</option>
-                    <option value="complet">Complet</option>
-                    <option value="passe">Passé</option>
-                </select>
             </div>
 
             <div class="table-container">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Activité</th>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Date / Heure</th>
+                            <th>Capacité max</th>
+                            <th>Lieu</th>
                             <th>Intervenant</th>
-                            <th>Date</th>
-                            <th>Capacité</th>
-                            <th>Inscrits</th>
-                            <th>Places restantes</th>
-                            <th>Statut</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Rempli dynamiquement -->
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </main>
