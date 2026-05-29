@@ -59,6 +59,15 @@ async function chargerServicesCatalogue() {
       id: service.id,
       nom: service.nom,
       description: service.description,
+      image:
+  service.specialite === "nutrition"
+    ? "images/nutrition.jpg"
+    : service.specialite === "psychologie"
+    ? "images/psychologie.jpg"
+    : service.specialite === "sport"
+    ? "images/yoga.jpg"
+    : "images/consultation.jpg",
+
       praticien: `${service.praticien_prenom} ${service.praticien_nom}`,
       specialite: service.specialite || "Praticien",
       categorie: convertirCategorie(service.categorie),
@@ -174,7 +183,7 @@ function renderServices() {
     servicesList.innerHTML += `
       <div class="catalogue-card">
         <div class="catalogue-card-image">
-          <div class="service-icon-main">♡</div>
+          <img src="${service.image}" alt="${service.nom}">
         </div>
 
         <div class="catalogue-card-content">
