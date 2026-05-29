@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style_praticien.css">
+    <style>
+        .hidden { display: none; }
+        .account-menu { display: none; }
+        .account-menu:not(.hidden) { display: block; }
+    </style>
 </head>
 <body>
 
@@ -224,7 +229,6 @@
                 } else if (dispo.statut === 'reserve') {
                     statutClass = 'statut-reserve';
                     statutLabel = 'Réservé';
-                    // Récupérer l'ID réservation depuis le créneau
                     let reservationId = null;
                     try {
                         const res2 = await fetch(`../backend/get_reservation_id.php?creneau_id=${dispo.id}`, { credentials: 'include' });
@@ -254,7 +258,7 @@
                 `;
             }
             
-            html += `</tbody></table>`;
+            html += `</tbody><table>`;
             container.innerHTML = html;
             
         } catch (error) {

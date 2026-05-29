@@ -51,9 +51,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="user-profile">
-                    <div class="avatar" id="avatar-initials">MM</div>
-                    <span class="user-name" id="user-name">Dr. Martin</span>
+                <div class="account-wrapper" style="position:relative; display:inline-block; margin-left:15px;">
+                    <button class="avatar-button" onclick="toggleAccountMenu()" style="background:none; border:none; cursor:pointer;">
+                        <div class="student-avatar" id="studentAvatar" style="width:35px; height:35px; border-radius:50%; background:#2e8b57; color:white; display:inline-flex; align-items:center; justify-content:center;">MM</div>
+                    </button>
+                    <strong id="studentName" style="margin-left:8px;"></strong>
+                    <div class="account-menu hidden" id="accountMenu" style="position:absolute; top:40px; right:0; background:white; border:1px solid #ccc; border-radius:8px; padding:10px; min-width:150px; box-shadow:0 4px 12px rgba(0,0,0,0.1); z-index:1000;">
+                        <a href="compte.html" style="display:block; padding:8px; text-decoration:none; color:#333;"><i class="fas fa-user-cog"></i> Mon compte</a>
+                        <button class="logout-btn" onclick="logout()" style="display:block; width:100%; padding:8px; background:none; border:none; text-align:left; cursor:pointer; color:#333;"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -124,8 +130,8 @@
             window.location.href = "login.html";
             return;
         }
-        document.getElementById("user-name").textContent = "Dr. " + user.nom;
-        document.getElementById("avatar-initials").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+        document.getElementById("studentAvatar").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+        document.getElementById("studentName").textContent = "Dr. " + user.nom;
         
         await chargerEvenements();
         
@@ -167,6 +173,28 @@
         };
         
         initNotifications();
+    });
+
+    function toggleAccountMenu() {
+        const menu = document.getElementById('accountMenu');
+        if (menu.style.display === 'block') {
+            menu.style.display = 'none';
+        } else {
+            menu.style.display = 'block';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+    }
+
+    document.addEventListener('click', function(event) {
+        const menu = document.getElementById('accountMenu');
+        const button = document.querySelector('.avatar-button');
+        if (menu && button && !button.contains(event.target) && !menu.contains(event.target)) {
+            menu.style.display = 'none';
+        }
     });
 
     async function chargerEvenements() {
@@ -217,14 +245,14 @@
         const joursSemaine = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
         const heures = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
         
-        let html = '<table class="agenda-table"><thead><tr><th class="time-col"></th>';
+        let html = '<table class="agenda-table"><thead>痕<th class="time-col"></th>';
         
         for (let i = 0; i < 7; i++) {
             const jour = new Date(debutSemaine);
             jour.setDate(debutSemaine.getDate() + i);
             html += `<th>${joursSemaine[i]} ${jour.getDate()}</th>`;
         }
-        html += '</tr></thead><tbody>';
+        html += '</thead><tbody>';
         
         for (let h of heures) {
             html += `<tr><td class="time-col">${h}</td>`;
@@ -276,7 +304,7 @@
         const heures = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
         const joursSemaine = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
         
-        let html = `<table class="agenda-table"><thead><tr><th class="time-col">Heure</th><th>${joursSemaine[currentDate.getDay()]} ${currentDate.getDate()}</th></table></thead><tbody>`;
+        let html = `<table class="agenda-table"><thead><tr><th class="time-col">Heure</th><th>${joursSemaine[currentDate.getDay()]} ${currentDate.getDate()}</th></tr></thead><tbody>`;
         
         for (let h of heures) {
             const evenementsDuJour = events.filter(e => e.date === dateStr && (e.heure_debut || '').substring(0,5) === h);
@@ -310,7 +338,7 @@
             }
             html += `</td></tr>`;
         }
-        html += '</tbody><table>';
+        html += '</tbody></table>';
         container.innerHTML = html;
     }
 
@@ -348,7 +376,7 @@
             
             const currentDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), d);
             if (currentDay.getDay() === 0 && d !== lastDay.getDate()) {
-                html += '<tr><tr>';
+                html += '</tr><tr>';
             }
         }
         
@@ -359,7 +387,7 @@
             }
         }
         
-        html += '<tr></tbody></table>';
+        html += '</tr></tbody></table>';
         container.innerHTML = html;
     }
 
@@ -578,6 +606,12 @@
         .catch(err => console.error("Erreur:", err));
     }
 </script>
+
+<style>
+    .hidden { display: none; }
+    .account-menu { display: none; }
+    .account-menu:not(.hidden) { display: block; }
+</style>
 
 </body>
 </html>
