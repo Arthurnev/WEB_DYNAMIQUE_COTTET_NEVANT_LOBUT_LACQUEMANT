@@ -181,7 +181,7 @@
                     <div class="patient-info">
                         <div class="patient-avatar"><i class="fas fa-user-circle"></i></div>
                         <div class="patient-details">
-                            <h2>${escapeHtml(rdv.patient_nom)}</h2>
+                            <h2>${escapeHtml(rdv.patient_prenom)} ${escapeHtml(rdv.patient_nom)}</h2>
                             <p><i class="fas fa-chart-line"></i> ${historique.length} consultation${historique.length > 1 ? 's' : ''} précédente${historique.length > 1 ? 's' : ''}</p>
                             <p><i class="fas fa-phone"></i> ${rdv.telephone || 'Non renseigné'}</p>
                             <p><i class="fas fa-envelope"></i> ${rdv.email || 'Non renseigné'}</p>
@@ -271,9 +271,11 @@
         if (!confirm("Annuler ce rendez-vous ?")) return;
         
         try {
-            const res = await fetch(`../backend/annuler_rdv.php?id=${rdvId}`, {
+            const res = await fetch('../backend/annuler_rdv.php', {
                 method: 'POST',
-                credentials: 'include'
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ id: parseInt(rdvId) })
             });
             const data = await res.json();
             
