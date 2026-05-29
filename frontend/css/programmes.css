@@ -6,12 +6,6 @@
     --border-color: #e2e8f0;
     --bg-light: #f8fafc;
     --grid-line-color: #f1f5f9;
-    --status-success-bg: #dcfce7;
-    --status-success-text: #16a34a;
-    --status-warning-bg: #fef3c7;
-    --status-warning-text: #d97706;
-    --status-muted-bg: #f1f5f9;
-    --status-muted-text: #475569;
 }
 
 * {
@@ -33,7 +27,6 @@ body {
     height: 100vh;
 }
 
-/* ========= SIDEBAR (identique) ========= */
 .sidebar {
     width: 280px;
     background: white;
@@ -89,14 +82,17 @@ body {
     text-decoration: none;
     transition: all 0.2s;
 }
+
 .nav-item i {
     width: 24px;
     font-size: 1.1rem;
 }
+
 .nav-item:hover {
     background-color: var(--bg-light);
     color: var(--text-dark);
 }
+
 .nav-item.active {
     background-color: rgba(17, 138, 107, 0.1);
     color: var(--primary-green);
@@ -111,6 +107,7 @@ body {
     line-height: 1.4;
     margin-top: auto;
 }
+
 .contact-btn {
     display: inline-block;
     margin-top: 0.5rem;
@@ -119,7 +116,6 @@ body {
     font-weight: 600;
 }
 
-/* ========= CONTENEUR PRINCIPAL ========= */
 .main-container {
     margin-left: 280px;
     flex: 1;
@@ -147,12 +143,14 @@ body {
     align-items: center;
     gap: 1.5rem;
 }
+
 .bell-icon {
     position: relative;
     font-size: 1.25rem;
     color: var(--text-muted);
     cursor: pointer;
 }
+
 .bell-badge {
     position: absolute;
     top: -5px;
@@ -164,6 +162,7 @@ body {
     padding: 1px 5px;
     border-radius: 10px;
 }
+
 .user-meta {
     display: flex;
     align-items: center;
@@ -172,6 +171,7 @@ body {
     font-size: 0.95rem;
     cursor: pointer;
 }
+
 .avatar-circle {
     width: 36px;
     height: 36px;
@@ -191,18 +191,22 @@ body {
     width: 100%;
     margin: 0 auto;
 }
+
 .admin-scroll-layout {
     overflow-y: auto;
     flex: 1;
     padding-right: 0.5rem;
 }
+
 .admin-scroll-layout::-webkit-scrollbar {
     width: 8px;
 }
+
 .admin-scroll-layout::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
 }
+
 .admin-scroll-layout::-webkit-scrollbar-thumb {
     background: var(--primary-green);
     border-radius: 10px;
@@ -211,17 +215,18 @@ body {
 .page-header-block {
     margin-bottom: 2rem;
 }
+
 .page-title {
     font-size: 1.65rem;
     font-weight: 700;
     margin-bottom: 0.25rem;
 }
+
 .page-subtitle {
     font-size: 0.95rem;
     color: var(--text-muted);
 }
 
-/* FILTRES */
 .filters-panel {
     background: white;
     border: 1px solid var(--border-color);
@@ -233,11 +238,13 @@ body {
     align-items: center;
     flex-wrap: wrap;
 }
+
 .search-wrapper {
     position: relative;
     flex: 2;
     min-width: 200px;
 }
+
 .search-wrapper i {
     position: absolute;
     left: 1rem;
@@ -246,6 +253,7 @@ body {
     color: var(--text-muted);
     font-size: 0.95rem;
 }
+
 .search-input {
     width: 100%;
     padding: 0.65rem 1rem 0.65rem 2.5rem;
@@ -254,25 +262,18 @@ body {
     font-size: 0.9rem;
     outline: none;
 }
+
 .search-input:focus {
     border-color: var(--primary-green);
 }
-.filter-select {
-    flex: 1;
-    padding: 0.65rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
 
-/* TABLEAU */
 .table-container {
     background: white;
     border: 1px solid var(--border-color);
     border-radius: 16px;
     overflow-x: auto;
 }
+
 .data-table {
     width: 100%;
     border-collapse: collapse;
@@ -280,42 +281,24 @@ body {
     font-size: 0.9rem;
     min-width: 800px;
 }
+
 .data-table th {
     background-color: #fff;
     padding: 1rem 1.5rem;
     border-bottom: 2px solid var(--grid-line-color);
 }
+
 .data-table td {
     padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--grid-line-color);
     vertical-align: middle;
 }
+
 .data-table tbody tr:hover {
     background-color: rgba(17, 138, 107, 0.02);
 }
 
-/* Badges de statut */
-.status-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-.status-a-venir {
-    background-color: var(--status-success-bg);
-    color: var(--status-success-text);
-}
-.status-complet {
-    background-color: var(--status-warning-bg);
-    color: var(--status-warning-text);
-}
-.status-passe {
-    background-color: var(--status-muted-bg);
-    color: var(--status-muted-text);
-}
-
-.btn-delete-action {
+.btn-delete {
     background: none;
     border: none;
     color: #ef4444;
@@ -325,7 +308,8 @@ body {
     border-radius: 6px;
     transition: 0.2s;
 }
-.btn-delete-action:hover {
+
+.btn-delete:hover {
     background-color: #ffeeeb;
     transform: scale(1.1);
 }
@@ -347,6 +331,7 @@ body {
     transition: all 0.2s;
     z-index: 2000;
 }
+
 .floating-help-btn:hover {
     border-color: var(--primary-green);
     color: var(--primary-green);
