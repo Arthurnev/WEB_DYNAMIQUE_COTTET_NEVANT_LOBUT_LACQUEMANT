@@ -1,24 +1,51 @@
-// Données simulées
-let programmes = [
-    { id: 1, nom: "Yoga doux", intervenant: "Sophie Morin", date: "2026-05-28", capacite: 20, inscrits: 12, categorie: "sport", statut: "a_venir" },
-    { id: 2, nom: "Atelier nutrition équilibrée", intervenant: "Dr. Marie Martin", date: "2026-05-25", capacite: 15, inscrits: 15, categorie: "nutrition", statut: "complet" },
-    { id: 3, nom: "Méditation guidée", intervenant: "Claire Leblanc", date: "2026-05-30", capacite: 25, inscrits: 10, categorie: "bienetre", statut: "a_venir" },
-    { id: 4, nom: "Renforcement musculaire", intervenant: "Pierre Dupont", date: "2026-05-20", capacite: 12, inscrits: 12, categorie: "sport", statut: "passe" },
-    { id: 5, nom: "Gestion du stress", intervenant: "Élise Garnier", date: "2026-06-02", capacite: 18, inscrits: 9, categorie: "bienetre", statut: "a_venir" }
-];
+let programmes = [];
 
-function getStatusBadge(statut) {
-    switch(statut) {
-        case 'a_venir': return '<span class="status-badge status-a-venir">À venir</span>';
-        case 'complet': return '<span class="status-badge status-complet">Complet</span>';
-        case 'passe': return '<span class="status-badge status-passe">Passé</span>';
-        default: return '';
+async function loadProgrammes() {
+    try {
+        // Correction du chemin : backend/programmes.php
+        const response = await fetch("../backend/programmes.php?action=list");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        if (data.success) {
+            programmes = data.data;
+            renderTable();
+        } else {
+            alert("Erreur : " + (data.error || "Chargement impossible"));
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erreur de connexion au serveur : " + error.message);
     }
 }
 
-function formatDate(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+async function deleteProgramme(id) {
+    if (!confirm("Supprimer définitivement ce programme ?")) return;
+    try {
+        const response = await fetch("../backend/programmes.php?action=delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert("Programme supprimé.");
+            await loadProgrammes();
+        } else {
+            alert(data.error || "Erreur lors de la suppression");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erreur de connexion");
+    }
+}
+
+function formatDateTime(dateStr) {
+    if (!dateStr) return '-';
+    const date = new Date(dateStr);
+    return date.toLocaleString('fr-FR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
 }
 
 function escapeHtml(str) {
@@ -27,64 +54,39 @@ function escapeHtml(str) {
 }
 
 function renderTable() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const categorie = document.getElementById('categorieFilter').value;
-    const statut = document.getElementById('statutFilter').value;
-
-    const filtered = programmes.filter(p => {
-        const matchSearch = searchTerm === '' ||
-            p.nom.toLowerCase().includes(searchTerm) ||
-            p.intervenant.toLowerCase().includes(searchTerm);
-        const matchCategorie = (categorie === 'all') || (p.categorie === categorie);
-        const matchStatut = (statut === 'all') || (p.statut === statut);
-        return matchSearch && matchCategorie && matchStatut;
-    });
-
     const tbody = document.getElementById('tableBody');
     if (!tbody) return;
 
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem;">Aucune activité trouvée</td></tr>';
+    if (programmes.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;">Aucun programme trouvé</td></tr>';
         return;
     }
 
     tbody.innerHTML = '';
-    filtered.forEach(p => {
-        const placesRestantes = p.capacite - p.inscrits;
+    programmes.forEach(p => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><strong>${escapeHtml(p.nom)}</strong></td>
-            <td>${escapeHtml(p.intervenant)}</td>
-            <td>${formatDate(p.date)}</td>
-            <td>${p.capacite}</td>
-            <td>${p.inscrits}</td>
-            <td>${placesRestantes}</td>
-            <td>${getStatusBadge(p.statut)}</td>
+            <td><strong>${escapeHtml(p.nom || '-')}</strong></td>
+            <td>${escapeHtml(p.description) || '-'}</td>
+            <td>${formatDateTime(p.date_heure)}</td>
+            <td>${p.capacite_max ?? '-'}</td>
+            <td>${escapeHtml(p.lieu) || '-'}</td>
+            <td>${escapeHtml(p.intervenant) || '-'}</td>
             <td style="text-align: center;">
-                <button class="btn-delete-action" data-id="${p.id}"><i class="far fa-trash-alt"></i></button>
+                <button class="btn-delete" data-id="${p.id}"><i class="far fa-trash-alt"></i></button>
             </td>
         `;
         tbody.appendChild(row);
     });
 
-    document.querySelectorAll('.btn-delete-action').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', () => {
             const id = parseInt(btn.dataset.id);
-            if (confirm("Supprimer définitivement cette activité ?")) {
-                programmes = programmes.filter(p => p.id !== id);
-                renderTable();
-            }
+            deleteProgramme(id);
         });
     });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderTable();
-    document.getElementById('searchInput').addEventListener('input', renderTable);
-    document.getElementById('categorieFilter').addEventListener('change', renderTable);
-    document.getElementById('statutFilter').addEventListener('change', renderTable);
-
-    document.querySelector('.floating-help-btn')?.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
-    document.querySelector('.bell-icon')?.addEventListener('click', () => alert("3 notifications non lues"));
-    document.querySelector('.user-meta')?.addEventListener('click', () => alert("Profil administrateur"));
+    loadProgrammes();
 });
