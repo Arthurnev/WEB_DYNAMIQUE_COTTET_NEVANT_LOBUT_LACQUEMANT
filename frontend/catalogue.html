@@ -5,6 +5,7 @@
   <title>Catalogue - VitaCare</title>
 
   <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 </head>
 
@@ -19,12 +20,34 @@
     </div>
 
     <nav class="student-menu">
-      <a href="index.html">▦ Dashboard</a>
-      <a class="active" href="catalogue.html">📖 Catalogue</a>
-      <a href="suivi_historique.html">📅 Suivi & historique</a>
-      <a href="activites.html">〽 Activités</a>
-      <a href="notifications.html">🔔 Notifications <span>3</span></a>
-    </nav>
+
+  <a  href="index.html">
+    <i class="fas fa-th-large"></i>
+    Dashboard
+  </a>
+
+  <a class="active" href="catalogue.html">
+    <i class="fas fa-book-open"></i>
+    Catalogue
+  </a>
+
+  <a href="suivi_historique.html">
+    <i class="fas fa-calendar-alt"></i>
+    Suivi & historique
+  </a>
+
+  <a href="activites.html">
+    <i class="fas fa-heart"></i>
+    Activités
+  </a>
+
+  <a href="notifications.html">
+    <i class="fas fa-bell"></i>
+    Notifications
+    <span id="sidebarNotifCount">0</span>
+  </a>
+
+</nav>
 
     <div class="student-help">
       <div class="help-icon">?</div>

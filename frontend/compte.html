@@ -6,38 +6,88 @@
   <title>VitaCare Campus — Mon Profil</title>
   <link rel="stylesheet" href="css/style.css">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-brand">
-    <div class="sidebar-logo">V</div>
-    <strong>VitaCare Campus</strong>
-  </div>
-  <nav class="sidebar-nav">
-    <a href="index.html"><span class="icon">🏠</span> Dashboard</a>
-    <a href="catalogue.html"><span class="icon">📋</span> Catalogue</a>
-    <a href="historique.html"><span class="icon">📅</span> Suivi &amp; historique</a>
-    <a href="#"><span class="icon">〜</span> Activités</a>
-    <a href="#"><span class="icon">🔔</span> Notifications</a>
-    <a href="profil.html" class="active"><span class="icon">👤</span> Mon profil</a>
-  </nav>
-  <div class="sidebar-footer">
-    <a href="#" onclick="logout()"><span class="icon">🚪</span> Déconnexion</a>
-  </div>
-</aside>
+<div class="student-app">
 
-<!-- TOPBAR -->
-<header class="topbar">
-  <button class="topbar-icon" title="Notifications">🔔</button>
-  <button class="topbar-icon" title="Panier">🛒</button>
-  <div class="topbar-user" onclick="window.location.href='profil.html'">
-    <div class="topbar-avatar" id="topbar-avatar">JD</div>
-    <span class="topbar-name" id="topbar-name">Jean Dupont</span>
-  </div>
-</header>
+  <aside class="student-sidebar">
+    <div class="student-brand">
+      <div class="brand-icon">V</div>
+      <strong>VitaCare Campus</strong>
+    </div>
+
+    <nav class="student-menu">
+
+  <a  href="index.html">
+    <i class="fas fa-th-large"></i>
+    Dashboard
+  </a>
+
+  <a  href="catalogue.html">
+    <i class="fas fa-book-open"></i>
+    Catalogue
+  </a>
+
+  <a href="suivi_historique.html">
+    <i class="fas fa-calendar-alt"></i>
+    Suivi & historique
+  </a>
+
+  <a href="activites.html">
+    <i class="fas fa-heart"></i>
+    Activités
+  </a>
+
+  <a href="notifications.html">
+    <i class="fas fa-bell"></i>
+    Notifications
+    <span id="sidebarNotifCount">0</span>
+  </a>
+
+</nav>
+
+    <div class="student-help">
+      <div class="help-icon">?</div>
+      <strong>Besoin d'aide ?</strong>
+      <p>Notre équipe est là pour vous aider.</p>
+
+      <button type="button" class="contact-toggle" onclick="toggleContactBox()">
+        Nous contacter
+      </button>
+
+      <div class="contact-box hidden" id="contactBox">
+        <p><strong>📞 Téléphone</strong><br>01 23 45 67 89</p>
+        <p><strong>✉️ Email</strong><br>contact@vitacare-campus.fr</p>
+        <p class="contact-note">Réponse sous 24h ouvrées.</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="student-main">
+
+    <header class="student-topbar">
+      <div class="student-actions">
+        <span>🔔</span>
+        <a href="panier.html" class="cart-link">🛒</a>
+
+        <div class="account-wrapper">
+          <button class="avatar-button" onclick="toggleAccountMenu()" type="button">
+            <div class="student-avatar" id="studentAvatar"></div>
+          </button>
+
+          <strong id="studentName"></strong>
+
+          <div class="account-menu hidden" id="accountMenu">
+            <a href="compte.html">⚙️ Mon compte</a>
+            <button class="logout-btn" onclick="logout()">🚪 Déconnexion</button>
+          </div>
+        </div>
+      </div>
+    </header>
 
 <!-- MAIN -->
 <main class="main">
@@ -50,7 +100,7 @@
       <div class="profile-avatar-row">
         <div class="profile-avatar-big" id="avatar-big">JD</div>
         <div class="profile-avatar-info">
-          <h2 id="display-name">Jean Dupont</h2>
+          <h2 id="studentName"></h2>
           <span class="role-badge" id="display-role">Étudiant</span>
           <br>
           <button class="btn-ghost">Changer la photo</button>
@@ -151,6 +201,7 @@
 </main>
 
 <script src="js/auth.js"></script>
+<script src="js/dashboard.js?v=2"></script>
 <script>
   // ── Chargement des données utilisateur ──
   function loadUser() {
@@ -160,8 +211,8 @@
 
     const initiales = ((user.prenom?.[0] ?? "") + (user.nom?.[0] ?? "")).toUpperCase() || "?";
     document.getElementById("avatar-big").textContent    = initiales;
-    document.getElementById("topbar-avatar").textContent = initiales;
-    document.getElementById("topbar-name").textContent   = (user.prenom ?? "") + " " + (user.nom ?? "");
+    document.getElementById("studentAvatar").textContent = initiales;
+    document.getElementById("studentName").textContent   = (user.prenom ?? "") + " " + (user.nom ?? "");
     document.getElementById("display-name").textContent  = (user.prenom ?? "") + " " + (user.nom ?? "");
     document.getElementById("display-role").textContent  =
       user.role === "praticien" ? "Praticien" :
@@ -200,14 +251,14 @@
       nom:       document.getElementById("nom").value.trim(),
       email:     document.getElementById("email").value.trim(),
       telephone: document.getElementById("telephone").value.trim(),
-      adresse:   document.getElementById("adresse").value.trim(),
-      campus:    document.getElementById("campus").value,
-      filiere:   document.getElementById("filiere").value,
-      annee:     document.getElementById("annee").value,
+      adresse: document.getElementById("adresse").value.trim(),
+      campus: document.getElementById("campus").value,
+      filiere: document.getElementById("filiere").value,
+      annee: document.getElementById("annee").value,
     };
 
     try {
-      const res  = await fetch("../backend/user.php?action=update_profile", {
+      const res  = await fetch("../backend/user.php?action=get_profile&id=ID_USER", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify(updated),
