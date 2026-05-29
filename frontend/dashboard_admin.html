@@ -1,1 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - VitaCare Campus</title>
+  <link rel="stylesheet" href="css/style_admin.css">
+  <script src="https://kit.fontawesome.com/4b7b8f5f2f.js" crossorigin="anonymous"></script>
+</head>
+<body>
 
+<div class="admin-app">
+
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <div class="brand-logo">V</div>
+      <strong>VitaCare Campus</strong>
+      <span>Admin</span>
+    </div>
+
+    <nav class="admin-nav">
+      <button class="active" data-page="dashboard"><i class="fa-solid fa-border-all"></i> Vue d'ensemble</button>
+      <button data-page="reservations"><i class="fa-regular fa-calendar"></i> Réservations</button>
+      <button data-page="activites"><i class="fa-solid fa-heart-pulse"></i> Activités & Programmes</button>
+      <button data-page="intervenants"><i class="fa-solid fa-user-doctor"></i> Intervenants</button>
+      <button data-page="eleves"><i class="fa-solid fa-users"></i> Élèves</button>
+      <button data-page="stats"><i class="fa-solid fa-chart-column"></i> Rapports statistiques</button>
+      <button data-page="notifications"><i class="fa-regular fa-bell"></i> Notifications</button>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+
+    <header class="admin-topbar">
+      <div></div>
+      <div class="admin-profile">
+        <span class="notif">🔔<b>3</b></span>
+        <div class="avatar">AD</div>
+        <strong>Administrateur</strong>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section class="admin-page active" id="dashboard">
+      <div class="page-title">
+        <h1>Vue d'ensemble des activités et indicateurs clés</h1>
+        <p>Tableau de bord administrateur</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><span>📅</span><h2>256</h2><p>Réservations</p><b>↗ +18%</b></div>
+        <div class="stat-card"><span>〽</span><h2>42</h2><p>Activités & programmes</p><b>↗ +5%</b></div>
+        <div class="stat-card"><span>👨‍⚕️</span><h2>18</h2><p>Intervenants</p><b>↗ +2</b></div>
+        <div class="stat-card"><span>🎓</span><h2>324</h2><p>Utilisateurs élèves</p><b>↗ +12%</b></div>
+      </div>
+
+      <div class="admin-grid">
+        <div class="panel">
+          <h2>Réservations par statut</h2>
+          <div class="bar-row"><span>Confirmées</span><div><b style="width:55%"></b></div><strong>142</strong></div>
+          <div class="bar-row yellow"><span>En attente</span><div><b style="width:5%"></b></div><strong>12</strong></div>
+          <div class="bar-row gray"><span>Passées</span><div><b style="width:33%"></b></div><strong>84</strong></div>
+          <div class="bar-row red"><span>Annulées</span><div><b style="width:7%"></b></div><strong>18</strong></div>
+        </div>
+
+        <div class="panel">
+          <h2>Activités à venir</h2>
+          <div class="list-card">Yoga doux <small>24 mai - 18:30</small></div>
+          <div class="list-card">Atelier nutrition équilibrée <small>25 mai - 14:00</small></div>
+          <div class="list-card">Méditation guidée <small>27 mai - 16:00</small></div>
+        </div>
+
+        <div class="panel">
+          <h2>Demandes en attente</h2>
+          <div class="list-card">Sophie Martin <small>Réservation</small></div>
+          <div class="list-card">Thomas Leroy <small>Inscription</small></div>
+          <div class="list-card">Camille Dubois <small>Réservation</small></div>
+        </div>
+
+        <div class="panel center">
+          <h2>Satisfaction moyenne</h2>
+          <div class="big-note">4.7</div>
+          <p>sur 5</p>
+          <div class="stars">★ ★ ★ ★ ☆</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESERVATIONS -->
+    <section class="admin-page" id="reservations">
+      <div class="page-title"><h1>Gestion des réservations</h1><p>Gérez toutes les réservations de la plateforme</p></div>
+      <div class="filter-box">
+        <input placeholder="Rechercher par étudiant, praticien, service...">
+        <select><option>Tous les statuts</option></select>
+        <select><option>Tous les praticiens</option></select>
+      </div>
+
+      <table class="admin-table">
+        <thead><tr><th>Étudiant</th><th>Praticien</th><th>Service</th><th>Date</th><th>Horaire</th><th>Statut</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td>Jean Dupont</td><td>Dr. Marie Martin</td><td>Consultation médicale</td><td>28/05/2026</td><td>09:00</td><td><span class="badge green">Confirmée</span></td><td>🗑</td></tr>
+          <tr><td>Sophie Martin</td><td>Dr. Pierre Durand</td><td>Suivi nutritionnel</td><td>28/05/2026</td><td>14:00</td><td><span class="badge yellow">En attente</span></td><td>🗑</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ACTIVITES -->
+    <section class="admin-page" id="activites">
+      <div class="page-title"><h1>Activités & Programmes</h1><p>Gérez toutes les activités de la plateforme</p></div>
+      <div class="filter-box">
+        <input placeholder="Rechercher par activité ou intervenant...">
+        <select><option>Trier par date</option></select>
+      </div>
+
+      <table class="admin-table">
+        <thead><tr><th>Nom</th><th>Intervenant</th><th>Date</th><th>Capacité</th><th>Places restantes</th><th>Taux remplissage</th><th>Statut</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td>Yoga doux</td><td>Dr. Marie Martin</td><td>24/05/2026 - 18:30</td><td>20</td><td>2</td><td><div class="mini-bar"><b style="width:90%"></b></div>90%</td><td><span class="badge blue">À venir</span></td><td>👥 🗑</td></tr>
+          <tr><td>Massage thérapeutique</td><td>Dr. Jean Petit</td><td>26/05/2026 - 10:00</td><td>10</td><td>0</td><td><div class="mini-bar"><b style="width:100%"></b></div>100%</td><td><span class="badge orange">Complet</span></td><td>👥 🗑</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- STATS -->
+    <section class="admin-page" id="stats">
+      <div class="page-title"><h1>Rapports statistiques</h1><p>Statistiques et analyses de la plateforme</p></div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><h2>256</h2><p>Réservations totales</p><b>+18%</b></div>
+        <div class="stat-card"><h2>78%</h2><p>Taux d'occupation</p><b>+5%</b></div>
+        <div class="stat-card"><h2>42</h2><p>Nouveaux utilisateurs</p><b>+12%</b></div>
+        <div class="stat-card"><h2>4.7/5</h2><p>Taux de satisfaction</p><b>+0.2</b></div>
+      </div>
+
+      <div class="admin-grid">
+        <div class="panel"><h2>Évolution des réservations par mois</h2><div class="bar-row"><span>Jan</span><div><b style="width:70%"></b></div><strong>45</strong></div><div class="bar-row"><span>Mai</span><div><b style="width:90%"></b></div><strong>58</strong></div></div>
+        <div class="panel"><h2>Répartition par type de service</h2><div class="bar-row"><span>Consultations</span><div><b style="width:42%"></b></div><strong>42%</strong></div><div class="bar-row"><span>Nutrition</span><div><b style="width:25%"></b></div><strong>25%</strong></div></div>
+      </div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="admin-page" id="notifications">
+      <div class="page-title"><h1>Notifications</h1><p>Gérez les notifications du système</p></div>
+
+      <div class="notif-tabs">
+        <button class="active">Toutes</button><button>Réservations</button><button>Nouveaux praticiens</button><button>Annulations</button><button>Système</button>
+      </div>
+
+      <div class="notif-card active"><strong>Nouvelle réservation</strong><p>Sophie Martin a réservé une consultation avec Dr. Marie Martin.</p><small>27/05/2026 à 10:30</small><span>Nouveau</span></div>
+      <div class="notif-card active"><strong>Nouveau praticien</strong><p>Dr. Paul Lambert a créé un compte sur la plateforme.</p><small>26/05/2026 à 15:45</small><span>Nouveau</span></div>
+      <div class="notif-card"><strong>Annulation de réservation</strong><p>Jean Dupont a annulé sa réservation du 30 mai.</p><small>26/05/2026 à 09:15</small></div>
+    </section>
+
+    <!-- AUTRES -->
+    <section class="admin-page" id="intervenants">
+      <div class="page-title"><h1>Intervenants</h1><p>Liste des praticiens inscrits</p></div>
+      <div class="empty-panel">Gestion des intervenants à connecter à la BDD.</div>
+    </section>
+
+    <section class="admin-page" id="eleves">
+      <div class="page-title"><h1>Élèves</h1><p>Liste des étudiants inscrits</p></div>
+      <div class="empty-panel">Gestion des élèves à connecter à la BDD.</div>
+    </section>
+
+  </main>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>
