@@ -268,22 +268,22 @@
     }
 
     async function supprimerDisponibilite(id) {
-        if (!confirm('Supprimer cette disponibilité ?')) return;
+    if (!confirm('Supprimer cette disponibilité ?')) return;
+    
+    try {
+        const res = await fetch(`../backend/supprimer_disponibilite.php?id=${id}`, { credentials: 'include' });
+        const data = await res.json();
         
-        try {
-            const res = await fetch(`../backend/supprimer_disponibilite.php?id=${id}`, { credentials: 'include' });
-            const data = await res.json();
-            
-            if (data.success) {
-                showToast('Disponibilité supprimée', 'success');
-                await chargerDisponibilites();
-            } else {
-                showToast('Erreur: ' + data.error, 'error');
-            }
-        } catch (error) {
-            showToast('Erreur de connexion', 'error');
+        if (data.success) {
+            showToast('Disponibilité supprimée', 'success');
+            await chargerDisponibilites();
+        } else {
+            showToast('Erreur: ' + data.error, 'error');
         }
+    } catch (error) {
+        showToast('Erreur de connexion', 'error');
     }
+}
 
     function openModal() {
         const modal = document.getElementById('dispoModal');
