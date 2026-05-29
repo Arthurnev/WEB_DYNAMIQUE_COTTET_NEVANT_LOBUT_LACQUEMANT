@@ -11,23 +11,14 @@ $action = $_GET["action"] ?? "";
 try {
     switch ($action) {
         case 'list':
-            // Table 'reservation' (sans 's')
-            $sql = "SELECT r.id, 
-                           CONCAT(e.nom, ' ', e.prenom) AS etudiant,
-                           CONCAT(p.nom, ' ', p.prenom) AS praticien,
-                           s.nom AS service,
-                           r.date,
-                           r.horaire,
-                           r.statut
-                    FROM reservation r
-                    JOIN utilisateur e ON r.etudiant_id = e.id
-                    JOIN utilisateur p ON r.praticien_id = p.id
-                    JOIN services s ON r.service_id = s.id
-                    ORDER BY r.date DESC, r.horaire ASC";
+            $sql = "SELECT id, nom, prenom, email, telephone, adresse_pro, specialite, diplome, numero_rpps
+                    FROM utilisateur 
+                    WHERE role = 'praticien' 
+                    ORDER BY nom ASC";
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
-            $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(["success" => true, "data" => $reservations]);
+            $praticiens = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(["success" => true, "data" => $praticiens]);
             break;
 
         case 'delete':
@@ -37,12 +28,18 @@ try {
                 echo json_encode(["success" => false, "error" => "ID manquant"]);
                 exit;
             }
-            $stmt = $pdo->prepare("DELETE FROM reservation WHERE id = ?");
+            $check = $pdo->prepare("SELECT role FROM utilisateur WHERE id = ?");
+            $check->execute([$id]);
+            if ($check->fetchColumn() !== 'praticien') {
+                echo json_encode(["success" => false, "error" => "Cet utilisateur n'est pas un praticien"]);
+                exit;
+            }
+            $stmt = $pdo->prepare("DELETE FROM utilisateur WHERE id = ?");
             $stmt->execute([$id]);
             if ($stmt->rowCount() > 0) {
                 echo json_encode(["success" => true]);
             } else {
-                echo json_encode(["success" => false, "error" => "Réservation non trouvée"]);
+                echo json_encode(["success" => false, "error" => "Praticien non trouvé"]);
             }
             break;
 
@@ -50,6 +47,8 @@ try {
             echo json_encode(["success" => false, "error" => "Action inconnue"]);
             break;
     }
+} catch (PDOException $e) {
+    echo json_encode(["success" => false, "error" => "Erreur SQL : " . $e->getMessage()]);
 } catch (Exception $e) {
     echo json_encode(["success" => false, "error" => $e->getMessage()]);
 }

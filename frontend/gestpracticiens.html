@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VitaCare Campus – Gestion des Praticiens</title>
+    <title>VitaCare Campus – Gestion des Intervenants</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/gestpracticiens.css">
 </head>
 <body>
 <div class="app">
-    <!-- SIDEBAR (identique à toutes les pages admin) -->
     <aside class="sidebar">
         <div class="sidebar-logo">
             <div class="logo-icon">V</div>
@@ -31,7 +30,6 @@
     </aside>
 
     <div class="main-container">
-        <!-- TOP BAR -->
         <header class="top-bar">
             <div></div>
             <div class="profile-area">
@@ -43,30 +41,17 @@
             </div>
         </header>
 
-        <!-- CONTENU SPÉCIFIQUE : Gestion des praticiens -->
         <main class="content-body admin-scroll-layout">
             <div class="page-header-block">
-                <h1 class="page-title">Gestion des praticiens</h1>
-                <p class="page-subtitle">Gérez tous les professionnels de santé inscrits sur la plateforme</p>
+                <h1 class="page-title">Gestion des intervenants</h1>
+                <p class="page-subtitle">Gérez tous les praticiens inscrits sur la plateforme</p>
             </div>
-            
+
             <div class="filters-panel">
                 <div class="search-wrapper">
                     <i class="fas fa-search"></i>
-                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher par nom, prénom, spécialité...">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher par nom, prénom, email, spécialité...">
                 </div>
-                <select class="filter-select" id="specialiteFilter">
-                    <option value="all">Toutes les spécialités</option>
-                    <option value="medecine_generale">Médecine générale</option>
-                    <option value="psychologie">Psychologie</option>
-                    <option value="nutrition">Nutrition</option>
-                    <option value="massotherapie">Massothérapie</option>
-                </select>
-                <select class="filter-select" id="statutFilter">
-                    <option value="all">Tous les statuts</option>
-                    <option value="actif">Actif</option>
-                    <option value="inactif">Inactif</option>
-                </select>
             </div>
 
             <div class="table-container">
@@ -75,15 +60,16 @@
                         <tr>
                             <th>Nom</th>
                             <th>Prénom</th>
-                            <th>Spécialité</th>
                             <th>Email</th>
-                            <th>Statut</th>
+                            <th>Téléphone</th>
+                            <th>Adresse pro</th>
+                            <th>Spécialité</th>
+                            <th>Diplôme</th>
+                            <th>RPPS</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Rempli dynamiquement -->
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </main>

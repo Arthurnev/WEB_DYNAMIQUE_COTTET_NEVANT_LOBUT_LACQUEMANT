@@ -10,7 +10,6 @@
 </head>
 <body>
 <div class="app">
-    <!-- SIDEBAR (identique à toutes les pages admin) -->
     <aside class="sidebar">
         <div class="sidebar-logo">
             <div class="logo-icon">V</div>
@@ -31,7 +30,6 @@
     </aside>
 
     <div class="main-container">
-        <!-- TOP BAR -->
         <header class="top-bar">
             <div></div>
             <div class="profile-area">
@@ -43,29 +41,18 @@
             </div>
         </header>
 
-        <!-- CONTENU SPÉCIFIQUE : Gestion des étudiants -->
         <main class="content-body admin-scroll-layout">
             <div class="page-header-block">
                 <h1 class="page-title">Gestion des étudiants</h1>
                 <p class="page-subtitle">Gérez tous les étudiants inscrits sur la plateforme</p>
             </div>
-            
+
+            <!-- Barre de recherche uniquement (pas de filtres campus/statut) -->
             <div class="filters-panel">
                 <div class="search-wrapper">
                     <i class="fas fa-search"></i>
                     <input type="text" class="search-input" id="searchInput" placeholder="Rechercher par nom, prénom, email...">
                 </div>
-                <select class="filter-select" id="campusFilter">
-                    <option value="all">Tous les campus</option>
-                    <option value="campus_a">Campus A</option>
-                    <option value="campus_b">Campus B</option>
-                    <option value="campus_c">Campus C</option>
-                </select>
-                <select class="filter-select" id="statutFilter">
-                    <option value="all">Tous les statuts</option>
-                    <option value="actif">Actif</option>
-                    <option value="inactif">Inactif</option>
-                </select>
             </div>
 
             <div class="table-container">
@@ -75,9 +62,6 @@
                             <th>Nom</th>
                             <th>Prénom</th>
                             <th>Email</th>
-                            <th>Campus</th>
-                            <th>Filière</th>
-                            <th>Année</th>
                             <th>Statut</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>

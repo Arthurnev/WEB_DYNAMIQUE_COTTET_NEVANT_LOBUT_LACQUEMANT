@@ -1,25 +1,43 @@
-// Données simulées
-let etudiants = [
-    { id: 1, nom: "Dupont", prenom: "Jean", email: "jean.dupont@etudiant.fr", campus: "campus_a", filiere: "Informatique", annee: "L3", statut: "actif" },
-    { id: 2, nom: "Martin", prenom: "Sophie", email: "sophie.martin@etudiant.fr", campus: "campus_b", filiere: "Psychologie", annee: "M1", statut: "actif" },
-    { id: 3, nom: "Lefebvre", prenom: "Paul", email: "paul.lefebvre@etudiant.fr", campus: "campus_a", filiere: "STAPS", annee: "L2", statut: "inactif" },
-    { id: 4, nom: "Rousseau", prenom: "Marie", email: "marie.rousseau@etudiant.fr", campus: "campus_c", filiere: "Nutrition", annee: "L3", statut: "actif" },
-    { id: 5, nom: "Bernard", prenom: "Thomas", email: "thomas.bernard@etudiant.fr", campus: "campus_b", filiere: "Médecine", annee: "D1", statut: "actif" }
-];
+let etudiants = [];
 
-function getCampusLabel(campus) {
-    const labels = {
-        campus_a: "Campus A",
-        campus_b: "Campus B",
-        campus_c: "Campus C"
-    };
-    return labels[campus] || campus;
+async function loadEtudiants() {
+    try {
+        const response = await fetch("../backend/gestetudiants.php?action=list");
+        const data = await response.json();
+        if (data.success) {
+            etudiants = data.data;
+            renderTable();
+        } else {
+            console.error(data.error);
+            alert("Erreur lors du chargement des étudiants");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erreur de connexion au serveur");
+    }
 }
 
-function getStatutBadge(statut) {
-    if (statut === 'actif') return '<span class="status-badge status-actif">Actif</span>';
-    if (statut === 'inactif') return '<span class="status-badge status-inactif">Inactif</span>';
-    return '';
+async function deleteEtudiant(id) {
+    if (!confirm("Supprimer définitivement cet étudiant ? Toutes ses données (réservations, etc.) seront effacées.")) {
+        return;
+    }
+    try {
+        const response = await fetch("../backend/gestetudiants.php?action=delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert("Étudiant supprimé avec succès.");
+            await loadEtudiants();
+        } else {
+            alert(data.error || "Erreur lors de la suppression");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erreur de connexion au serveur");
+    }
 }
 
 function escapeHtml(str) {
@@ -29,24 +47,20 @@ function escapeHtml(str) {
 
 function renderTable() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const campusFilter = document.getElementById('campusFilter').value;
-    const statutFilter = document.getElementById('statutFilter').value;
 
     const filtered = etudiants.filter(e => {
         const matchSearch = searchTerm === '' ||
             e.nom.toLowerCase().includes(searchTerm) ||
             e.prenom.toLowerCase().includes(searchTerm) ||
             e.email.toLowerCase().includes(searchTerm);
-        const matchCampus = (campusFilter === 'all') || (e.campus === campusFilter);
-        const matchStatut = (statutFilter === 'all') || (e.statut === statutFilter);
-        return matchSearch && matchCampus && matchStatut;
+        return matchSearch;
     });
 
     const tbody = document.getElementById('tableBody');
     if (!tbody) return;
 
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem;">Aucun étudiant trouvé</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem;">Aucun étudiant trouvé</td></tr>';
         return;
     }
 
@@ -57,10 +71,7 @@ function renderTable() {
             <td>${escapeHtml(e.nom)}</td>
             <td>${escapeHtml(e.prenom)}</td>
             <td>${escapeHtml(e.email)}</td>
-            <td>${getCampusLabel(e.campus)}</td>
-            <td>${escapeHtml(e.filiere)}</td>
-            <td>${escapeHtml(e.annee)}</td>
-            <td>${getStatutBadge(e.statut)}</td>
+            <td><span class="status-badge status-actif">Actif</span></td>
             <td style="text-align: center;">
                 <button class="btn-delete-action" data-id="${e.id}"><i class="far fa-trash-alt"></i></button>
             </td>
@@ -69,23 +80,22 @@ function renderTable() {
     });
 
     document.querySelectorAll('.btn-delete-action').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', () => {
             const id = parseInt(btn.dataset.id);
-            if (confirm("Supprimer définitivement cet étudiant ?")) {
-                etudiants = etudiants.filter(e => e.id !== id);
-                renderTable();
-            }
+            deleteEtudiant(id);
         });
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    renderTable();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadEtudiants();
     document.getElementById('searchInput').addEventListener('input', renderTable);
-    document.getElementById('campusFilter').addEventListener('change', renderTable);
-    document.getElementById('statutFilter').addEventListener('change', renderTable);
 
-    document.querySelector('.floating-help-btn')?.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
-    document.querySelector('.bell-icon')?.addEventListener('click', () => alert("3 notifications non lues"));
-    document.querySelector('.user-meta')?.addEventListener('click', () => alert("Profil administrateur"));
+    // Interactions de la barre d'outils (aide, cloche, profil)
+    const helpBtn = document.querySelector('.floating-help-btn');
+    if (helpBtn) helpBtn.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
+    const bell = document.querySelector('.bell-icon');
+    if (bell) bell.addEventListener('click', () => alert("3 notifications non lues"));
+    const userMeta = document.querySelector('.user-meta');
+    if (userMeta) userMeta.addEventListener('click', () => alert("Profil administrateur"));
 });

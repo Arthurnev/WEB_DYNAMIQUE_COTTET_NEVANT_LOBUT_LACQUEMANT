@@ -6,10 +6,6 @@
     --border-color: #e2e8f0;
     --bg-light: #f8fafc;
     --grid-line-color: #f1f5f9;
-    --status-success-bg: #dcfce7;
-    --status-success-text: #16a34a;
-    --status-danger-bg: #fee2e2;
-    --status-danger-text: #ef4444;
 }
 
 * {
@@ -31,7 +27,6 @@ body {
     height: 100vh;
 }
 
-/* ========= SIDEBAR (identique) ========= */
 .sidebar {
     width: 280px;
     background: white;
@@ -117,7 +112,6 @@ body {
     font-weight: 600;
 }
 
-/* ========= CONTENEUR PRINCIPAL ========= */
 .main-container {
     margin-left: 280px;
     flex: 1;
@@ -219,7 +213,6 @@ body {
     color: var(--text-muted);
 }
 
-/* FILTRES */
 .filters-panel {
     background: white;
     border: 1px solid var(--border-color);
@@ -255,16 +248,7 @@ body {
 .search-input:focus {
     border-color: var(--primary-green);
 }
-.filter-select {
-    flex: 1;
-    padding: 0.65rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
 
-/* TABLEAU */
 .table-container {
     background: white;
     border: 1px solid var(--border-color);
@@ -276,7 +260,7 @@ body {
     border-collapse: collapse;
     text-align: left;
     font-size: 0.9rem;
-    min-width: 700px;
+    min-width: 1000px;
 }
 .data-table th {
     background-color: #fff;
@@ -290,23 +274,6 @@ body {
 }
 .data-table tbody tr:hover {
     background-color: rgba(17, 138, 107, 0.02);
-}
-
-/* Badges de statut */
-.status-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-.status-actif {
-    background-color: var(--status-success-bg);
-    color: var(--status-success-text);
-}
-.status-inactif {
-    background-color: var(--status-danger-bg);
-    color: var(--status-danger-text);
 }
 
 .btn-delete-action {

@@ -1,25 +1,43 @@
-// Données simulées
-let praticiens = [
-    { id: 1, nom: "Martin", prenom: "Marie", specialite: "medecine_generale", email: "marie.martin@vitacare.fr", statut: "actif" },
-    { id: 2, nom: "Durand", prenom: "Pierre", specialite: "nutrition", email: "pierre.durand@vitacare.fr", statut: "actif" },
-    { id: 3, nom: "Petit", prenom: "Jean", specialite: "psychologie", email: "jean.petit@vitacare.fr", statut: "inactif" },
-    { id: 4, nom: "Lefevre", prenom: "Sophie", specialite: "massotherapie", email: "sophie.lefevre@vitacare.fr", statut: "actif" }
-];
+let praticiens = [];
 
-function getSpecialiteLabel(specialite) {
-    const labels = {
-        medecine_generale: "Médecine générale",
-        psychologie: "Psychologie",
-        nutrition: "Nutrition",
-        massotherapie: "Massothérapie"
-    };
-    return labels[specialite] || specialite;
+async function loadPraticiens() {
+    try {
+        const response = await fetch("../backend/gestpracticiens.php?action=list");
+        const data = await response.json();
+        if (data.success) {
+            praticiens = data.data;
+            renderTable();
+        } else {
+            console.error(data.error);
+            alert("Erreur lors du chargement des praticiens");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erreur de connexion au serveur");
+    }
 }
 
-function getStatutBadge(statut) {
-    if (statut === 'actif') return '<span class="status-badge status-actif">Actif</span>';
-    if (statut === 'inactif') return '<span class="status-badge status-inactif">Inactif</span>';
-    return '';
+async function deletePraticien(id) {
+    if (!confirm("Supprimer définitivement ce praticien ? Toutes ses données seront effacées.")) {
+        return;
+    }
+    try {
+        const response = await fetch("../backend/gestpracticiens.php?action=delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert("Praticien supprimé avec succès.");
+            await loadPraticiens();
+        } else {
+            alert(data.error || "Erreur lors de la suppression");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erreur de connexion au serveur");
+    }
 }
 
 function escapeHtml(str) {
@@ -29,24 +47,21 @@ function escapeHtml(str) {
 
 function renderTable() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const specialiteFilter = document.getElementById('specialiteFilter').value;
-    const statutFilter = document.getElementById('statutFilter').value;
 
     const filtered = praticiens.filter(p => {
         const matchSearch = searchTerm === '' ||
             p.nom.toLowerCase().includes(searchTerm) ||
             p.prenom.toLowerCase().includes(searchTerm) ||
-            getSpecialiteLabel(p.specialite).toLowerCase().includes(searchTerm);
-        const matchSpecialite = (specialiteFilter === 'all') || (p.specialite === specialiteFilter);
-        const matchStatut = (statutFilter === 'all') || (p.statut === statutFilter);
-        return matchSearch && matchSpecialite && matchStatut;
+            p.email.toLowerCase().includes(searchTerm) ||
+            (p.specialite && p.specialite.toLowerCase().includes(searchTerm));
+        return matchSearch;
     });
 
     const tbody = document.getElementById('tableBody');
     if (!tbody) return;
 
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Aucun praticien trouvé</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:2rem;">Aucun praticien trouvé</td></tr>';
         return;
     }
 
@@ -56,9 +71,12 @@ function renderTable() {
         row.innerHTML = `
             <td>${escapeHtml(p.nom)}</td>
             <td>${escapeHtml(p.prenom)}</td>
-            <td>${getSpecialiteLabel(p.specialite)}</td>
             <td>${escapeHtml(p.email)}</td>
-            <td>${getStatutBadge(p.statut)}</td>
+            <td>${escapeHtml(p.telephone || '-')}</td>
+            <td>${escapeHtml(p.adresse_pro || '-')}</td>
+            <td>${escapeHtml(p.specialite || '-')}</td>
+            <td>${escapeHtml(p.diplome || '-')}</td>
+            <td>${escapeHtml(p.numero_rpps || '-')}</td>
             <td style="text-align: center;">
                 <button class="btn-delete-action" data-id="${p.id}"><i class="far fa-trash-alt"></i></button>
             </td>
@@ -67,23 +85,21 @@ function renderTable() {
     });
 
     document.querySelectorAll('.btn-delete-action').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', () => {
             const id = parseInt(btn.dataset.id);
-            if (confirm("Supprimer définitivement ce praticien ?")) {
-                praticiens = praticiens.filter(p => p.id !== id);
-                renderTable();
-            }
+            deletePraticien(id);
         });
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    renderTable();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadPraticiens();
     document.getElementById('searchInput').addEventListener('input', renderTable);
-    document.getElementById('specialiteFilter').addEventListener('change', renderTable);
-    document.getElementById('statutFilter').addEventListener('change', renderTable);
 
-    document.querySelector('.floating-help-btn')?.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
-    document.querySelector('.bell-icon')?.addEventListener('click', () => alert("3 notifications non lues"));
-    document.querySelector('.user-meta')?.addEventListener('click', () => alert("Profil administrateur"));
+    const helpBtn = document.querySelector('.floating-help-btn');
+    if (helpBtn) helpBtn.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
+    const bell = document.querySelector('.bell-icon');
+    if (bell) bell.addEventListener('click', () => alert("3 notifications non lues"));
+    const userMeta = document.querySelector('.user-meta');
+    if (userMeta) userMeta.addEventListener('click', () => alert("Profil administrateur"));
 });

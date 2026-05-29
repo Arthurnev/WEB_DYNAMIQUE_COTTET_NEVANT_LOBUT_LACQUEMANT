@@ -31,7 +31,7 @@ body {
     height: 100vh;
 }
 
-/* ========= SIDEBAR (identique) ========= */
+/* SIDEBAR */
 .sidebar {
     width: 280px;
     background: white;
@@ -117,7 +117,6 @@ body {
     font-weight: 600;
 }
 
-/* ========= CONTENEUR PRINCIPAL ========= */
 .main-container {
     margin-left: 280px;
     flex: 1;
@@ -219,7 +218,7 @@ body {
     color: var(--text-muted);
 }
 
-/* FILTRES */
+/* FILTRES simplifiés */
 .filters-panel {
     background: white;
     border: 1px solid var(--border-color);
@@ -255,14 +254,6 @@ body {
 .search-input:focus {
     border-color: var(--primary-green);
 }
-.filter-select {
-    flex: 1;
-    padding: 0.65rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
 
 /* TABLEAU */
 .table-container {
@@ -276,7 +267,7 @@ body {
     border-collapse: collapse;
     text-align: left;
     font-size: 0.9rem;
-    min-width: 800px;
+    min-width: 600px;
 }
 .data-table th {
     background-color: #fff;
@@ -292,7 +283,6 @@ body {
     background-color: rgba(17, 138, 107, 0.02);
 }
 
-/* Badges de statut */
 .status-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
