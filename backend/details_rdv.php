@@ -17,7 +17,6 @@ if (!$reservation_id) {
 }
 
 try {
-    // Détails du rendez-vous
     $stmt = $pdo->prepare("
         SELECT 
             r.id,
@@ -36,9 +35,9 @@ try {
         JOIN creneau c ON r.id_creneau = c.id
         JOIN service s ON c.id_service = s.id
         JOIN utilisateur u ON r.id_etudiant = u.id
-        WHERE r.id = ? AND c.id_praticien = ?
+        WHERE r.id = ?
     ");
-    $stmt->execute([$reservation_id, $_SESSION['user_id']]);
+    $stmt->execute([$reservation_id]);
     $rdv = $stmt->fetch();
     
     if (!$rdv) {
@@ -48,20 +47,20 @@ try {
     
     $rdv['patient_nom'] = $rdv['patient_prenom'] . ' ' . $rdv['patient_nom'];
     
-    // Historique des consultations du patient
+    // Historique
     $stmt = $pdo->prepare("
         SELECT c.date, s.nom as service_nom
         FROM reservation r
         JOIN creneau c ON r.id_creneau = c.id
         JOIN service s ON c.id_service = s.id
-        WHERE r.id_etudiant = ? AND r.id != ? AND (r.statut = 'terminee' OR r.statut = 'confirmee')
+        WHERE r.id_etudiant = ? AND r.id != ?
         ORDER BY c.date DESC
         LIMIT 5
     ");
     $stmt->execute([$rdv['patient_id'], $reservation_id]);
     $historique = $stmt->fetchAll();
     
-    // Note existante
+    // Note
     $stmt = $pdo->prepare("SELECT * FROM consultation_commentaires WHERE reservation_id = ?");
     $stmt->execute([$reservation_id]);
     $note = $stmt->fetch();
