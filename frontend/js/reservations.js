@@ -1,85 +1,132 @@
-// Données statiques
-let reservations = [
-    { id: 1, etudiant: "Jean Dupont", praticien: "Dr. Marie Martin", service: "Consultation médicale", date: "28/05/2026", horaire: "09:00", statut: "confirm" },
-    { id: 2, etudiant: "Sophie Martin", praticien: "Dr. Pierre Durand", service: "Suivi nutritionnel", date: "28/05/2026", horaire: "14:00", statut: "pending" },
-    { id: 3, etudiant: "Paul Lefebvre", praticien: "Dr. Marie Martin", service: "Consultation", date: "29/05/2026", horaire: "10:30", statut: "confirm" },
-    { id: 4, etudiant: "Marie Rousseau", praticien: "Dr. Jean Petit", service: "Massage thérapeutique", date: "30/05/2026", horaire: "15:00", statut: "past" },
-    { id: 5, etudiant: "Thomas Bernard", praticien: "Dr. Pierre Durand", service: "Consultation nutrition", date: "27/05/2026", horaire: "11:00", statut: "cancelled" }
-];
+let reservations = [];
 
-function getStatusBadge(statut) {
-    switch(statut) {
-        case 'confirm': return '<span class="status-badge status-confirm">Confirmée</span>';
-        case 'pending': return '<span class="status-badge status-pending">En attente</span>';
-        case 'past': return '<span class="status-badge status-past">Passée</span>';
-        case 'cancelled': return '<span class="status-badge status-cancelled">Annulée</span>';
-        default: return '';
+// 1. Chargement des données depuis le serveur PHP
+async function loadReservations() {
+    try {
+        const response = await fetch("../backend/reservations.php?action=list");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        if (data.success) {
+            reservations = data.data;
+            renderTable();
+        } else {
+            console.error("Erreur backend : " + (data.error || "Chargement impossible"));
+        }
+    } catch (error) {
+        console.error("Erreur réseau :", error);
     }
 }
 
+// 2. Suppression d'une réservation
+async function deleteReservation(id) {
+    if (!confirm("Supprimer définitivement cette réservation ?")) return;
+    try {
+        const response = await fetch("../backend/reservations.php?action=delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert("Réservation supprimée.");
+            await loadReservations();
+        } else {
+            alert(data.error || "Erreur lors de la suppression");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erreur de connexion");
+    }
+}
+
+// Génération visuelle des badges de statut
+function getStatutBadge(statut) {
+    const statuts = {
+        'en_attente': '<span class="status-badge status-pending">En attente</span>',
+        'confirmee': '<span class="status-badge status-confirm">Confirmée</span>',
+        'annulee': '<span class="status-badge status-cancelled">Annulée</span>',
+        'terminee': '<span class="status-badge status-past">Terminée</span>'
+    };
+    return statuts[statut] || statut;
+}
+
+// Protection contre les failles d'injection XSS
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'));
 }
 
+// 3. Remplissage et filtrage dynamique du tableau
 function renderTable() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const statusFilter = document.getElementById('statusFilter').value;
-    const praticienFilter = document.getElementById('praticienFilter').value;
+    const searchInput = document.getElementById('searchInput');
+    let searchTerm = '';
+    
+    // SÉCURITÉ CRUCIALE : On vérifie si l'élément existe bien avant de lire sa valeur (.value)
+    if (searchInput) {
+        searchTerm = searchInput.value.toLowerCase().trim();
+    }
 
-    const filtered = reservations.filter(res => {
-        const matchSearch = searchTerm === '' ||
-            res.etudiant.toLowerCase().includes(searchTerm) ||
-            res.praticien.toLowerCase().includes(searchTerm) ||
-            res.service.toLowerCase().includes(searchTerm);
-        const matchStatus = (statusFilter === 'all') || (res.statut === statusFilter);
-        const matchPraticien = (praticienFilter === 'all') || (res.praticien === praticienFilter);
-        return matchSearch && matchStatus && matchPraticien;
-    });
+    let filtered = reservations;
+    if (searchTerm !== '') {
+        filtered = reservations.filter(r =>
+            (r.etudiant && r.etudiant.toLowerCase().includes(searchTerm)) ||
+            (r.praticien && r.praticien.toLowerCase().includes(searchTerm)) ||
+            (r.service && r.service.toLowerCase().includes(searchTerm))
+        );
+    }
 
     const tbody = document.getElementById('tableBody');
-    if (!tbody) return;
+    if (!tbody) return; // Sécurité additionnelle si la table n'est pas sur la page actuelle
 
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;">Aucune réservation trouvée</td></tr>';
+        let message = '';
+        if (reservations.length === 0 && searchTerm === '') {
+            message = 'Aucune réservation pour le moment – la table est vide.';
+        } else if (reservations.length > 0 && searchTerm !== '') {
+            message = 'Aucune réservation ne correspond à votre recherche.';
+        } else {
+            message = 'Aucune réservation trouvée.';
+        }
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:#64748b;">${message}</td></tr>`;
         return;
     }
 
     tbody.innerHTML = '';
-    filtered.forEach(res => {
+    filtered.forEach(r => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><strong>${escapeHtml(res.etudiant)}</strong></td>
-            <td>${escapeHtml(res.praticien)}</td>
-            <td>${escapeHtml(res.service)}</td>
-            <td>${escapeHtml(res.date)}</td>
-            <td>${escapeHtml(res.horaire)}</td>
-            <td>${getStatusBadge(res.statut)}</td>
+            <td><strong>${escapeHtml(r.etudiant)}</strong></td>
+            <td>${escapeHtml(r.praticien)}</td>
+            <td>${escapeHtml(r.service)}</td>
+            <td><code>${escapeHtml(r.date)}</code></td>
+            <td><code>${escapeHtml(r.horaire)}</code></td>
+            <td>${getStatutBadge(r.statut)}</td>
             <td style="text-align: center;">
-                <button class="btn-delete-action" data-id="${res.id}"><i class="far fa-trash-alt"></i></button>
+                <button class="btn-delete" data-id="${r.id}"><i class="far fa-trash-alt"></i></button>
             </td>
         `;
         tbody.appendChild(row);
     });
 
-    document.querySelectorAll('.btn-delete-action').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const id = parseInt(btn.dataset.id);
-            if (confirm("Supprimer définitivement cette réservation ?")) {
-                reservations = reservations.filter(r => r.id !== id);
-                renderTable();
-            }
-        });
+    // Écouteurs d'événements pour les boutons de suppression
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.replaceWith(btn.cloneNode(true)); // Évite les doublons d'écouteurs d'événements lors du rechargement
+    });
+    
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', () => deleteReservation(parseInt(btn.dataset.id)));
     });
 }
 
+// Initialisation au chargement du DOM
 document.addEventListener('DOMContentLoaded', () => {
-    renderTable();
-    document.getElementById('searchInput').addEventListener('input', renderTable);
-    document.getElementById('statusFilter').addEventListener('change', renderTable);
-    document.getElementById('praticienFilter').addEventListener('change', renderTable);
-
-    document.querySelector('.floating-help-btn')?.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
-    document.querySelector('.bell-icon')?.addEventListener('click', () => alert("3 notifications non lues"));
-    document.querySelector('.user-meta')?.addEventListener('click', () => alert("Profil administrateur"));
+    loadReservations();
+    
+    // 🔄 SYNCHRONISATION TEMPS RÉEL : Rafraîchissement en arrière-plan toutes les 5 secondes
+    setInterval(loadReservations, 5000);
+    
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', renderTable);
+    }
 });
