@@ -6,14 +6,6 @@
     --border-color: #e2e8f0;
     --bg-light: #f8fafc;
     --grid-line-color: #f1f5f9;
-    --status-success-bg: #dcfce7;
-    --status-success-text: #16a34a;
-    --status-warning-bg: #fef3c7;
-    --status-warning-text: #d97706;
-    --status-muted-bg: #f1f5f9;
-    --status-muted-text: #475569;
-    --status-danger-bg: #fee2e2;
-    --status-danger-text: #ef4444;
 }
 
 * {
@@ -50,7 +42,6 @@ body {
     z-index: 1100;
     padding: 1.5rem;
 }
-
 .sidebar-logo {
     display: flex;
     align-items: center;
@@ -60,7 +51,6 @@ body {
     color: var(--text-dark);
     margin-bottom: 2rem;
 }
-
 .logo-icon {
     background: #f15a24;
     color: white;
@@ -72,14 +62,12 @@ body {
     justify-content: center;
     font-weight: 800;
 }
-
 .nav-menu {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
-
 .nav-item {
     display: flex;
     align-items: center;
@@ -104,7 +92,6 @@ body {
     color: var(--primary-green);
     font-weight: 600;
 }
-
 .help-box {
     background-color: var(--bg-light);
     border-radius: 12px;
@@ -129,7 +116,6 @@ body {
     height: 100vh;
     overflow-y: auto;
 }
-
 .top-bar {
     height: 70px;
     background: white;
@@ -142,7 +128,6 @@ body {
     top: 0;
     z-index: 1000;
 }
-
 .profile-area {
     display: flex;
     align-items: center;
@@ -222,7 +207,6 @@ body {
     color: var(--text-muted);
 }
 
-/* FILTRES */
 .filters-panel {
     background: white;
     border: 1px solid var(--border-color);
@@ -258,16 +242,7 @@ body {
 .search-input:focus {
     border-color: var(--primary-green);
 }
-.filter-select {
-    flex: 1;
-    padding: 0.65rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
 
-/* TABLEAU */
 .table-container {
     background: white;
     border: 1px solid var(--border-color);
@@ -279,7 +254,7 @@ body {
     border-collapse: collapse;
     text-align: left;
     font-size: 0.9rem;
-    min-width: 700px;
+    min-width: 800px;
 }
 .data-table th {
     background-color: #fff;
@@ -295,6 +270,22 @@ body {
     background-color: rgba(17, 138, 107, 0.02);
 }
 
+.btn-delete {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.4rem;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+.btn-delete:hover {
+    background-color: #ffeeeb;
+    transform: scale(1.1);
+}
+
+/* STATUT BADGES */
 .status-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -302,36 +293,21 @@ body {
     font-size: 0.8rem;
     font-weight: 600;
 }
-.status-confirm {
-    background-color: var(--status-success-bg);
-    color: var(--status-success-text);
-}
 .status-pending {
-    background-color: var(--status-warning-bg);
-    color: var(--status-warning-text);
+    background-color: #fef3c7;
+    color: #d97706;
 }
-.status-past {
-    background-color: var(--status-muted-bg);
-    color: var(--status-muted-text);
+.status-confirm {
+    background-color: #dcfce7;
+    color: #16a34a;
 }
 .status-cancelled {
-    background-color: var(--status-danger-bg);
-    color: var(--status-danger-text);
+    background-color: #fee2e2;
+    color: #ef4444;
 }
-
-.btn-delete-action {
-    background: none;
-    border: none;
-    color: var(--status-danger-text);
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 0.4rem;
-    border-radius: 6px;
-    transition: 0.2s;
-}
-.btn-delete-action:hover {
-    background-color: #ffeeeb;
-    transform: scale(1.1);
+.status-past {
+    background-color: #f1f5f9;
+    color: #475569;
 }
 
 .floating-help-btn {
