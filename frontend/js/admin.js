@@ -10,12 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Bouton aide flottant
-    const helpBtn = document.querySelector('.floating-help-btn');
-    if (helpBtn) {
-        helpBtn.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
-    }
-
     // Icône cloche
     const bell = document.querySelector('.bell-icon');
     if (bell) {
