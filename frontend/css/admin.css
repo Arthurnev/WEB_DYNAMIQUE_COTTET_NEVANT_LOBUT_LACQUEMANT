@@ -316,23 +316,6 @@ body {
 .stars-gold-container { display: flex; gap: 0.2rem; color: #f59e0b; margin: 0.5rem 0; font-size: 1.2rem; }
 .text-trend-green { font-size: 0.85rem; color: #16a34a; font-weight: 600; }
 
-/* Bouton export */
-.footer-action-container { display: flex; justify-content: flex-end; margin-top: 1rem; }
-.btn-green-action {
-    background-color: var(--primary-green);
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: background 0.2s;
-}
-.btn-green-action:hover { background-color: var(--primary-hover); }
-
 @media (max-width: 900px) {
     .sidebar { width: 100%; height: auto; position: relative; }
     .main-container { margin-left: 0; }

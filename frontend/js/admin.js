@@ -21,13 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (userMeta) {
         userMeta.addEventListener('click', () => alert("Profil administrateur"));
     }
-
-    // Bouton exporter le rapport
-    const exportBtn = document.querySelector('.btn-green-action');
-    if (exportBtn) {
-        exportBtn.addEventListener('click', () => alert("Export du rapport (simulation)"));
-    }
-
     // Les liens "Voir tout" et "Voir toutes" sont déjà des <a> normaux
     // Ils redirigent vers les pages respectives sans script supplémentaire.
 });
