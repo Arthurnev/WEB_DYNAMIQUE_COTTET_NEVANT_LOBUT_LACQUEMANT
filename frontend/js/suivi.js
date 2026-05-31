@@ -86,7 +86,7 @@ function toggleAccountMenu() {
 
 function logout() {
     localStorage.removeItem("utilisateur");
-    window.location.href = "accueil.html";
+    window.location.href = "Accueil.html";
 }
 
 
@@ -98,7 +98,9 @@ async function chargerDonnees() {
 
     try {
 
-        const res = await fetch("../backend/suivi.php");
+        const res = await fetch("../backend/suivi.php", {
+            credentials: "include"
+        });
         const data = await res.json();
 
         if (!data.success) {
@@ -449,6 +451,15 @@ function renderActivites(activites) {
                     </span>
                 </div>
 
+                <div class="rdv-actions">
+                    <button
+                        class="btn-annuler"
+                        onclick="annulerInscriptionActivite(${act.activite_id})"
+                    >
+                        Annuler le rdv
+                    </button>
+                    </div>
+
             </div>
         `;
     });
@@ -602,4 +613,31 @@ function toggleContactBox() {
   if (box) {
     box.classList.toggle("hidden");
   }
+}
+
+function annulerInscriptionActivite(idActivite) {
+  if (!confirm("Annuler cette inscription ?")) return;
+
+  fetch("../backend/annuler_inscription_activite.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      id_activite: idActivite
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert("Inscription annulée.");
+      chargerDonnees();
+    } else {
+      alert(data.error);
+    }
+  })
+  .catch(() => {
+    alert("Erreur de connexion");
+  });
 }

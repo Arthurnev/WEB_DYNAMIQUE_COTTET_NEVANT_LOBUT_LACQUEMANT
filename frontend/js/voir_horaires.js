@@ -37,7 +37,7 @@ function toggleContactBox() {
 
 function logout() {
   localStorage.removeItem("user");
-  window.location.href = "accueil.html";
+  window.location.href = "Accueil.html";
 }
 
 async function chargerHoraires() {
