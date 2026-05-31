@@ -1,5 +1,6 @@
 let etudiants = [];
 
+// ========== CHARGEMENT DES ÉTUDIANTS ==========
 async function loadEtudiants() {
     try {
         const response = await fetch("../backend/gestetudiants.php?action=list");
@@ -17,8 +18,9 @@ async function loadEtudiants() {
     }
 }
 
+// ========== SUPPRESSION D'UN ÉTUDIANT ==========
 async function deleteEtudiant(id) {
-    if (!confirm("Supprimer définitivement cet étudiant ? Toutes ses données (réservations, etc.) seront effacées.")) {
+    if (!confirm("Supprimer définitivement cet étudiant ? Toutes ses données seront effacées.")) {
         return;
     }
     try {
@@ -40,27 +42,33 @@ async function deleteEtudiant(id) {
     }
 }
 
+// ========== ÉCHAPPEMENT HTML ==========
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'));
 }
 
+// ========== AFFICHAGE DU TABLEAU (AVEC RECHERCHE ET MESSAGE SI VIDE) ==========
 function renderTable() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-
-    const filtered = etudiants.filter(e => {
-        const matchSearch = searchTerm === '' ||
-            e.nom.toLowerCase().includes(searchTerm) ||
-            e.prenom.toLowerCase().includes(searchTerm) ||
-            e.email.toLowerCase().includes(searchTerm);
-        return matchSearch;
-    });
-
     const tbody = document.getElementById('tableBody');
     if (!tbody) return;
 
+    // Si la liste est vide (pas d'étudiants du tout)
+    if (etudiants.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem;">📭 Aucun étudiant pour le moment</td></tr>';
+        return;
+    }
+
+    const filtered = etudiants.filter(e => {
+        return searchTerm === '' ||
+            e.nom.toLowerCase().includes(searchTerm) ||
+            e.prenom.toLowerCase().includes(searchTerm) ||
+            e.email.toLowerCase().includes(searchTerm);
+    });
+
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem;">Aucun étudiant trouvé</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem;">🔍 Aucun étudiant ne correspond à votre recherche</td></tr>';
         return;
     }
 
@@ -71,7 +79,6 @@ function renderTable() {
             <td>${escapeHtml(e.nom)}</td>
             <td>${escapeHtml(e.prenom)}</td>
             <td>${escapeHtml(e.email)}</td>
-            <td><span class="status-badge status-actif">Actif</span></td>
             <td style="text-align: center;">
                 <button class="btn-delete-action" data-id="${e.id}"><i class="far fa-trash-alt"></i></button>
             </td>
@@ -87,15 +94,44 @@ function renderTable() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadEtudiants();
-    document.getElementById('searchInput').addEventListener('input', renderTable);
+// ========== GESTION DE LA TOPBAR (MENU ADMIN) ==========
+function toggleAdminMenu(event) {
+    event.stopPropagation();
+    const adminMenu = document.getElementById('admin-menu');
+    adminMenu.classList.toggle('show');
+}
 
-    // Interactions de la barre d'outils (aide, cloche, profil)
-    const helpBtn = document.querySelector('.floating-help-btn');
-    if (helpBtn) helpBtn.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
-    const bell = document.querySelector('.bell-icon');
-    if (bell) bell.addEventListener('click', () => alert("3 notifications non lues"));
+function logout(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+}
+
+document.addEventListener('click', function(event) {
     const userMeta = document.querySelector('.user-meta');
-    if (userMeta) userMeta.addEventListener('click', () => alert("Profil administrateur"));
+    const adminMenu = document.getElementById('admin-menu');
+    if (userMeta && !userMeta.contains(event.target)) {
+        adminMenu.classList.remove('show');
+    }
+});
+
+// ========== INITIALISATION AU CHARGEMENT ==========
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadEtudiants();
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.addEventListener('input', renderTable);
+
+    // Affichage des initiales et du nom depuis localStorage
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+    const avatarElement = document.getElementById('topbar-avatar');
+    const fullnameElement = document.getElementById('admin-fullname');
+
+    const prenom = user.prenom || 'Judicaël';
+    const nom = user.nom || 'LACQUEMANT';
+    const initiales = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase();
+
+    if (avatarElement) avatarElement.textContent = initiales;
+    if (fullnameElement) fullnameElement.textContent = `Ad. ${nom}`;
 });

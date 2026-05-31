@@ -6,7 +6,372 @@
     <title>VitaCare Campus – Gestion des Étudiants</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/gestetudiants.css">
+    <style>
+        /* ========== TOPBAR ET MENU DÉROULANT (IDENTIQUE À ADMIN.HTML) ========== */
+        .top-bar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .bell-icon {
+            position: relative;
+            font-size: 1.25rem;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .bell-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 10px;
+        }
+
+        .user-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
+            background-color: #2e8b57;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .admin-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.9rem;
+        }
+
+        .admin-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 0.5rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .admin-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #1f2937;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            color: #64748b;
+        }
+
+        /* ========== STYLES EXISTANTS (DE GESTETUDIANTS.CSS) ========== */
+        :root {
+            --primary-green: #118a6b;
+            --primary-hover: #0e7057;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --bg-light: #f8fafc;
+            --grid-line-color: #f1f5f9;
+            --status-success-bg: #dcfce7;
+            --status-success-text: #16a34a;
+            --status-danger-bg: #fee2e2;
+            --status-danger-text: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 1100;
+            padding: 1.5rem;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            background: #f15a24;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        .nav-menu {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .nav-item i {
+            width: 24px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .nav-item.active {
+            background-color: rgba(17, 138, 107, 0.1);
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        .main-container {
+            margin-left: 280px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .content-body {
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .admin-scroll-layout {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 0.5rem;
+        }
+
+        .admin-scroll-layout::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .admin-scroll-layout::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .admin-scroll-layout::-webkit-scrollbar-thumb {
+            background: var(--primary-green);
+            border-radius: 10px;
+        }
+
+        .page-header-block {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .filters-panel {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.25rem;
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 2;
+            min-width: 200px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.65rem 1rem 0.65rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-green);
+        }
+
+        .table-container {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+            min-width: 600px;
+        }
+
+        .data-table th {
+            background-color: #fff;
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid var(--grid-line-color);
+        }
+
+        .data-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--grid-line-color);
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: rgba(17, 138, 107, 0.02);
+        }
+
+        .btn-delete-action {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.4rem;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .btn-delete-action:hover {
+            background-color: #ffeeeb;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-container {
+                margin-left: 0;
+            }
+            .filters-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="app">
@@ -21,29 +386,40 @@
             <a href="programmes.html" class="nav-item"><i class="fas fa-pulse"></i> Activités & Programmes</a>
             <a href="gestpracticiens.html" class="nav-item"><i class="fas fa-user-md"></i> Intervenants</a>
             <a href="gestetudiants.html" class="nav-item active"><i class="fas fa-graduation-cap"></i> Étudiants</a>
-            <a href="stats.html" class="nav-item"><i class="far fa-chart-bar"></i> Rapports statistiques</a>
         </nav>
     </aside>
 
     <div class="main-container">
+        <!-- TOPBAR (IDENTIQUE À ADMIN.HTML) -->
         <header class="top-bar">
             <div></div>
             <div class="profile-area">
-                <div class="bell-icon"><i class="far fa-bell"></i><span class="bell-badge">3</span></div>
-                <div class="user-meta">
-                    <div class="avatar-circle">AD</div>
-                    <span>Administrateur</span>
+                <div class="bell-icon">
+                    <i class="far fa-bell"></i>
+                    <span class="bell-badge">3</span>
+                </div>
+                <div class="user-meta" onclick="toggleAdminMenu(event)">
+                    <div class="avatar-circle" id="topbar-avatar">JL</div>
+                    <span class="admin-name" id="admin-fullname">Ad. Lacquemant</span>
+                    <div class="admin-dropdown" id="admin-menu">
+                        <a href="compteA.html" class="dropdown-item" onclick="event.stopPropagation()">
+                            <i class="fas fa-user-circle"></i> Mon compte
+                        </a>
+                        <div class="dropdown-item logout-item" onclick="logout(event)">
+                            <i class="fas fa-door-open"></i> Déconnexion
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
 
+        <!-- CONTENU PRINCIPAL -->
         <main class="content-body admin-scroll-layout">
             <div class="page-header-block">
                 <h1 class="page-title">Gestion des étudiants</h1>
                 <p class="page-subtitle">Gérez tous les étudiants inscrits sur la plateforme</p>
             </div>
 
-            <!-- Barre de recherche uniquement (pas de filtres campus/statut) -->
             <div class="filters-panel">
                 <div class="search-wrapper">
                     <i class="fas fa-search"></i>
@@ -58,19 +434,150 @@
                             <th>Nom</th>
                             <th>Prénom</th>
                             <th>Email</th>
-                            <th>Statut</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Rempli dynamiquement -->
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </main>
     </div>
 </div>
 
-<script src="js/gestetudiants.js"></script>
+<script>
+    // ============================================================
+    // Gestion des étudiants
+    // ============================================================
+    let etudiants = [];
+
+    async function loadEtudiants() {
+        try {
+            const response = await fetch("../backend/gestetudiants.php?action=list");
+            const data = await response.json();
+            if (data.success) {
+                etudiants = data.data;
+                renderTable();
+            } else {
+                console.error(data.error);
+                alert("Erreur lors du chargement des étudiants");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur de connexion au serveur");
+        }
+    }
+
+    async function deleteEtudiant(id) {
+        if (!confirm("Supprimer définitivement cet étudiant ? Toutes ses données seront effacées.")) {
+            return;
+        }
+        try {
+            const response = await fetch("../backend/gestetudiants.php?action=delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id })
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert("Étudiant supprimé avec succès.");
+                await loadEtudiants();
+            } else {
+                alert(data.error || "Erreur lors de la suppression");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur de connexion au serveur");
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'));
+    }
+
+    function renderTable() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+        const filtered = etudiants.filter(e => {
+            const matchSearch = searchTerm === '' ||
+                e.nom.toLowerCase().includes(searchTerm) ||
+                e.prenom.toLowerCase().includes(searchTerm) ||
+                e.email.toLowerCase().includes(searchTerm);
+            return matchSearch;
+        });
+
+        const tbody = document.getElementById('tableBody');
+        if (!tbody) return;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem;">Aucun étudiant trouvé</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+        filtered.forEach(e => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${escapeHtml(e.nom)}</td>
+                <td>${escapeHtml(e.prenom)}</td>
+                <td>${escapeHtml(e.email)}</td>
+                <td style="text-align: center;">
+                    <button class="btn-delete-action" data-id="${e.id}"><i class="far fa-trash-alt"></i></button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.querySelectorAll('.btn-delete-action').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.dataset.id);
+                deleteEtudiant(id);
+            });
+        });
+    }
+
+    // ============================================================
+    // Gestion de la topbar (IDENTIQUE À ADMIN.HTML)
+    // ============================================================
+    function toggleAdminMenu(event) {
+        event.stopPropagation();
+        const adminMenu = document.getElementById('admin-menu');
+        adminMenu.classList.toggle('show');
+    }
+
+    function logout(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    }
+
+    // Fermer le menu si on clique ailleurs
+    document.addEventListener('click', function(event) {
+        const userMeta = document.querySelector('.user-meta');
+        const adminMenu = document.getElementById('admin-menu');
+        if (userMeta && !userMeta.contains(event.target)) {
+            adminMenu.classList.remove('show');
+        }
+    });
+
+    // Charger les données au démarrage
+    document.addEventListener('DOMContentLoaded', async function() {
+        await loadEtudiants();
+        document.getElementById('searchInput').addEventListener('input', renderTable);
+
+        // Récupérer les données de l'utilisateur depuis localStorage
+        const user = JSON.parse(localStorage.getItem('user')) || {};
+        const avatarElement = document.getElementById('topbar-avatar');
+        const fullnameElement = document.getElementById('admin-fullname');
+
+        const prenom = user.prenom || 'Judicaël';
+        const nom = user.nom || 'LACQUEMANT';
+        const initiales = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase();
+
+        if (avatarElement) avatarElement.textContent = initiales;
+        if (fullnameElement) fullnameElement.textContent = `Ad. ${nom}`;
+    });
+</script>
 </body>
 </html>
