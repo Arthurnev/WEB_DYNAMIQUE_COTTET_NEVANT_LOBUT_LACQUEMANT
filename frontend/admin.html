@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare Campus – Dashboard Administrateur</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lien vers le CSS local -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">V</div>
+            <span>VitaCare Campus Admin</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="admin.html" class="nav-item active"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
+            <a href="reservations.html" class="nav-item"><i class="far fa-calendar-check"></i> Réservations</a>
+            <a href="programmes.html" class="nav-item"><i class="fas fa-calendar-alt"></i> Activités & Programmes</a>
+            <a href="gestpracticiens.html" class="nav-item"><i class="fas fa-user-md"></i> Intervenants</a>
+            <a href="gestetudiants.html" class="nav-item"><i class="fas fa-graduation-cap"></i> Étudiants</a>
+        </nav>
+    </aside>
+
+    <div class="main-container">
+        <header class="top-bar">
+            <div></div>
+            <div class="profile-area">
+                <div class="user-meta" onclick="toggleAdminMenu(event)">
+                    <div class="avatar-circle" id="topbar-avatar">JL</div>
+                    <span class="admin-name" id="admin-fullname">Ad. Lacquemant</span>
+                    <div class="admin-dropdown" id="admin-menu">
+                        <a href="compteA.html" class="dropdown-item" onclick="event.stopPropagation()">
+                            <i class="fas fa-user-circle"></i> Mon compte
+                        </a>
+                        <div class="dropdown-item logout-item" onclick="logout(event)">
+                            <i class="fas fa-door-open"></i> Déconnexion
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-body">
+            <div class="page-title">Vue d'ensemble des activités et indicateurs clés</div>
+            <div class="page-subtitle">Tableau de bord administrateur</div>
+
+            <div class="kpi-row-grid">
+                <a href="reservations.html" class="kpi-minimal-card">
+                    <div class="kpi-icon-box box-blue"><i class="far fa-calendar-alt"></i></div>
+                    <div class="kpi-core-data"><span class="kpi-num" id="total-reservations">0</span><span class="kpi-txt">Réservations</span></div>
+                </a>
+                <a href="programmes.html" class="kpi-minimal-card">
+                    <div class="kpi-icon-box box-green"><i class="fas fa-pulse"></i></div>
+                    <div class="kpi-core-data"><span class="kpi-num" id="total-activites">0</span><span class="kpi-txt">Activités & programmes</span></div>
+                </a>
+                <a href="gestpracticiens.html" class="kpi-minimal-card">
+                    <div class="kpi-icon-box box-purple"><i class="far fa-user"></i></div>
+                    <div class="kpi-core-data"><span class="kpi-num" id="total-intervenants">0</span><span class="kpi-txt">Intervenants</span></div>
+                </a>
+                <a href="gestetudiants.html" class="kpi-minimal-card">
+                    <div class="kpi-icon-box box-orange"><i class="fas fa-user-graduate"></i></div>
+                    <div class="kpi-core-data"><span class="kpi-num" id="total-etudiants">0</span><span class="kpi-txt">Étudiants</span></div>
+                </a>
+            </div>
+
+            <div class="admin-two-col-layout">
+                <div class="admin-stack-column">
+                    <div class="dashboard-white-panel">
+                        <div class="panel-inline-header">
+                            <h2 class="panel-inner-title">Réservations</h2>
+                            <a href="reservations.html" class="panel-top-link">Voir tout</a>
+                        </div>
+                        <div class="rows-data-list" id="reservations-list"></div>
+                    </div>
+                    <div class="dashboard-white-panel">
+                        <div class="panel-inline-header">
+                            <h2 class="panel-inner-title">Intervenants</h2>
+                            <a href="gestpracticiens.html" class="panel-top-link">Voir tout</a>
+                        </div>
+                        <div class="rows-data-list" id="intervenants-list"></div>
+                    </div>
+                </div>
+                <div class="admin-stack-column">
+                    <div class="dashboard-white-panel">
+                        <div class="panel-inline-header">
+                            <h2 class="panel-inner-title">Activités</h2>
+                            <a href="programmes.html" class="panel-top-link">Voir toutes</a>
+                        </div>
+                        <div class="rows-data-list" id="activites-list"></div>
+                    </div>
+                    <div class="dashboard-white-panel">
+                        <div class="panel-inline-header">
+                            <h2 class="panel-inner-title">Étudiants</h2>
+                            <a href="gestetudiants.html" class="panel-top-link">Voir tout</a>
+                        </div>
+                        <div class="rows-data-list" id="etudiants-list"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Lien vers le JavaScript local -->
+<script src="js/admin.js"></script>
+</body>
+</html>

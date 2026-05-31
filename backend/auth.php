@@ -47,7 +47,8 @@ try {
             $prenom = trim($data["prenom"] ?? "");
             $email = trim($data["email"] ?? "");
             $password = $data["mot_de_passe"] ?? "";
-            $role = $data["role"] ?? "etudiant";
+
+            $role = "etudiant";
 
             if (!$nom || !$prenom || !$email || !$password) {
                 echo json_encode(["success" => false, "error" => "Tous les champs sont obligatoires"]);
@@ -57,6 +58,10 @@ try {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 echo json_encode(["success" => false, "error" => "Email invalide"]);
                 exit;
+            }
+
+            if (substr(strtolower($email), -12) === "@vitacare.fr") {
+                $role = "admin";
             }
 
             if (strlen($password) < 6) {
@@ -82,7 +87,11 @@ try {
 
             $stmt->execute([$nom, $prenom, $email, $hash, $role]);
 
-            echo json_encode(["success" => true, "message" => "Compte créé avec succès"]);
+            echo json_encode([
+                "success" => true,
+                "message" => "Compte créé avec succès",
+                "role" => $role
+            ]);
             break;
 
         case "register_praticien":
@@ -231,8 +240,17 @@ try {
             $_SESSION["email"] = $user["email"];
             $_SESSION["role"] = $user["role"];
 
+            $redirectPage = "espace_etudiant.html";
+
+            if ($user["role"] === "admin") {
+                $redirectPage = "admin.html";
+            } elseif ($user["role"] === "praticien") {
+                $redirectPage = "espace_praticien.html";
+            }
+
             echo json_encode([
                 "success" => true,
+                "redirect" => $redirectPage,
                 "user" => [
                     "id" => $user["id"],
                     "nom" => $user["nom"],
