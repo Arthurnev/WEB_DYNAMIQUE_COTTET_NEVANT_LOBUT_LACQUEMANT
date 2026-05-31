@@ -1,6 +1,6 @@
 let reservations = [];
 
-// 1. Chargement des données depuis le serveur PHP
+// ========== CHARGEMENT DES RÉSERVATIONS ==========
 async function loadReservations() {
     try {
         const response = await fetch("../backend/reservations.php?action=list");
@@ -10,14 +10,15 @@ async function loadReservations() {
             reservations = data.data;
             renderTable();
         } else {
-            console.error("Erreur backend : " + (data.error || "Chargement impossible"));
+            alert("Erreur : " + (data.error || "Chargement impossible"));
         }
     } catch (error) {
-        console.error("Erreur réseau :", error);
+        console.error(error);
+        alert("Erreur de connexion au serveur : " + error.message);
     }
 }
 
-// 2. Suppression d'une réservation
+// ========== SUPPRESSION D'UNE RÉSERVATION ==========
 async function deleteReservation(id) {
     if (!confirm("Supprimer définitivement cette réservation ?")) return;
     try {
@@ -39,55 +40,57 @@ async function deleteReservation(id) {
     }
 }
 
-// Génération visuelle des badges de statut
-function getStatutBadge(statut) {
-    const statuts = {
-        'en_attente': '<span class="status-badge status-pending">En attente</span>',
-        'confirmee': '<span class="status-badge status-confirm">Confirmée</span>',
-        'annulee': '<span class="status-badge status-cancelled">Annulée</span>',
-        'terminee': '<span class="status-badge status-past">Terminée</span>'
-    };
-    return statuts[statut] || statut;
-}
-
-// Protection contre les failles d'injection XSS
+// ========== FONCTION D'ÉCHAPPEMENT HTML ==========
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'));
 }
 
-// 3. Remplissage et filtrage dynamique du tableau
+// ========== AFFICHAGE DU STATUT AVEC BADGE ==========
+function getStatusBadge(statut) {
+    const classes = {
+        'en_attente': 'status-pending',
+        'confirmée': 'status-confirm',
+        'confirmee': 'status-confirm',
+        'annulée': 'status-cancelled',
+        'annulee': 'status-cancelled',
+        'terminée': 'status-past',
+        'terminee': 'status-past'
+    };
+    const defaultClass = 'status-pending';
+    const statutLower = (statut || '').toLowerCase();
+    const badgeClass = classes[statutLower] || defaultClass;
+    let label = statut || 'en_attente';
+    if (label === 'en_attente') label = 'En attente';
+    else if (label === 'confirmée' || label === 'confirmee') label = 'Confirmée';
+    else if (label === 'annulée' || label === 'annulee') label = 'Annulée';
+    else if (label === 'terminée' || label === 'terminee') label = 'Terminée';
+    return `<span class="status-badge ${badgeClass}">${escapeHtml(label)}</span>`;
+}
+
+// ========== AFFICHAGE DU TABLEAU AVEC RECHERCHE ==========
 function renderTable() {
-    const searchInput = document.getElementById('searchInput');
-    let searchTerm = '';
+    const tbody = document.getElementById('tableBody');
+    if (!tbody) return;
+
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
     
-    // SÉCURITÉ CRUCIALE : On vérifie si l'élément existe bien avant de lire sa valeur (.value)
-    if (searchInput) {
-        searchTerm = searchInput.value.toLowerCase().trim();
+    // Si aucune réservation dans la base
+    if (reservations.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;"> Aucune réservation pour le moment</td></tr>';
+        return;
     }
 
-    let filtered = reservations;
-    if (searchTerm !== '') {
-        filtered = reservations.filter(r =>
+    // Filtrer selon la recherche
+    const filtered = reservations.filter(r => {
+        return searchTerm === '' ||
             (r.etudiant && r.etudiant.toLowerCase().includes(searchTerm)) ||
             (r.praticien && r.praticien.toLowerCase().includes(searchTerm)) ||
-            (r.service && r.service.toLowerCase().includes(searchTerm))
-        );
-    }
-
-    const tbody = document.getElementById('tableBody');
-    if (!tbody) return; // Sécurité additionnelle si la table n'est pas sur la page actuelle
+            (r.service && r.service.toLowerCase().includes(searchTerm));
+    });
 
     if (filtered.length === 0) {
-        let message = '';
-        if (reservations.length === 0 && searchTerm === '') {
-            message = 'Aucune réservation pour le moment – la table est vide.';
-        } else if (reservations.length > 0 && searchTerm !== '') {
-            message = 'Aucune réservation ne correspond à votre recherche.';
-        } else {
-            message = 'Aucune réservation trouvée.';
-        }
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:#64748b;">${message}</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;">🔍 Aucune réservation ne correspond à votre recherche</td></tr>';
         return;
     }
 
@@ -95,12 +98,12 @@ function renderTable() {
     filtered.forEach(r => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><strong>${escapeHtml(r.etudiant)}</strong></td>
-            <td>${escapeHtml(r.praticien)}</td>
-            <td>${escapeHtml(r.service)}</td>
-            <td><code>${escapeHtml(r.date)}</code></td>
-            <td><code>${escapeHtml(r.horaire)}</code></td>
-            <td>${getStatutBadge(r.statut)}</td>
+            <td>${escapeHtml(r.etudiant || '-')}</td>
+            <td>${escapeHtml(r.praticien || '-')}</td>
+            <td>${escapeHtml(r.service || '-')}</td>
+            <td>${escapeHtml(r.date || '-')}</td>
+            <td>${escapeHtml(r.horaire || '-')}</td>
+            <td>${getStatusBadge(r.statut)}</td>
             <td style="text-align: center;">
                 <button class="btn-delete" data-id="${r.id}"><i class="far fa-trash-alt"></i></button>
             </td>
@@ -108,25 +111,56 @@ function renderTable() {
         tbody.appendChild(row);
     });
 
-    // Écouteurs d'événements pour les boutons de suppression
+    // Attacher les événements de suppression
     document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.replaceWith(btn.cloneNode(true)); // Évite les doublons d'écouteurs d'événements lors du rechargement
-    });
-    
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', () => deleteReservation(parseInt(btn.dataset.id)));
+        btn.addEventListener('click', () => {
+            const id = parseInt(btn.dataset.id);
+            deleteReservation(id);
+        });
     });
 }
 
-// Initialisation au chargement du DOM
-document.addEventListener('DOMContentLoaded', () => {
-    loadReservations();
-    
-    // 🔄 SYNCHRONISATION TEMPS RÉEL : Rafraîchissement en arrière-plan toutes les 5 secondes
-    setInterval(loadReservations, 5000);
-    
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', renderTable);
+// ========== FONCTIONS POUR LA TOPBAR ==========
+function toggleAdminMenu(event) {
+    event.stopPropagation();
+    const adminMenu = document.getElementById('admin-menu');
+    adminMenu.classList.toggle('show');
+}
+
+function logout(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+}
+
+// Fermer le menu si on clique ailleurs
+document.addEventListener('click', function(event) {
+    const userMeta = document.querySelector('.user-meta');
+    const adminMenu = document.getElementById('admin-menu');
+    if (userMeta && !userMeta.contains(event.target) && !event.target.closest('.dropdown-item')) {
+        adminMenu.classList.remove('show');
     }
+});
+
+// ========== INITIALISATION AU CHARGEMENT ==========
+document.addEventListener('DOMContentLoaded', function() {
+    // Informations utilisateur
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+    const avatarElement = document.getElementById('topbar-avatar');
+    const fullnameElement = document.getElementById('admin-fullname');
+
+    const prenom = user.prenom || 'Judicael';
+    const nom = user.nom || 'Lacquemant';
+    const initiales = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase();
+
+    if (avatarElement) avatarElement.textContent = initiales;
+    if (fullnameElement) fullnameElement.textContent = `Ad. ${nom}`;
+
+    // Charger les réservations
+    loadReservations();
+
+    // Écouteur de recherche
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.addEventListener('input', renderTable);
 });

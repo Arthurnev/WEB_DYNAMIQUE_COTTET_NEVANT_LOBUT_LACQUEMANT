@@ -11,14 +11,16 @@
 <body>
 <div class="app">
     <aside class="sidebar">
-        <div class="sidebar-logo"><div class="logo-icon">V</div><span>VitaCare Campus Admin</span></div>
+        <div class="sidebar-logo">
+            <div class="logo-icon">V</div>
+            <span>VitaCare Campus Admin</span>
+        </div>
         <nav class="nav-menu">
             <a href="admin.html" class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
             <a href="reservations.html" class="nav-item active"><i class="far fa-calendar-check"></i> Réservations</a>
-            <a href="programmes.html" class="nav-item"><i class="fas fa-pulse"></i> Programmes</a>
+            <a href="programmes.html" class="nav-item"><i class="fas fa-pulse"></i> Activités & Programmes</a>
             <a href="gestpracticiens.html" class="nav-item"><i class="fas fa-user-md"></i> Intervenants</a>
             <a href="gestetudiants.html" class="nav-item"><i class="fas fa-graduation-cap"></i> Étudiants</a>
-            <a href="stats.html" class="nav-item"><i class="far fa-chart-bar"></i> Rapports statistiques</a>
         </nav>
     </aside>
 
@@ -26,10 +28,21 @@
         <header class="top-bar">
             <div></div>
             <div class="profile-area">
-                <div class="bell-icon"><i class="far fa-bell"></i><span class="bell-badge">3</span></div>
-                <div class="user-meta">
-                    <div class="avatar-circle">AD</div>
-                    <span>Administrateur</span>
+                <div class="bell-icon">
+                    <i class="far fa-bell"></i>
+                    <span class="bell-badge">3</span>
+                </div>
+                <div class="user-meta" onclick="toggleAdminMenu(event)">
+                    <div class="avatar-circle" id="topbar-avatar">JL</div>
+                    <span class="admin-name" id="admin-fullname">Ad. Lacquemant</span>
+                    <div class="admin-dropdown" id="admin-menu">
+                        <a href="compteA.html" class="dropdown-item" onclick="event.stopPropagation()">
+                            <i class="fas fa-user-circle"></i> Mon compte
+                        </a>
+                        <div class="dropdown-item" onclick="logout(event)">
+                            <i class="fas fa-door-open"></i> Déconnexion
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>

@@ -27,14 +27,13 @@ body {
     height: 100vh;
 }
 
-/* ========= SIDEBAR ========= */
+/* ========== SIDEBAR ========== */
 .sidebar {
     width: 280px;
     background: white;
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     position: fixed;
     height: 100vh;
     top: 0;
@@ -42,6 +41,7 @@ body {
     z-index: 1100;
     padding: 1.5rem;
 }
+
 .sidebar-logo {
     display: flex;
     align-items: center;
@@ -51,6 +51,7 @@ body {
     color: var(--text-dark);
     margin-bottom: 2rem;
 }
+
 .logo-icon {
     background: #f15a24;
     color: white;
@@ -62,12 +63,14 @@ body {
     justify-content: center;
     font-weight: 800;
 }
+
 .nav-menu {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
+
 .nav-item {
     display: flex;
     align-items: center;
@@ -79,50 +82,51 @@ body {
     text-decoration: none;
     transition: all 0.2s;
 }
+
 .nav-item i {
     width: 24px;
     font-size: 1.1rem;
 }
+
 .nav-item:hover {
     background-color: var(--bg-light);
     color: var(--text-dark);
 }
+
 .nav-item.active {
     background-color: rgba(17, 138, 107, 0.1);
     color: var(--primary-green);
     font-weight: 600;
 }
-.main-container {
-    margin-left: 280px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow-y: auto;
-}
+
+/* ========== TOPBAR ========== */
 .top-bar {
     height: 70px;
     background: white;
     border-bottom: 1px solid var(--border-color);
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: space-between;
     padding: 0 2rem;
     position: sticky;
     top: 0;
     z-index: 1000;
 }
+
 .profile-area {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    position: relative;
 }
+
 .bell-icon {
     position: relative;
     font-size: 1.25rem;
     color: var(--text-muted);
     cursor: pointer;
 }
+
 .bell-badge {
     position: absolute;
     top: -5px;
@@ -134,25 +138,79 @@ body {
     padding: 1px 5px;
     border-radius: 10px;
 }
+
 .user-meta {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-weight: 500;
-    font-size: 0.95rem;
     cursor: pointer;
+    position: relative;
 }
+
 .avatar-circle {
     width: 36px;
     height: 36px;
-    background-color: #2563eb;
+    background-color: #2e8b57;
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.85rem;
+}
+
+.admin-name {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+
+.admin-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 1000;
+}
+
+.admin-dropdown.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: var(--bg-light);
+}
+
+.dropdown-item i {
+    width: 20px;
+    color: var(--text-muted);
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-container {
+    margin-left: 280px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .content-body {
@@ -161,18 +219,22 @@ body {
     width: 100%;
     margin: 0 auto;
 }
+
 .admin-scroll-layout {
     overflow-y: auto;
     flex: 1;
     padding-right: 0.5rem;
 }
+
 .admin-scroll-layout::-webkit-scrollbar {
     width: 8px;
 }
+
 .admin-scroll-layout::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
 }
+
 .admin-scroll-layout::-webkit-scrollbar-thumb {
     background: var(--primary-green);
     border-radius: 10px;
@@ -181,16 +243,19 @@ body {
 .page-header-block {
     margin-bottom: 2rem;
 }
+
 .page-title {
     font-size: 1.65rem;
     font-weight: 700;
     margin-bottom: 0.25rem;
 }
+
 .page-subtitle {
     font-size: 0.95rem;
     color: var(--text-muted);
 }
 
+/* Filtres */
 .filters-panel {
     background: white;
     border: 1px solid var(--border-color);
@@ -202,11 +267,13 @@ body {
     align-items: center;
     flex-wrap: wrap;
 }
+
 .search-wrapper {
     position: relative;
     flex: 2;
     min-width: 200px;
 }
+
 .search-wrapper i {
     position: absolute;
     left: 1rem;
@@ -215,6 +282,7 @@ body {
     color: var(--text-muted);
     font-size: 0.95rem;
 }
+
 .search-input {
     width: 100%;
     padding: 0.65rem 1rem 0.65rem 2.5rem;
@@ -223,16 +291,19 @@ body {
     font-size: 0.9rem;
     outline: none;
 }
+
 .search-input:focus {
     border-color: var(--primary-green);
 }
 
+/* Tableau */
 .table-container {
     background: white;
     border: 1px solid var(--border-color);
     border-radius: 16px;
     overflow-x: auto;
 }
+
 .data-table {
     width: 100%;
     border-collapse: collapse;
@@ -240,16 +311,19 @@ body {
     font-size: 0.9rem;
     min-width: 800px;
 }
+
 .data-table th {
     background-color: #fff;
     padding: 1rem 1.5rem;
     border-bottom: 2px solid var(--grid-line-color);
 }
+
 .data-table td {
     padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--grid-line-color);
     vertical-align: middle;
 }
+
 .data-table tbody tr:hover {
     background-color: rgba(17, 138, 107, 0.02);
 }
@@ -264,12 +338,13 @@ body {
     border-radius: 6px;
     transition: 0.2s;
 }
+
 .btn-delete:hover {
     background-color: #ffeeeb;
     transform: scale(1.1);
 }
 
-/* STATUT BADGES */
+/* Statut Badges */
 .status-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -277,24 +352,39 @@ body {
     font-size: 0.8rem;
     font-weight: 600;
 }
+
 .status-pending {
     background-color: #fef3c7;
     color: #d97706;
 }
+
 .status-confirm {
     background-color: #dcfce7;
     color: #16a34a;
 }
+
 .status-cancelled {
     background-color: #fee2e2;
     color: #ef4444;
 }
+
 .status-past {
     background-color: #f1f5f9;
     color: #475569;
 }
+
+/* Responsive */
 @media (max-width: 900px) {
-    .sidebar { width: 100%; height: auto; position: relative; }
-    .main-container { margin-left: 0; }
-    .filters-panel { flex-direction: column; align-items: stretch; }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .main-container {
+        margin-left: 0;
+    }
+    .filters-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
