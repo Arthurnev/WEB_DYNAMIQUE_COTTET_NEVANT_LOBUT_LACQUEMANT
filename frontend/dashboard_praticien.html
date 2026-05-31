@@ -9,19 +9,7 @@
   <link rel="stylesheet" href="css/style_practicien.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <style>
-    .hidden {
-      display: none !important;
-    }
 
-    .account-menu {
-      display: none;
-    }
-
-    .account-menu:not(.hidden) {
-      display: block;
-    }
-  </style>
 </head>
 
 <body>
@@ -68,15 +56,18 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="help-box">
-        <div class="help-icon">
-          <i class="fas fa-question"></i>
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <button type="button" class="contact-toggle" onclick="togglePraticienHelp()">Nous contacter</button>
+                <div class="contact-box hidden" id="contactBox">
+                    <p><strong><i class="fas fa-phone"></i> Téléphone</strong><br>01 23 45 67 89</p>
+                    <p><strong><i class="fas fa-envelope"></i> Email</strong><br>support@vitacare.fr</p>
+                    <a href="aide_praticien.html" class="faq-link"><i class="fas fa-circle-question"></i> FAQ</a>
+                </div>
+            </div>
         </div>
-        <strong>Besoin d'aide ?</strong>
-        <p>Notre équipe est là pour vous aider.</p>
-        <a href="aide_praticien.html">Nous contacter</a>
-      </div>
-    </div>
   </aside>
 
   <main class="main-content">
@@ -142,8 +133,8 @@
               href="compte_praticien.html"
               style="display:block; padding:8px; text-decoration:none; color:#333;"
             >
-              <i class="fas fa-user-cog"></i>
-              Mon compte
+              
+              ⚙️ Mon compte
             </a>
 
             <button
@@ -152,8 +143,8 @@
               style="display:block; width:100%; padding:8px; background:none; border:none; text-align:left; cursor:pointer; color:#333;"
               type="button"
             >
-              <i class="fas fa-sign-out-alt"></i>
-              Déconnexion
+              
+              🚪 Déconnexion
             </button>
           </div>
         </div>
@@ -659,6 +650,13 @@ function afficherActivites(activites) {
       </div>
     `;
   }).join("");
+}
+
+function toggleContactBox() {
+  const box = document.getElementById("contactBox");
+  if (box) {
+    box.classList.toggle("hidden");
+  }
 }
 </script>
 
