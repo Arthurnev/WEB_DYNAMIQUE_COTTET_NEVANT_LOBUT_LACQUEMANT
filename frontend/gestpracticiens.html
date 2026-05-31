@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare Campus – Gestion des Intervenants</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin_global.css">
+</head>
+<body>
+<div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">V</div>
+            <span>VitaCare Campus Admin</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="admin.html" class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
+            <a href="reservations.html" class="nav-item"><i class="far fa-calendar-check"></i> Réservations</a>
+            <a href="programmes.html" class="nav-item"><i class="fas fa-calendar-alt"></i> Activités & Programmes</a>
+            <a href="gestpracticiens.html" class="nav-item active"><i class="fas fa-user-md"></i> Intervenants</a>
+            <a href="gestetudiants.html" class="nav-item"><i class="fas fa-graduation-cap"></i> Étudiants</a>
+        </nav>
+    </aside>
+
+    <div class="main-container">
+        <header class="top-bar">
+            <div></div>
+            <div class="profile-area">
+                <div class="user-meta" onclick="toggleAdminMenu(event)">
+                    <div class="avatar-circle" id="topbar-avatar">JL</div>
+                    <span class="admin-name" id="admin-fullname">Ad. Lacquemant</span>
+                    <div class="admin-dropdown" id="admin-menu">
+                        <a href="compteA.html" class="dropdown-item" onclick="event.stopPropagation()">
+                            <i class="fas fa-user-circle"></i> Mon compte
+                        </a>
+                        <div class="dropdown-item logout-item" onclick="logout(event)">
+                            <i class="fas fa-door-open"></i> Déconnexion
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-body admin-scroll-layout">
+            <div class="page-header-block">
+                <h1 class="page-title">Gestion des intervenants</h1>
+                <p class="page-subtitle">Gérez tous les praticiens inscrits sur la plateforme</p>
+            </div>
+
+            <div class="filters-panel">
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher par nom, prénom, email, spécialité...">
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Adresse pro</th>
+                            <th>Spécialité</th>
+                            <th>Diplôme</th>
+                            <th>RPPS</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="js/gestpracticiens.js"></script>
+</body>
+</html>
