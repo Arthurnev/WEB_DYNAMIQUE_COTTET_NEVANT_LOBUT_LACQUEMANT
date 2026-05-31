@@ -11,7 +11,7 @@
 
 body {
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-    background: #f8fafc;
+    background: #eef8f5;
     color: #1f2937;
 }
 
@@ -19,7 +19,7 @@ body {
 .app-container {
     display: flex;
     min-height: 100vh;
-    background: #f8fafc;
+    background: #eef8f5;
 }
 
 /* ========== SIDEBAR ========== */
@@ -105,14 +105,15 @@ body {
 }
 
 .help-box {
-    background: #eaf7f4;
-    border-radius: 16px;
-    padding: 16px;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 18px;
     text-align: center;
+    border: 1px solid #e5e7eb;
 }
 
 .help-icon {
-    background: #2e8b57;
+    background: #2563eb;
     color: white;
     width: 32px;
     height: 32px;
@@ -202,11 +203,14 @@ body {
 
 /* Page content */
 .page-content {
-    padding: 32px;
+    padding: 20px 30px 30px 30px;
+    background: #eef8f5;
+    min-height: calc(100vh - 70px);
 }
 
 .page-header {
-    margin-bottom: 28px;
+    margin-bottom: 20px;
+    margin-top: 0;
 }
 
 .page-header h1 {
@@ -227,6 +231,7 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     width: 100%;
+    align-items: start;
 }
 
 .dashboard-col-left,
@@ -236,7 +241,12 @@ body {
 
 /* ========== CARTES GÉNÉRALES ========== */
 .dashboard-card {
-    height: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    height: auto;
 }
 
 .dashboard-card:hover {
@@ -247,9 +257,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+    margin-bottom: 10px;
     border-bottom: 1px solid #eef3f8;
-    padding-bottom: 12px;
+    padding-bottom: 8px;
 }
 
 .card-header h2 {
@@ -282,7 +292,7 @@ body {
 }
 
 .card-footer {
-    margin-top: 18px;
+    margin-top: 10px;
     text-align: center;
 }
 
@@ -2662,5 +2672,380 @@ body {
     
     .contact-card {
         padding: 24px;
+    }
+}
+
+/* ============================================================
+   CORRECTIONS GLOBALES - ALIGNEMENT AVEC INTERFACE PATIENT
+   ============================================================ */
+
+.main-content {
+    padding: 0 !important;
+    background: #eef8f5 !important;
+}
+
+.topbar {
+    margin-bottom: 0 !important;
+}
+
+.page-content {
+    background: #eef8f5 !important;
+    padding: 20px 30px 30px 30px !important;
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.dashboard-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px !important;
+    width: 100% !important;
+    max-width: none !important;
+    align-items: start !important;
+}
+
+
+
+.dashboard-col-left,
+.dashboard-col-right {
+    width: 100% !important;
+}
+
+.dashboard-card,
+.activity-card,
+.patient-card,
+.info-card,
+.disponibilites-table,
+.agenda-table-container,
+.notif-card,
+.faq-item,
+.detail-container,
+.empty-state,
+.empty-patients,
+.empty-activities,
+.empty-disponibilites {
+    background: #ffffff !important;
+    border-radius: 20px !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.dashboard-card {
+    padding: 18px !important;
+    min-height: auto !important;
+    height: auto !important;
+}
+
+.card-header {
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+}
+
+.card-header h2 {
+    font-size: 17px !important;
+}
+
+.agenda-day,
+.patient-item,
+.reservation-item,
+.dispo-item,
+.activite-item {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 8px !important;
+}
+
+.event-item {
+    padding: 9px 12px !important;
+    border-radius: 12px !important;
+}
+
+.card-footer {
+    margin-top: 8px !important;
+}
+
+.account-menu a,
+.account-menu button {
+    font-size: 14px !important;
+}
+
+.help-box {
+    background: #ffffff !important;
+    border-radius: 18px !important;
+    padding: 18px !important;
+    border: 1px solid #e5e7eb !important;
+    text-align: center !important;
+}
+
+.help-icon {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    width: 34px !important;
+    height: 34px !important;
+}
+
+.contact-toggle {
+    background: transparent !important;
+    border: none !important;
+    color: #2563eb !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    margin-top: 8px !important;
+    font-family: inherit !important;
+}
+
+.contact-box {
+    margin-top: 12px !important;
+    font-size: 12px !important;
+    color: #334155 !important;
+    text-align: left !important;
+}
+
+.contact-box p {
+    margin: 8px 0 !important;
+}
+
+.faq-link {
+    display: inline-block !important;
+    margin-top: 8px !important;
+    color: #2563eb !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+}
+
+@media (max-width: 1000px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ============================================================
+   CORRECTIONS FINALES DASHBOARD PRATICIEN
+   - fond vert clair
+   - topbar en haut
+   - cartes blanches
+   - blocs plus compacts
+   - aide identique interface patient
+   ============================================================ */
+
+html,
+body {
+    min-height: 100%;
+    background: #eef8f5 !important;
+    overflow-x: hidden;
+}
+
+.app-container {
+    align-items: stretch !important;
+    background: #eef8f5 !important;
+}
+
+.main-content {
+    margin-left: 260px !important;
+    width: calc(100vw - 260px) !important;
+    min-height: 100vh !important;
+    background: #eef8f5 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+}
+
+.topbar {
+    height: 70px !important;
+    min-height: 70px !important;
+    margin: 0 !important;
+    padding: 0 32px !important;
+    background: #ffffff !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 900 !important;
+}
+
+.page-content {
+    background: #eef8f5 !important;
+    margin: 0 !important;
+    padding: 18px 30px 30px 30px !important;
+    min-height: calc(100vh - 70px) !important;
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.page-header {
+    margin: 0 0 18px 0 !important;
+    padding: 0 !important;
+}
+
+.page-header h1 {
+    margin: 0 !important;
+}
+
+.dashboard-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 22px !important;
+    width: 100% !important;
+    max-width: none !important;
+    align-items: start !important;
+}
+
+.dashboard-col-left,
+.dashboard-col-right {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 22px !important;
+    width: 100% !important;
+}
+
+.dashboard-card,
+.activity-card,
+.patient-card,
+.info-card,
+.detail-container,
+.notif-card,
+.faq-item,
+.disponibilites-table,
+.agenda-table-container,
+.empty-state,
+.empty-patients,
+.empty-activities,
+.empty-disponibilites {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.dashboard-card {
+    border-radius: 20px !important;
+    padding: 18px !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+.card-header {
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+}
+
+.card-header h2 {
+    font-size: 16px !important;
+}
+
+.agenda-list,
+.patient-list,
+.reservation-list,
+.disponibilite-list,
+.activite-list {
+    gap: 8px !important;
+}
+
+.agenda-day,
+.patient-item,
+.reservation-item,
+.dispo-item,
+.activite-item {
+    background: #ffffff !important;
+    padding: 9px 12px !important;
+    margin: 0 !important;
+    border-radius: 14px !important;
+    border: 1px solid #eef2f8 !important;
+}
+
+.event-item {
+    background: #f8fafc !important;
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+}
+
+.dispo-item {
+    border-left: 4px solid #2e8b57 !important;
+}
+
+.activite-item,
+.patient-item {
+    border-bottom: 0 !important;
+}
+
+.card-footer {
+    margin-top: 10px !important;
+}
+
+.account-menu a,
+.account-menu button {
+    font-size: 14px !important;
+    border-radius: 8px !important;
+}
+
+.account-menu a:hover,
+.account-menu button:hover {
+    background: #f3f4f6 !important;
+}
+
+.sidebar-footer {
+    padding: 16px !important;
+}
+
+.help-box {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 18px !important;
+    padding: 18px !important;
+    text-align: center !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04) !important;
+}
+
+.help-icon {
+    background: #2e8b57 !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+.contact-toggle {
+    background: #ffffff !important;
+    color: #2e8b57 !important;
+    border: 1px solid #d1fae5 !important;
+    border-radius: 999px !important;
+    padding: 8px 14px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    margin-top: 6px !important;
+}
+
+.contact-toggle:hover {
+    background: #eaf7f4 !important;
+}
+
+.contact-box {
+    margin-top: 12px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid #e5e7eb !important;
+    text-align: left !important;
+}
+
+.contact-box p {
+    margin: 8px 0 !important;
+    color: #334155 !important;
+}
+
+.faq-link {
+    display: inline-block !important;
+    margin-top: 8px !important;
+    color: #2e8b57 !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 1000px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
     }
 }
