@@ -1,18 +1,24 @@
 function showMessage(text, type) {
   const msg = document.getElementById("message");
   if (!msg) return;
+
   msg.textContent = text;
   msg.className = "message " + type;
-  msg.style.display = "block"; // ← ligne ajoutée
+  msg.style.display = "block";
 }
 
-function switchTab(role, el) {         // ← reçoit l'élément
+function switchTab(role, el) {
   document.getElementById("form-etudiant").style.display =
     role === "etudiant" ? "block" : "none";
+
   document.getElementById("form-praticien").style.display =
     role === "praticien" ? "block" : "none";
-  document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
-  el.classList.add("active");          // ← utilise el
+
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.classList.remove("active");
+  });
+
+  el.classList.add("active");
 }
 
 async function login() {
@@ -27,25 +33,33 @@ async function login() {
   try {
     const res = await fetch("../backend/auth.php?action=login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, mot_de_passe: password }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        mot_de_passe: password
+      })
     });
 
     const data = await res.json();
+    console.log(data);
 
     if (data.success) {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       if (data.user.role === "admin") {
-        window.location.href = "dashboard_admin.html";
+        window.location.href = "admin.html";
       } else if (data.user.role === "praticien") {
         window.location.href = "dashboard_praticien.html";
       } else {
         window.location.href = "index.html";
       }
+
     } else {
       showMessage(data.error, "error");
     }
+
   } catch (error) {
     showMessage("Erreur de connexion au serveur", "error");
   }
@@ -65,26 +79,30 @@ async function registerEtudiant() {
   try {
     const res = await fetch("../backend/auth.php?action=register", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
-        nom,
-        prenom,
-        email,
-        mot_de_passe: password,
-        role: "etudiant",
-      }),
+        nom: nom,
+        prenom: prenom,
+        email: email,
+        mot_de_passe: password
+      })
     });
 
     const data = await res.json();
 
     if (data.success) {
       showMessage("Compte créé ! Redirection...", "success");
+
       setTimeout(() => {
         window.location.href = "login.html";
       }, 1000);
+
     } else {
       showMessage(data.error, "error");
     }
+
   } catch (error) {
     showMessage("Erreur de connexion au serveur", "error");
   }
@@ -109,30 +127,35 @@ async function registerPraticien() {
   try {
     const res = await fetch("../backend/auth.php?action=register_praticien", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
-        nom,
-        prenom,
-        email,
+        nom: nom,
+        prenom: prenom,
+        email: email,
         mot_de_passe: password,
-        telephone,
-        adresse,
-        specialite,
-        diplome,
-        rpps,
-      }),
+        telephone: telephone,
+        adresse: adresse,
+        specialite: specialite,
+        diplome: diplome,
+        rpps: rpps
+      })
     });
 
     const data = await res.json();
 
     if (data.success) {
       showMessage("Compte praticien créé ! Redirection...", "success");
+
       setTimeout(() => {
         window.location.href = "login.html";
       }, 1000);
+
     } else {
       showMessage(data.error, "error");
     }
+
   } catch (error) {
     showMessage("Erreur de connexion au serveur", "error");
   }
