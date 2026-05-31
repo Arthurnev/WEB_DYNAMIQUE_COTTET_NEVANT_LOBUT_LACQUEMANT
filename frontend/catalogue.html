@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Catalogue - VitaCare</title>
+
+  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+</head>
+
+<body>
+
+<div class="student-app">
+
+  <aside class="student-sidebar">
+    <div class="student-brand">
+      <div class="brand-icon">V</div>
+      <strong>VitaCare Campus</strong>
+    </div>
+
+    <nav class="student-menu">
+
+  <a  href="index.html">
+    <i class="fas fa-th-large"></i>
+    Dashboard
+  </a>
+
+  <a class="active" href="catalogue.html">
+    <i class="fas fa-book-open"></i>
+    Catalogue
+  </a>
+
+  <a href="suivi_historique.html">
+    <i class="fas fa-calendar-alt"></i>
+    Suivi & historique
+  </a>
+
+  <a href="activites.html">
+    <i class="fas fa-heart"></i>
+    Activités
+  </a>
+
+  <a href="notifications.html">
+    <i class="fas fa-bell"></i>
+    Notifications
+    <span id="sidebarNotifCount">0</span>
+  </a>
+
+</nav>
+
+    <div class="student-help">
+      <div class="help-icon">?</div>
+      <strong>Besoin d'aide ?</strong>
+      <p>Notre équipe est là pour vous aider.</p>
+
+      <button type="button" class="contact-toggle" onclick="toggleContactBox()">
+        Nous contacter
+      </button>
+
+      <div class="contact-box hidden" id="contactBox">
+        <p><strong>📞 Téléphone</strong><br>01 23 45 67 89</p>
+        <p><strong>✉️ Email</strong><br>contact@vitacare-campus.fr</p>
+        <p class="contact-note">Réponse sous 24h ouvrées.</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="student-main">
+
+    <header class="student-topbar">
+      <div class="student-actions">
+        <div class="notif-dropdown-container" style="position:relative; display:inline-block;">
+          <button class="notif-bell" id="notifBell" style="background:none; border:none; font-size:20px; cursor:pointer; position:relative;">
+            🔔
+            <span id="topbarNotifCount" style="position:absolute; top:-5px; right:-10px; background:#ef4444; color:white; font-size:10px; padding:2px 5px; border-radius:50%; display:none;">0</span>
+          </button>
+          <div id="notifDropdown" style="display:none; position:absolute; top:35px; right:0; width:300px; background:white; border-radius:10px; box-shadow:0 5px 20px rgba(0,0,0,0.15); z-index:100; border:1px solid #ccc;">
+            <div style="padding:10px; border-bottom:1px solid #eee; font-weight:bold;">Notifications</div>
+            <div id="notifDropdownList" style="max-height:300px; overflow-y:auto;"></div>
+            <div style="padding:10px; text-align:center; border-top:1px solid #eee;">
+              <a href="notifications.html" style="color:#2e8b57; text-decoration:none;">Voir toutes</a>
+            </div>
+          </div>
+        </div>
+        <a href="panier.html" class="cart-link">🛒</a>
+
+        <div class="account-wrapper">
+          <button class="avatar-button" onclick="toggleAccountMenu()" type="button">
+            <div class="student-avatar" id="studentAvatar"></div>
+          </button>
+
+          <strong id="studentName"></strong>
+
+          <div class="account-menu hidden" id="accountMenu">
+            <a href="compte.html">⚙️ Mon compte</a>
+            <button class="logout-btn" onclick="logout()">🚪 Déconnexion</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="catalogue-page">
+      <div class="catalogue-header">
+        <h1>Catalogue des services</h1>
+        <p>Recherchez une consultation, une activité ou un professionnel.</p>
+      </div>
+
+      <div class="catalogue-search">
+        <input type="text" id="searchInput" placeholder="Rechercher un service, un praticien, une spécialité...">
+      </div>
+
+      <div class="catalogue-tabs">
+        <button class="active" data-category="all">Tous</button>
+        <button data-category="medecine">Médecine</button>
+        <button data-category="sport">Sport & Fitness</button>
+        <button data-category="bien_etre">Bien-être mental</button>
+        <button data-category="nutrition">Nutrition</button>
+      </div>
+
+      <div class="catalogue-layout">
+
+        <section class="services-list" id="servicesList">
+          <!-- Cartes générées par catalogue.js -->
+        </section>
+
+        <aside class="catalogue-side">
+
+          <div class="filters-card">
+            <h2>Filtres</h2>
+
+            <h3>Mode de consultation</h3>
+
+            <label>
+              <input type="checkbox" class="filter-mode" value="Présentiel">
+              Présentiel
+            </label>
+
+            <label>
+              <input type="checkbox" class="filter-mode" value="Vidéo">
+              Vidéo
+            </label>
+
+            <label>
+              <input type="checkbox" class="filter-mode" value="Téléphone">
+              Téléphone
+            </label>
+
+            <h3>Durée</h3>
+
+            <div class="duration-filters">
+              <button class="duration-filter active" data-duration="all">Tous</button>
+              <button class="duration-filter" data-duration="15">15 min</button>
+              <button class="duration-filter" data-duration="30">30 min</button>
+              <button class="duration-filter" data-duration="45">45 min</button>
+              <button class="duration-filter" data-duration="60">60 min+</button>
+            </div>
+          </div>
+
+          <div class="map-card">
+            <div class="map-title">
+              <h2>Carte des praticiens</h2>
+              <button type="button" id="expandMapBtn">Agrandir</button>
+            </div>
+
+            <div id="doctorMap"></div>
+          </div>
+
+        </aside>
+
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<div class="map-modal hidden" id="mapModal">
+  <div class="map-modal-content">
+    <button type="button" class="close-map" id="closeMapBtn">×</button>
+    <h2>Localisation des praticiens</h2>
+    <div id="doctorMapLarge"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="js/auth.js?v=2"></script>
+<script src="js/dashboard.js?v=2"></script>
+<script src="js/catalogue.js?v=2"></script>
+<script src="js/notifications.js"></script>
+
+</body>
+</html>

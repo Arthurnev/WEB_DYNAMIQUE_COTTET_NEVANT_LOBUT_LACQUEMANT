@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de bord praticien - VitaCare Campus</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style_practicien.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+</head>
+
+<body>
+
+<div class="app-container">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">V</div>
+      <span class="brand-name">VitaCare <small>Campus</small></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard_praticien.html" class="active">
+        <i class="fas fa-th-large"></i>
+        Tableau de bord
+      </a>
+
+      <a href="agenda_praticien.html">
+        <i class="fas fa-calendar-alt"></i>
+        Agenda
+      </a>
+
+      <a href="disponibilites_praticien.html">
+        <i class="fas fa-clock"></i>
+        Disponibilités
+      </a>
+
+      <a href="patients_praticien.html">
+        <i class="fas fa-users"></i>
+        Patients
+      </a>
+
+      <a href="activites_praticien.html">
+        <i class="fas fa-heart"></i>
+        Activités
+      </a>
+
+      <a href="notifications_praticien.html">
+        <i class="fas fa-bell"></i>
+        Notifications
+        <span class="badge" id="sidebar-notif-count">0</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <button type="button" class="contact-toggle" onclick="togglePraticienHelp()">Nous contacter</button>
+                <div class="contact-box hidden" id="contactBox">
+                    <p><strong><i class="fas fa-phone"></i> Téléphone</strong><br>01 23 45 67 89</p>
+                    <p><strong><i class="fas fa-envelope"></i> Email</strong><br>support@vitacare.fr</p>
+                    <a href="aide_praticien.html" class="faq-link"><i class="fas fa-circle-question"></i> FAQ</a>
+                </div>
+            </div>
+        </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="topbar-right">
+
+        <div class="notif-dropdown-container" style="position:relative;">
+          <span class="icon-btn notif-bell" id="notif-bell" style="cursor:pointer; position:relative;">
+            <i class="fas fa-bell"></i>
+            <span
+              id="topbar-notif-count"
+              style="position:absolute; top:-8px; right:-8px; background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:999px; display:none;"
+            >
+              0
+            </span>
+          </span>
+
+          <div
+            id="notif-dropdown"
+            style="display:none; position:absolute; top:100%; right:0; width:380px; max-height:450px; background:white; border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,0.15); border:1px solid #e5e7eb; z-index:1000; margin-top:12px;"
+          >
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid #e5e7eb;">
+              <span style="font-weight:700; font-size:16px;">Notifications</span>
+              <button
+                id="markAllReadBtn"
+                style="background:transparent; border:none; color:#2e8b57; font-size:13px; font-weight:600; cursor:pointer;"
+              >
+                Tout marquer comme lu
+              </button>
+            </div>
+
+            <div id="notif-dropdown-list" style="max-height:320px; overflow-y:auto;">
+              <div style="padding:20px; text-align:center;">Chargement...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="account-wrapper" style="position:relative; display:inline-block; margin-left:15px;">
+          <button
+            class="avatar-button"
+            onclick="toggleAccountMenu()"
+            style="background:none; border:none; cursor:pointer;"
+            type="button"
+          >
+            <div
+              class="student-avatar"
+              id="studentAvatar"
+              style="width:35px; height:35px; border-radius:50%; background:#2e8b57; color:white; display:inline-flex; align-items:center; justify-content:center;"
+            >
+              DR
+            </div>
+          </button>
+
+          <strong id="studentName" style="margin-left:8px;"></strong>
+
+          <div
+            class="account-menu hidden"
+            id="accountMenu"
+            style="position:absolute; top:40px; right:0; background:white; border:1px solid #ccc; border-radius:8px; padding:10px; min-width:170px; box-shadow:0 4px 12px rgba(0,0,0,0.1); z-index:1000;"
+          >
+            <a
+              href="compte_praticien.html"
+              style="display:block; padding:8px; text-decoration:none; color:#333;"
+            >
+              
+              ⚙️ Mon compte
+            </a>
+
+            <button
+              class="logout-btn"
+              onclick="logout()"
+              style="display:block; width:100%; padding:8px; background:none; border:none; text-align:left; cursor:pointer; color:#333;"
+              type="button"
+            >
+              
+              🚪 Déconnexion
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="page-header">
+        <h1 id="welcomeTitle">Bonjour 👋</h1>
+        <p class="subtitle">Voici un aperçu de votre journée et de votre semaine</p>
+      </div>
+
+      <div class="dashboard-grid">
+
+        <div class="dashboard-col-left">
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>
+                <i class="fas fa-calendar-alt" style="color:#2e8b57;"></i>
+                Agenda de la semaine
+              </h2>
+            </div>
+
+           <div class="agenda-list" id="agendaSemaine"></div>
+
+            <div class="card-footer">
+              <a href="agenda_praticien.html" class="see-all">Voir agenda complet</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>
+                <i class="fas fa-users" style="color:#2e8b57;"></i>
+                Patients récents
+              </h2>
+              <a href="patients_praticien.html" class="see-all">Voir tous</a>
+            </div>
+
+            <div class="patient-list" id="patientsRecents"></div>
+          </div>
+
+        </div>
+
+        <div class="dashboard-col-right">
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>
+                <i class="fas fa-clock" style="color:#2e8b57;"></i>
+                Réservations du jour
+              </h2>
+            </div>
+
+            <div class="reservation-list" id="reservationsJour"></div>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>
+                <i class="fas fa-calendar-check" style="color:#2e8b57;"></i>
+                Disponibilités à venir
+              </h2>
+            </div>
+
+           <div class="disponibilite-list" id="disponibilitesAVenir"></div>
+
+            <div class="card-footer">
+              <a href="disponibilites_praticien.html" class="see-all">Gérer mes disponibilités</a>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>
+                <i class="fas fa-heart" style="color:#2e8b57;"></i>
+                Activités créées
+              </h2>
+              <a href="activites_praticien.html" class="see-all">Voir toutes</a>
+            </div>
+
+            <div class="activite-list" id="activitesCreees"></div>
+
+            <div class="card-footer" style="margin-top:16px;">
+              <button
+                class="btn-primary"
+                style="width:100%;"
+                onclick="window.location.href='activites_praticien.html'"
+              >
+                + Créer une activité
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const prenom = user.prenom || "";
+    const nom = user.nom || "";
+
+    document.getElementById("studentAvatar").textContent =
+      `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase() || "DR";
+
+    document.getElementById("studentName").textContent =
+      `Dr. ${prenom} ${nom}`.trim();
+
+    document.getElementById("welcomeTitle").textContent =
+      `Bonjour, Dr. ${nom} 👋`;
+
+    chargerDashboardPraticien();
+    initNotifications();
+  });
+
+  function toggleAccountMenu() {
+    const menu = document.getElementById("accountMenu");
+
+    if (!menu) return;
+
+    menu.classList.toggle("hidden");
+  }
+
+  document.addEventListener("click", function(event) {
+    const menu = document.getElementById("accountMenu");
+    const wrapper = document.querySelector(".account-wrapper");
+
+    if (!menu || !wrapper) return;
+
+    if (!wrapper.contains(event.target)) {
+      menu.classList.add("hidden");
+    }
+  });
+
+  function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+  }
+
+  function initNotifications() {
+    const bell = document.getElementById("notif-bell");
+    const dropdown = document.getElementById("notif-dropdown");
+    const markAllBtn = document.getElementById("markAllReadBtn");
+
+    chargerNotifications();
+
+    if (bell && dropdown) {
+      bell.addEventListener("click", function(e) {
+        e.stopPropagation();
+
+        if (dropdown.style.display === "block") {
+          dropdown.style.display = "none";
+        } else {
+          chargerNotifications();
+          dropdown.style.display = "block";
+        }
+      });
+
+      document.addEventListener("click", function(e) {
+        if (!bell.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.style.display = "none";
+        }
+      });
+    }
+
+    if (markAllBtn) {
+      markAllBtn.onclick = marquerToutLu;
+    }
+  }
+
+  function chargerNotifications() {
+    fetch("../backend/notifications.php", {
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) return;
+
+        const notifications = data.notifications || [];
+        const nonLues = notifications.filter(n => Number(n.lu) === 0).length;
+
+        const topbarBadge = document.getElementById("topbar-notif-count");
+        if (topbarBadge) {
+          topbarBadge.textContent = nonLues;
+          topbarBadge.style.display = nonLues > 0 ? "block" : "none";
+        }
+
+        const sidebarBadge = document.getElementById("sidebar-notif-count");
+        if (sidebarBadge) {
+          sidebarBadge.textContent = nonLues;
+          sidebarBadge.style.display = nonLues > 0 ? "inline-block" : "none";
+        }
+
+        afficherNotifications(notifications);
+      })
+      .catch(err => console.error("Erreur notifications:", err));
+  }
+
+  function afficherNotifications(notifications) {
+    const container = document.getElementById("notif-dropdown-list");
+    if (!container) return;
+
+    if (notifications.length === 0) {
+      container.innerHTML =
+        '<div style="padding:20px; text-align:center; color:#9ca3af;">Aucune notification</div>';
+      return;
+    }
+
+    const recentes = [...notifications]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 5);
+
+    container.innerHTML = recentes.map(notif => {
+      const estLu = Number(notif.lu) === 1;
+
+      let bgColor = "#e5e7eb";
+      let iconColor = "#4b5563";
+      let iconFa = "fa-info-circle";
+
+      if (notif.type === "rappel") {
+        bgColor = "#fef3c7";
+        iconColor = "#d97706";
+        iconFa = "fa-bell";
+      } else if (notif.type === "confirmation") {
+        bgColor = "#d1fae5";
+        iconColor = "#065f46";
+        iconFa = "fa-check-circle";
+      } else if (notif.type === "annulation") {
+        bgColor = "#fee2e2";
+        iconColor = "#dc2626";
+        iconFa = "fa-times-circle";
+      }
+
+      const date = new Date(notif.date);
+      const dateStr = date.toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "numeric"
+      });
+
+      const heureStr = date.toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      const titre =
+        notif.titre ||
+        (notif.message.length > 50
+          ? notif.message.substring(0, 50) + "..."
+          : notif.message);
+
+      return `
+        <div
+          onclick="marquerCommeLu(${notif.id})"
+          style="padding:12px 18px; display:flex; gap:12px; cursor:pointer; border-bottom:1px solid #f0f4f9; ${!estLu ? "background:#eaf7f4;" : ""}"
+        >
+          <div style="width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; background:${bgColor}; color:${iconColor}">
+            <i class="fas ${iconFa}"></i>
+          </div>
+
+          <div style="flex:1">
+            <div style="font-weight:600; font-size:14px; color:#1f2937; margin-bottom:4px;">
+              ${escapeHtml(titre)}
+            </div>
+
+            <div style="font-size:12px; color:#6b7280;">
+              ${escapeHtml(notif.message.substring(0, 80))}
+            </div>
+
+            <div style="font-size:11px; color:#9ca3af; margin-top:4px;">
+              ${dateStr} à ${heureStr}
+            </div>
+          </div>
+
+          ${!estLu ? '<div style="width:8px; height:8px; border-radius:50%; background:#2e8b57; margin-top:12px;"></div>' : ""}
+        </div>
+      `;
+    }).join("");
+
+    container.innerHTML += `
+      <div style="padding:12px 18px; text-align:center; border-top:1px solid #e5e7eb;">
+        <a href="notifications_praticien.html" style="color:#2e8b57; text-decoration:none; font-weight:600;">
+          Voir toutes les notifications →
+        </a>
+      </div>
+    `;
+  }
+
+  function marquerCommeLu(id) {
+    fetch("../backend/marquer_notification_lu.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        id: id
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          chargerNotifications();
+        }
+      })
+      .catch(err => console.error("Erreur:", err));
+  }
+
+  function marquerToutLu() {
+    fetch("../backend/marquer_tout_lu.php", {
+      method: "POST",
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          chargerNotifications();
+        }
+      })
+      .catch(err => console.error("Erreur:", err));
+  }
+
+  function escapeHtml(text) {
+    if (!text) return "";
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  async function chargerDashboardPraticien() {
+  try {
+    const res = await fetch("../backend/dashboard_praticien.php", {
+      credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      console.error(data.error);
+      return;
+    }
+
+    afficherAgenda(data.agenda);
+    afficherReservationsJour(data.reservations_jour);
+    afficherDisponibilites(data.disponibilites);
+    afficherPatients(data.patients);
+    afficherActivites(data.activites);
+
+  } catch (error) {
+    console.error("Erreur dashboard :", error);
+  }
+}
+
+function afficherAgenda(agenda) {
+  const container = document.getElementById("agendaSemaine");
+  if (!container) return;
+
+  if (agenda.length === 0) {
+    container.innerHTML = `<p class="empty-state">Aucun rendez-vous à venir.</p>`;
+    return;
+  }
+
+  container.innerHTML = agenda.map(rdv => {
+    const date = new Date(rdv.date);
+    const jour = date.toLocaleDateString("fr-FR", { weekday: "short" });
+    const dateStr = date.toLocaleDateString("fr-FR");
+
+    return `
+      <div class="agenda-day">
+        <span class="day-label">${jour}</span>
+        <div class="day-events">
+          <div class="event-item">
+            ${rdv.heure_debut.slice(0, 5)} - ${rdv.patient_prenom} ${rdv.patient_nom}
+            <br><small>${dateStr} • ${rdv.service_nom}</small>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function afficherReservationsJour(reservations) {
+  const container = document.getElementById("reservationsJour");
+  if (!container) return;
+
+  if (reservations.length === 0) {
+    container.innerHTML = `<p class="empty-state">Aucune réservation aujourd’hui.</p>`;
+    return;
+  }
+
+  container.innerHTML = reservations.map(rdv => `
+    <div class="reservation-item">
+      <div class="reservation-time">${rdv.heure_debut.slice(0, 5)}</div>
+
+      <div class="reservation-info">
+        <div class="reservation-patient">${rdv.patient_prenom} ${rdv.patient_nom}</div>
+        <div class="reservation-service">${rdv.service_nom}</div>
+      </div>
+
+      <div class="reservation-status ${rdv.statut === "confirmee" ? "confirmed" : "pending"}">
+        ${rdv.statut === "confirmee" ? "Confirmé" : "En attente"}
+      </div>
+    </div>
+  `).join("");
+}
+
+function afficherDisponibilites(dispos) {
+  const container = document.getElementById("disponibilitesAVenir");
+  if (!container) return;
+
+  if (dispos.length === 0) {
+    container.innerHTML = `<p class="empty-state">Aucune disponibilité à venir.</p>`;
+    return;
+  }
+
+  container.innerHTML = dispos.map(dispo => {
+    const date = new Date(dispo.date).toLocaleDateString("fr-FR");
+
+    return `
+      <div class="dispo-item available">
+        <div class="dispo-date">${date}</div>
+        <div class="dispo-time">${dispo.heure_debut.slice(0, 5)} - ${dispo.heure_fin.slice(0, 5)}</div>
+        <div class="dispo-status">Libre</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function afficherPatients(patients) {
+  const container = document.getElementById("patientsRecents");
+  if (!container) return;
+
+  if (patients.length === 0) {
+    container.innerHTML = `<p class="empty-state">Aucun patient pour le moment.</p>`;
+    return;
+  }
+
+  container.innerHTML = patients.map(patient => {
+    const date = patient.derniere_visite
+      ? new Date(patient.derniere_visite).toLocaleDateString("fr-FR")
+      : "Aucune";
+
+    return `
+      <div class="patient-item">
+        <div class="patient-avatar"><i class="fas fa-user"></i></div>
+
+        <div class="patient-info">
+          <div class="patient-name">${patient.prenom} ${patient.nom}</div>
+          <div class="patient-detail">${patient.nb_consultations} consultation${patient.nb_consultations > 1 ? "s" : ""}</div>
+        </div>
+
+        <div class="patient-date">${date}</div>
+
+        <a href="dossier_patient.html?id=${patient.id}" class="patient-link">
+          Voir dossier
+        </a>
+      </div>
+    `;
+  }).join("");
+}
+
+function afficherActivites(activites) {
+  const container = document.getElementById("activitesCreees");
+  if (!container) return;
+
+  if (activites.length === 0) {
+    container.innerHTML = `<p class="empty-state">Aucune activité créée.</p>`;
+    return;
+  }
+
+  container.innerHTML = activites.map(act => {
+    const date = new Date(act.date_heure).toLocaleDateString("fr-FR");
+    const capacite = Number(act.capacite_max) || 1;
+    const inscrits = Number(act.nb_inscrits) || 0;
+    const progress = Math.min(100, Math.round((inscrits / capacite) * 100));
+
+    return `
+      <div class="activite-item">
+        <div class="activite-info">
+          <div class="activite-nom">${act.nom}</div>
+          <div class="activite-detail">${date} • ${inscrits}/${capacite} inscrits</div>
+        </div>
+
+        <div class="activite-progress">
+          <div class="progress-bar" style="width:${progress}%;"></div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function toggleContactBox() {
+  const box = document.getElementById("contactBox");
+  if (box) {
+    box.classList.toggle("hidden");
+  }
+}
+</script>
+
+</body>
+</html>

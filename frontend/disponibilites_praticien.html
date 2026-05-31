@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gestion des disponibilités - VitaCare Campus | Dr. Martin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style_practicien.css">
+    <style>
+        .hidden { display: none; }
+        .account-menu { display: none; }
+        .account-menu:not(.hidden) { display: block; }
+    
+    /* Harmonisation interface praticien avec le style patient */
+    .main-content {
+      width: calc(100vw - 280px) !important;
+      max-width: none !important;
+    }
+
+    .page-content {
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 48px 48px !important;
+    }
+
+    .topbar {
+      background: #fff !important;
+      border-bottom: 1px solid #e5e7eb !important;
+    }
+
+    .sidebar-footer .help-box {
+      background: #eaf7f4;
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .sidebar-footer .contact-toggle {
+      margin-top: 10px;
+      border: none;
+      background: transparent;
+      color: #2e8b57;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .sidebar-footer .contact-box {
+      margin-top: 12px;
+      text-align: left;
+      background: #fff;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 13px;
+    }
+
+    .sidebar-footer .contact-box p {
+      margin: 0 0 10px 0;
+      color: #334155;
+    }
+
+    .sidebar-footer .faq-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #2e8b57;
+      font-weight: 700;
+      text-decoration: none;
+      margin-top: 4px;
+    }
+
+    .sidebar-nav a {
+      gap: 12px;
+    }
+
+    .sidebar-nav .badge {
+      margin-left: auto;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">V</div>
+            <span class="brand-name">VitaCare <small>Campus</small></span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
+            <a href="agenda_praticien.html"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            <a href="disponibilites_praticien.html" class="active"><i class="fas fa-clock"></i> Disponibilités</a>
+            <a href="patients_praticien.html"><i class="fas fa-users"></i> Patients</a>
+            <a href="activites_praticien.html"><i class="fas fa-heart"></i> Activités</a>
+            <a href="notifications_praticien.html"><i class="fas fa-bell"></i> Notifications <span class="badge" id="sidebar-notif-count">0</span></a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <button type="button" class="contact-toggle" onclick="togglePraticienHelp()">Nous contacter</button>
+                <div class="contact-box hidden" id="contactBox">
+                    <p><strong><i class="fas fa-phone"></i> Téléphone</strong><br>01 23 45 67 89</p>
+                    <p><strong><i class="fas fa-envelope"></i> Email</strong><br>support@vitacare.fr</p>
+                    <a href="aide_praticien.html" class="faq-link"><i class="fas fa-circle-question"></i> FAQ</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-right">
+                <div class="notif-dropdown-container" style="position:relative;">
+                    <span class="icon-btn notif-bell" id="notif-bell" style="cursor:pointer; position:relative;">
+                        <i class="fas fa-bell"></i>
+                        <span id="topbar-notif-count" style="position:absolute; top:-8px; right:-8px; background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:999px; display:none;">0</span>
+                    </span>
+                    <div id="notif-dropdown" style="display:none; position:absolute; top:100%; right:0; width:380px; max-height:450px; background:white; border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,0.15); border:1px solid #e5e7eb; z-index:1000; margin-top:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid #e5e7eb;">
+                            <span style="font-weight:700; font-size:16px;">Notifications</span>
+                            <button id="markAllReadBtn" style="background:transparent; border:none; color:#2e8b57; font-size:13px; font-weight:600; cursor:pointer;">Tout marquer comme lu</button>
+                        </div>
+                        <div id="notif-dropdown-list" style="max-height:320px; overflow-y:auto;">
+                            <div style="padding:20px; text-align:center;">Chargement...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="account-wrapper" style="position:relative; display:inline-block; margin-left:15px;">
+                    <button class="avatar-button" onclick="toggleAccountMenu()" style="background:none; border:none; cursor:pointer;">
+                        <div class="student-avatar" id="studentAvatar" style="width:35px; height:35px; border-radius:50%; background:#2e8b57; color:white; display:inline-flex; align-items:center; justify-content:center;">MM</div>
+                    </button>
+                    <strong id="studentName" style="margin-left:8px;"></strong>
+                    <div class="account-menu hidden" id="accountMenu" style="position:absolute; top:40px; right:0; background:white; border:1px solid #ccc; border-radius:8px; padding:10px; min-width:150px; box-shadow:0 4px 12px rgba(0,0,0,0.1); z-index:1000;">
+                        <a href="compte_praticien.html" style="display:block; padding:8px; text-decoration:none; color:#333;"><i class="fas fa-user-cog"></i> Mon compte</a>
+                        <button class="logout-btn" onclick="logout()" style="display:block; width:100%; padding:8px; background:none; border:none; text-align:left; cursor:pointer; color:#333;"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="disponibilites-header">
+                <div>
+                    <h1>Gestion des disponibilités</h1>
+                    <p class="subtitle">Gérez vos plages horaires disponibles pour les réservations</p>
+                </div>
+                <button class="btn-add" id="openModalBtn">
+                    <i class="fas fa-plus"></i> Ajouter une disponibilité
+                </button>
+            </div>
+
+            <div id="disponibilitesContainer" class="disponibilites-table">
+                <div style="text-align:center; padding:40px;">Chargement...</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div id="dispoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-plus-circle"></i> Nouvelle disponibilité</h2>
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+        </div>
+        <form id="dispoForm">
+            <div class="form-group">
+                <label>Date *</label>
+                <input type="date" id="dispoDate" required>
+            </div>
+            <div class="form-group">
+                <label>Répétition</label>
+                <select id="dispoRepetition">
+                    <option value="unique">Une seule fois</option>
+                    <option value="hebdomadaire">Hebdomadaire</option>
+                    <option value="mensuelle">Mensuelle</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Heure de début *</label>
+                    <input type="time" id="dispoHeureDebut" required>
+                </div>
+                <div class="form-group">
+                    <label>Heure de fin *</label>
+                    <input type="time" id="dispoHeureFin" required>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel-modal" id="cancelModalBtn">Annuler</button>
+                <button type="submit" class="btn-submit">Ajouter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    function togglePraticienHelp() {
+        const box = document.getElementById("contactBox");
+        if (box) box.classList.toggle("hidden");
+    }
+
+    function setPraticienIdentity(user) {
+        const prenom = user.prenom || "";
+        const nom = user.nom || "";
+        const fullName = `${prenom} ${nom}`.trim();
+        const initials = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase() || "DR";
+
+        const studentAvatar = document.getElementById("studentAvatar");
+        const studentName = document.getElementById("studentName");
+        const avatarInitials = document.getElementById("avatar-initials");
+        const userName = document.getElementById("user-name");
+        const profileAvatar = document.getElementById("profileAvatar");
+        const profileName = document.getElementById("profileName");
+
+        if (studentAvatar) studentAvatar.textContent = initials;
+        if (studentName) studentName.textContent = `Dr. ${fullName}`.trim();
+        if (avatarInitials) avatarInitials.textContent = initials;
+        if (userName) userName.textContent = `Dr. ${fullName}`.trim();
+        if (profileAvatar) profileAvatar.textContent = initials;
+        if (profileName) profileName.textContent = `Dr. ${fullName}`.trim();
+    }
+
+    let currentUser = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        currentUser = user;
+        
+        setPraticienIdentity(user);
+        
+        await chargerDisponibilites();
+        
+        document.getElementById('openModalBtn').onclick = openModal;
+        document.getElementById('closeModalBtn').onclick = closeModal;
+        document.getElementById('cancelModalBtn').onclick = closeModal;
+        document.getElementById('dispoForm').onsubmit = ajouterDisponibilite;
+        
+        window.onclick = (event) => {
+            const modal = document.getElementById('dispoModal');
+            if (event.target === modal) closeModal();
+        };
+        
+        initNotifications();
+    });
+
+    function toggleAccountMenu() {
+    const menu = document.getElementById("accountMenu");
+
+    if (!menu) return;
+
+    menu.classList.toggle("hidden");
+}
+
+    function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+    }
+
+    document.addEventListener('click', function(event) {
+        const menu = document.getElementById('accountMenu');
+        const button = document.querySelector('.avatar-button');
+        if (menu && button && !button.contains(event.target) && !menu.contains(event.target)) {
+            menu.style.display = 'none';
+        }
+    });
+
+    async function chargerDisponibilites() {
+        const container = document.getElementById('disponibilitesContainer');
+        try {
+            const res = await fetch('../backend/lister_disponibilites.php', { credentials: 'include' });
+            const data = await res.json();
+            
+            if (!data.success) {
+                container.innerHTML = `<div class="empty-disponibilites"><p>Erreur: ${data.error}</p></div>`;
+                return;
+            }
+            
+            const disponibilites = data.disponibilites;
+            
+            if (disponibilites.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-disponibilites">
+                        <i class="fas fa-calendar-plus"></i>
+                        <p>Vous n'avez pas encore créé de disponibilité</p>
+                        <button class="btn-add" onclick="document.getElementById('openModalBtn').click()">
+                            <i class="fas fa-plus"></i> Ajouter une disponibilité
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table class="disponibilites-table">
+                    <thead>
+                        <tr><th>Date</th><th>Horaire</th><th>Répétition</th><th>Statut</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (const dispo of disponibilites) {
+                const date = new Date(dispo.date);
+                const dateStr = date.toLocaleDateString('fr-FR');
+                const heureDebut = dispo.heure_debut.substring(0, 5);
+                const heureFin = dispo.heure_fin.substring(0, 5);
+                
+                let statutClass = '';
+                let statutLabel = '';
+                let actions = '';
+                
+                if (dispo.statut === 'disponible') {
+                    statutClass = 'statut-libre';
+                    statutLabel = 'Libre';
+                    actions = `<button class="btn-delete-dispo" onclick="supprimerDisponibilite(${dispo.id})" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:16px;"><i class="fas fa-trash-alt"></i></button>`;
+                } else if (dispo.statut === 'reserve') {
+                    statutClass = 'statut-reserve';
+                    statutLabel = 'Réservé';
+                    let reservationId = null;
+                    try {
+                        const res2 = await fetch(`../backend/get_reservation_id.php?creneau_id=${dispo.id}`, { credentials: 'include' });
+                        const data2 = await res2.json();
+                        if (data2.success) reservationId = data2.reservation_id;
+                    } catch(e) {}
+                    
+                    if (reservationId) {
+                        actions = `<button class="btn-cancel-rdv" onclick="annulerRdv(${reservationId})" style="background:#fee2e2; border:1px solid #dc2626; color:#dc2626; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px;"><i class="fas fa-calendar-times"></i> Annuler</button>`;
+                    } else {
+                        actions = `<span style="color:#999;">-</span>`;
+                    }
+                } else {
+                    statutClass = 'statut-bloque';
+                    statutLabel = 'Bloqué';
+                    actions = `<button class="btn-delete-dispo" onclick="supprimerDisponibilite(${dispo.id})" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:16px;"><i class="fas fa-trash-alt"></i></button>`;
+                }
+                
+                html += `
+                    <tr>
+                        <td>${dateStr}</td>
+                        <td>${heureDebut} - ${heureFin}</td>
+                        <td>Unique<br></td>
+                        <td><span class="${statutClass}">${statutLabel}</span></td>
+                        <td>${actions}</td>
+                    </tr>
+                `;
+            }
+            
+            html += `</tbody><table>`;
+            container.innerHTML = html;
+            
+        } catch (error) {
+            container.innerHTML = `<div class="empty-disponibilites"><p>Erreur: ${error.message}</p></div>`;
+        }
+    }
+
+    async function annulerRdv(reservationId) {
+        if (!confirm('Annuler ce rendez-vous ?')) return;
+        
+        try {
+            const res = await fetch('../backend/annuler_rdv.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ id: reservationId })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                showToast('Rendez-vous annulé', 'success');
+                await chargerDisponibilites();
+                chargerNotifications();
+            } else {
+                showToast('Erreur: ' + data.error, 'error');
+            }
+        } catch (error) {
+            showToast('Erreur de connexion', 'error');
+        }
+    }
+
+    async function ajouterDisponibilite(event) {
+        event.preventDefault();
+        
+        const date = document.getElementById('dispoDate').value;
+        const repetition = document.getElementById('dispoRepetition').value;
+        const heureDebut = document.getElementById('dispoHeureDebut').value;
+        const heureFin = document.getElementById('dispoHeureFin').value;
+        
+        if (!date || !heureDebut || !heureFin) {
+            showToast('Veuillez remplir tous les champs obligatoires', 'error');
+            return;
+        }
+        
+        if (heureDebut >= heureFin) {
+            showToast('L\'heure de fin doit être après l\'heure de début', 'error');
+            return;
+        }
+        
+        try {
+            const res = await fetch('../backend/ajouter_disponibilite.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    date: date,
+                    heure_debut: heureDebut,
+                    heure_fin: heureFin,
+                    repetition: repetition
+                })
+            });
+            
+            const data = await res.json();
+            
+            if (data.success) {
+                showToast('Disponibilité ajoutée', 'success');
+                closeModal();
+                document.getElementById('dispoForm').reset();
+                await chargerDisponibilites();
+            } else {
+                showToast('Erreur: ' + data.error, 'error');
+            }
+        } catch (error) {
+            showToast('Erreur de connexion', 'error');
+        }
+    }
+
+    async function supprimerDisponibilite(id) {
+        if (!confirm('Supprimer cette disponibilité ?')) return;
+        
+        try {
+            const res = await fetch(`../backend/supprimer_disponibilite.php?id=${id}`, { credentials: 'include' });
+            const data = await res.json();
+            
+            if (data.success) {
+                showToast('Disponibilité supprimée', 'success');
+                await chargerDisponibilites();
+            } else {
+                showToast('Erreur: ' + data.error, 'error');
+            }
+        } catch (error) {
+            showToast('Erreur de connexion', 'error');
+        }
+    }
+
+    function openModal() {
+        const modal = document.getElementById('dispoModal');
+        modal.classList.add('open');
+        const today = new Date();
+        today.setDate(today.getDate() + 1);
+        document.getElementById('dispoDate').value = today.toISOString().split('T')[0];
+        document.getElementById('dispoHeureDebut').value = '09:00';
+        document.getElementById('dispoHeureFin').value = '12:00';
+    }
+
+    function closeModal() {
+        document.getElementById('dispoModal').classList.remove('open');
+        document.getElementById('dispoForm').reset();
+    }
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3000);
+    }
+
+    function initNotifications() {
+        const bell = document.getElementById('notif-bell');
+        const dropdown = document.getElementById('notif-dropdown');
+        const markAllBtn = document.getElementById('markAllReadBtn');
+        
+        chargerNotifications();
+        
+        if (bell && dropdown) {
+            bell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                } else {
+                    chargerNotifications();
+                    dropdown.style.display = 'block';
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!bell.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
+        }
+        
+        if (markAllBtn) {
+            markAllBtn.onclick = marquerToutLu;
+        }
+    }
+
+    function chargerNotifications() {
+        fetch('../backend/notifications.php', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const notifications = data.notifications;
+                    const nonLues = notifications.filter(n => n.lu == 0).length;
+                    const badge = document.getElementById('topbar-notif-count');
+                    const sidebarBadge = document.getElementById('sidebar-notif-count');
+
+if (sidebarBadge) {
+  sidebarBadge.textContent = nonLues;
+  sidebarBadge.style.display = nonLues > 0 ? 'inline-block' : 'none';
+}
+                    if (badge) {
+                        if (nonLues > 0) {
+                            badge.textContent = nonLues;
+                            badge.style.display = 'block';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                    afficherNotifications(notifications);
+                }
+            })
+            .catch(err => console.error("Erreur:", err));
+    }
+
+    function afficherNotifications(notifications) {
+        const container = document.getElementById('notif-dropdown-list');
+        if (!container) return;
+        
+        if (notifications.length === 0) {
+            container.innerHTML = '<div style="padding:20px; text-align:center; color:#9ca3af;">Aucune notification</div>';
+            return;
+        }
+        
+        const recentes = [...notifications].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+        
+        container.innerHTML = recentes.map(notif => {
+            const estLu = notif.lu == 1;
+            let bgColor = '#e5e7eb';
+            let iconColor = '#4b5563';
+            let iconFa = 'fa-info-circle';
+            
+            if (notif.type === 'rappel') {
+                bgColor = '#fef3c7';
+                iconColor = '#d97706';
+                iconFa = 'fa-bell';
+            } else if (notif.type === 'confirmation') {
+                bgColor = '#d1fae5';
+                iconColor = '#065f46';
+                iconFa = 'fa-check-circle';
+            } else if (notif.type === 'annulation') {
+                bgColor = '#fee2e2';
+                iconColor = '#dc2626';
+                iconFa = 'fa-times-circle';
+            }
+            
+            const date = new Date(notif.date);
+            const dateStr = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'numeric' });
+            const heureStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            
+            const titre = notif.message.length > 50 ? notif.message.substring(0, 50) + '...' : notif.message;
+            
+            return `
+                <div onclick="marquerCommeLu(${notif.id})" style="padding:12px 18px; display:flex; gap:12px; cursor:pointer; border-bottom:1px solid #f0f4f9; ${!estLu ? 'background:#eaf7f4;' : ''}">
+                    <div style="width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; background:${bgColor}; color:${iconColor}">
+                        <i class="fas ${iconFa}"></i>
+                    </div>
+                    <div style="flex:1">
+                        <div style="font-weight:600; font-size:14px; color:#1f2937; margin-bottom:4px;">${escapeHtml(titre)}</div>
+                        <div style="font-size:12px; color:#6b7280;">${escapeHtml(notif.message.substring(0, 80))}</div>
+                        <div style="font-size:11px; color:#9ca3af; margin-top:4px;">${dateStr} à ${heureStr}</div>
+                    </div>
+                    ${!estLu ? '<div style="width:8px; height:8px; border-radius:50%; background:#2e8b57; margin-top:12px;"></div>' : ''}
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML += `
+            <div style="padding:12px 18px; text-align:center; border-top:1px solid #e5e7eb;">
+                <a href="notifications_praticien.html" style="color:#2e8b57; text-decoration:none; font-weight:600;">Voir toutes les notifications →</a>
+            </div>
+        `;
+    }
+
+    function marquerCommeLu(id) {
+        fetch('../backend/marquer_notification_lu.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ id: id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                chargerNotifications();
+            }
+        })
+        .catch(err => console.error("Erreur:", err));
+    }
+
+    function marquerToutLu() {
+        fetch('../backend/marquer_tout_lu.php', {
+            method: 'POST',
+            credentials: 'include'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                chargerNotifications();
+            }
+        })
+        .catch(err => console.error("Erreur:", err));
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+</body>
+</html>

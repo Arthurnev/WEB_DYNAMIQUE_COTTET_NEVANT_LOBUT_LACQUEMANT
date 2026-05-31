@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Étudiant - VitaCare</title>
+  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+<body>
+
+<div class="student-app">
+
+  <aside class="student-sidebar">
+    <div class="student-brand">
+      <div class="brand-icon">V</div>
+      <strong>VitaCare Campus</strong>
+    </div>
+
+    <nav class="student-menu">
+
+  <a  class="active" href="index.html">
+    <i class="fas fa-th-large"></i>
+    Dashboard
+  </a>
+
+  <a  href="catalogue.html">
+    <i class="fas fa-book-open"></i>
+    Catalogue
+  </a>
+
+  <a href="suivi_historique.html">
+    <i class="fas fa-calendar-alt"></i>
+    Suivi & historique
+  </a>
+
+  <a href="activites.html">
+    <i class="fas fa-heart"></i>
+    Activités
+  </a>
+
+  <a   href="notifications.html">
+    <i class="fas fa-bell"></i>
+    Notifications
+    <span id="sidebarNotifCount">0</span>
+  </a>
+
+</nav>
+
+    <div class="student-help">
+      <div class="help-icon">?</div>
+      <strong>Besoin d'aide ?</strong>
+      <p>Notre équipe est là pour vous aider.</p>
+      <button class="contact-toggle" onclick="toggleContactBox()">Nous contacter</button>
+      <div class="contact-box hidden" id="contactBox">
+        <p><strong>📞 Téléphone</strong><br>01 23 45 67 89</p>
+        <p><strong>✉️ Email</strong><br>contact@vitacare-campus.fr</p>
+        <p class="contact-note">Réponse sous 24h ouvrées.</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="student-main">
+
+    <header class="student-topbar">
+      <div class="student-actions">
+        <div class="notif-dropdown-container" style="position:relative; display:inline-block;">
+          <button class="notif-bell" id="notifBell" style="background:none; border:none; font-size:20px; cursor:pointer; position:relative;">
+            🔔
+            <span id="topbarNotifCount" style="position:absolute; top:-5px; right:-10px; background:#ef4444; color:white; font-size:10px; padding:2px 5px; border-radius:50%; display:none;">0</span>
+          </button>
+          <div id="notifDropdown" style="display:none; position:absolute; top:35px; right:0; width:300px; background:white; border-radius:10px; box-shadow:0 5px 20px rgba(0,0,0,0.15); z-index:100; border:1px solid #ccc;">
+            <div style="padding:10px; border-bottom:1px solid #eee; font-weight:bold;">Notifications</div>
+            <div id="notifDropdownList" style="max-height:300px; overflow-y:auto;"></div>
+            <div style="padding:10px; text-align:center; border-top:1px solid #eee;">
+              <a href="notifications.html" style="color:#2e8b57; text-decoration:none;">Voir toutes</a>
+            </div>
+          </div>
+        </div>
+        <a href="panier.html" class="cart-link">🛒</a>
+        <div class="account-wrapper" style="position:relative; display:inline-block;">
+          <button class="avatar-button" onclick="toggleAccountMenu()" style="background:none; border:none; cursor:pointer;">
+            <div class="student-avatar" id="studentAvatar" style="width:35px; height:35px; border-radius:50%; background:#2e8b57; color:white; display:inline-flex; align-items:center; justify-content:center;">JD</div>
+          </button>
+          <strong id="studentName"></strong>
+          <div class="account-menu hidden" id="accountMenu" style="position:absolute; top:40px; right:0; background:white; border:1px solid #ccc; border-radius:8px; padding:10px; min-width:150px;">
+            <a href="compte.html" style="display:block; padding:8px; text-decoration:none; color:#333;">⚙️ Mon compte</a>
+            <button class="logout-btn" onclick="logout()" style="display:block; width:100%; padding:8px; background:none; border:none; text-align:left; cursor:pointer;">🚪 Déconnexion</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="student-welcome">
+      <h1>Bonjour, <span id="welcomeName"></span> 👋</h1>      
+      <p>Voici un aperçu de votre santé et bien-être</p>
+      <button onclick="window.location.href='catalogue.html'">+ Prendre un rendez-vous</button>
+    </section>
+
+    <section class="student-grid">
+
+      <div class="student-card">
+        <div class="card-title">
+          <h2>📅 Prochains rendez-vous</h2>
+          <a href="suivi_historique.html">Voir tout ›</a>
+        </div>
+        <div id="prochainsRdv">
+          <div>Chargement...</div>
+        </div>
+      </div>
+
+      <div class="student-card">
+        <div>
+          <button id="prevMonthBtn">◀</button>
+          <span id="monthYear"></span>
+          <button id="nextMonthBtn">▶</button>
+        </div>
+        <div id="calendarGrid"></div>
+      </div>
+
+      <div class="student-card">
+        <div class="card-title">
+          <h2>💚 Activités recommandées</h2>
+          <a href="activites.html">Voir tout ›</a>
+        </div>
+        <div id="activitesRecommandees">
+          <div>Chargement...</div>
+        </div>
+      </div>
+
+      <div class="student-card">
+        <div class="card-title">
+          <h2>🔔 Notifications récentes</h2>
+          <a href="notifications.html">Voir tout ›</a>
+        </div>
+        <div id="notificationsRecentes">
+          <div>Chargement...</div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+  let currentCalendarDate = new Date();
+  let rdvList = [];
+  let allNotifications = [];
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+    document.getElementById("studentName").textContent = user.prenom + " " + user.nom;
+    document.getElementById("studentAvatar").textContent = (user.prenom ? user.prenom[0] : "") + (user.nom ? user.nom[0] : "");
+    document.getElementById("welcomeName").textContent = user.prenom;
+    
+    await chargerToutesDonnees();
+    initNotifications();
+    afficherCalendrier();
+    
+    document.getElementById('prevMonthBtn').onclick = () => {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+      afficherCalendrier();
+    };
+    document.getElementById('nextMonthBtn').onclick = () => {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+      afficherCalendrier();
+    };
+  });
+
+  async function chargerToutesDonnees() {
+    await chargerProchainsRdv();
+    await chargerActivitesRecommandees();
+    await chargerNotificationsRecentes();
+  }
+
+  async function chargerProchainsRdv() {
+    try {
+      const res = await fetch('../backend/suivi.php', { credentials: 'include' });
+      const data = await res.json();
+      if (data.success && data.prochains) {
+        rdvList = data.prochains;
+        afficherProchainsRdv();
+      } else {
+        document.getElementById('prochainsRdv').innerHTML = '<div>Aucun rendez-vous à venir</div>';
+      }
+    } catch (error) {
+      document.getElementById('prochainsRdv').innerHTML = '<div>Erreur de chargement</div>';
+    }
+  }
+
+  function afficherProchainsRdv() {
+    const container = document.getElementById('prochainsRdv');
+    if (rdvList.length === 0) {
+      container.innerHTML = '<div>Aucun rendez-vous à venir</div>';
+      return;
+    }
+    
+    container.innerHTML = rdvList.map(rdv => {
+      const date = new Date(rdv.date_creneau);
+      const dateStr = date.toLocaleDateString('fr-FR');
+      const heureStr = rdv.heure_debut.substring(0,5);
+      return `
+        <div style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-radius:10px; cursor:pointer;" onclick="window.location.href='suivi_historique.html'">
+          <strong>${rdv.service_nom || 'Consultation'}</strong><br>
+          Dr. ${rdv.praticien_nom}<br>
+          ${dateStr} à ${heureStr}
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function chargerActivitesRecommandees() {
+    try {
+      const res = await fetch('../backend/lister_activites_etudiant.php', { credentials: 'include' });
+      const data = await res.json();
+      if (data.success && data.activites) {
+        const activites = data.activites.slice(0, 2);
+        afficherActivitesRecommandees(activites);
+      } else {
+        document.getElementById('activitesRecommandees').innerHTML = '<div>Aucune activité</div>';
+      }
+    } catch (error) {
+      document.getElementById('activitesRecommandees').innerHTML = '<div>Erreur de chargement</div>';
+    }
+  }
+
+  function afficherActivitesRecommandees(activites) {
+    const container = document.getElementById('activitesRecommandees');
+    if (activites.length === 0) {
+      container.innerHTML = '<div>Aucune activité recommandée</div>';
+      return;
+    }
+    
+    container.innerHTML = activites.map(act => {
+      const date = new Date(act.date_heure);
+      const dateStr = date.toLocaleDateString('fr-FR');
+      return `
+        <div style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-radius:10px; cursor:pointer;" onclick="window.location.href='activites.html'">
+          <strong>${act.nom}</strong><br>
+          ${act.lieu} - ${dateStr}<br>
+          ${act.inscrits || 0}/${act.capacite_max} inscrits
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function chargerNotificationsRecentes() {
+    try {
+      const res = await fetch('../backend/notifications.php', { credentials: 'include' });
+      const data = await res.json();
+      if (data.success) {
+        allNotifications = data.notifications || [];
+        const recentes = allNotifications.slice(0, 2);
+        afficherNotificationsRecentes(recentes);
+      }
+    } catch (error) {
+      document.getElementById('notificationsRecentes').innerHTML = '<div>Aucune notification</div>';
+    }
+  }
+
+  function afficherNotificationsRecentes(notifications) {
+    const container = document.getElementById('notificationsRecentes');
+    if (notifications.length === 0) {
+      container.innerHTML = '<div>Aucune notification</div>';
+      return;
+    }
+    
+    container.innerHTML = notifications.map(notif => {
+      const date = new Date(notif.date);
+      const dateStr = date.toLocaleDateString('fr-FR');
+      const titre = notif.message.length > 60 ? notif.message.substring(0,60)+'...' : notif.message;
+      return `
+        <div style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-radius:10px; cursor:pointer;" onclick="window.location.href='notifications.html'">
+          <strong>${titre}</strong><br>
+          ${dateStr}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function afficherCalendrier() {
+    const mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+    document.getElementById('monthYear').textContent = `${mois[currentCalendarDate.getMonth()]} ${currentCalendarDate.getFullYear()}`;
+    
+    const firstDay = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), 1);
+    const lastDay = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 0);
+    let startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
+    
+    const rdvDates = rdvList.map(rdv => rdv.date_creneau);
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    let html = '<div style="display:grid; grid-template-columns:repeat(7,1fr); gap:5px; text-align:center;">';
+    const joursSemaine = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    for (let j of joursSemaine) html += `<div style="font-weight:bold;">${j}</div>`;
+    
+    for (let i = 0; i < startOffset; i++) html += '<div></div>';
+    
+    for (let d = 1; d <= lastDay.getDate(); d++) {
+      const dateStr = `${currentCalendarDate.getFullYear()}-${String(currentCalendarDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const hasRdv = rdvDates.includes(dateStr);
+      const isToday = dateStr === todayStr;
+      let style = 'padding:8px; text-align:center; border-radius:50%;';
+      if (isToday) style += ' background:#2e8b57; color:white;';
+      if (hasRdv) style += ' font-weight:bold; color:#2e8b57;';
+      html += `<div style="${style}">${d}</div>`;
+    }
+    html += '</div>';
+    document.getElementById('calendarGrid').innerHTML = html;
+  }
+
+  function initNotifications() {
+    const bell = document.getElementById('notifBell');
+    const dropdown = document.getElementById('notifDropdown');
+    
+    chargerNotifications();
+    
+    if (bell && dropdown) {
+      bell.onclick = (e) => {
+        e.stopPropagation();
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        if (dropdown.style.display === 'block') chargerNotifications();
+      };
+      document.onclick = (e) => {
+        if (!bell.contains(e.target) && !dropdown.contains(e.target)) dropdown.style.display = 'none';
+      };
+    }
+  }
+
+  async function chargerNotifications() {
+    try {
+      const res = await fetch('../backend/notifications.php', { credentials: 'include' });
+      const data = await res.json();
+      if (data.success) {
+        const notifications = data.notifications || [];
+        const nonLues = notifications.filter(n => n.lu == 0).length;
+        
+        const topbarBadge = document.getElementById('topbarNotifCount');
+        if (topbarBadge) {
+          if (nonLues > 0) {
+            topbarBadge.textContent = nonLues;
+            topbarBadge.style.display = 'inline-block';
+          } else {
+            topbarBadge.style.display = 'none';
+          }
+        }
+        
+        const sidebarBadge = document.getElementById('sidebarNotifCount');
+        if (sidebarBadge) {
+          sidebarBadge.textContent = nonLues;
+        }
+        
+        afficherDropdownNotifications(notifications.slice(0, 5));
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  }
+
+  function afficherDropdownNotifications(notifications) {
+    const container = document.getElementById('notifDropdownList');
+    if (!container) return;
+    
+    if (notifications.length === 0) {
+      container.innerHTML = '<div style="padding:10px; text-align:center;">Aucune notification</div>';
+      return;
+    }
+    
+    container.innerHTML = notifications.map(notif => {
+      const date = new Date(notif.date);
+      const dateStr = date.toLocaleDateString('fr-FR');
+      const titre = notif.message.length > 50 ? notif.message.substring(0,50)+'...' : notif.message;
+      return `
+        <div style="padding:10px; border-bottom:1px solid #eee; cursor:pointer;" onclick="marquerCommeLu(${notif.id})">
+          <strong>${titre}</strong><br>
+          <small>${dateStr}</small>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function marquerCommeLu(id) {
+    try {
+      await fetch('../backend/marquer_notification_lu.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id: id })
+      });
+      chargerNotifications();
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  }
+
+  function toggleAccountMenu() {
+    const menu = document.getElementById('accountMenu');
+    menu.classList.toggle('hidden');
+  }
+
+  function toggleContactBox() {
+    const box = document.getElementById('contactBox');
+    box.classList.toggle('hidden');
+  }
+
+  function logout() {
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+  }
+</script>
+
+</body>
+</html>

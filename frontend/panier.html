@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Panier - VitaCare</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+<body>
+
+<div class="student-app">
+
+  <aside class="student-sidebar">
+    <div class="student-brand">
+      <div class="brand-icon">V</div>
+      <strong>VitaCare Campus</strong>
+    </div>
+
+     <nav class="student-menu">
+
+  <a  href="index.html">
+    <i class="fas fa-th-large"></i>
+    Dashboard
+  </a>
+
+  <a href="catalogue.html">
+    <i class="fas fa-book-open"></i>
+    Catalogue
+  </a>
+
+  <a href="suivi_historique.html">
+    <i class="fas fa-calendar-alt"></i>
+    Suivi & historique
+  </a>
+
+  <a href="activites.html">
+    <i class="fas fa-heart"></i>
+    Activités
+  </a>
+
+  <a href="notifications.html">
+    <i class="fas fa-bell"></i>
+    Notifications
+    <span id="sidebarNotifCount">0</span>
+  </a>
+
+</nav>
+
+    <div class="student-help">
+      <div class="help-icon">?</div>
+      <strong>Besoin d'aide ?</strong>
+      <p>Notre équipe est là pour vous aider.</p>
+      <button class="contact-toggle" onclick="toggleContactBox()">
+  Nous contacter
+</button>
+
+<div class="contact-box hidden" id="contactBox">
+  <p><strong>📞 Téléphone</strong><br>01 23 45 67 89</p>
+  <p><strong>✉️ Email</strong><br>contact@vitacare-campus.fr</p>
+  <p class="contact-note">Réponse sous 24h ouvrées.</p>
+</div>
+    </div>
+  </aside>
+
+  <main class="student-main">
+
+    <header class="student-topbar">
+      <div class="student-actions">
+       
+<div class="notif-dropdown-container" style="position:relative; display:inline-block;">
+          <button class="notif-bell" id="notifBell" style="background:none; border:none; font-size:20px; cursor:pointer; position:relative;">
+            🔔
+            <span id="topbarNotifCount" style="position:absolute; top:-5px; right:-10px; background:#ef4444; color:white; font-size:10px; padding:2px 5px; border-radius:50%; display:none;">0</span>
+          </button>
+          <div id="notifDropdown" style="display:none; position:absolute; top:35px; right:0; width:300px; background:white; border-radius:10px; box-shadow:0 5px 20px rgba(0,0,0,0.15); z-index:100; border:1px solid #ccc;">
+            <div style="padding:10px; border-bottom:1px solid #eee; font-weight:bold;">Notifications</div>
+            <div id="notifDropdownList" style="max-height:300px; overflow-y:auto;"></div>
+            <div style="padding:10px; text-align:center; border-top:1px solid #eee;">
+              <a href="notifications.html" style="color:#2e8b57; text-decoration:none;">Voir toutes</a>
+            </div>
+          </div>
+        </div>
+  <a href="panier.html" class="cart-link">
+    🛒
+  </a>
+        <div class="account-wrapper">
+  <button class="avatar-button" onclick="toggleAccountMenu()">
+    <div class="student-avatar" id="studentAvatar"></div>
+  </button>
+
+  <strong id="studentName"></strong>
+
+  <div class="account-menu hidden" id="accountMenu">
+  <a href="compte.html">⚙️ Mon compte</a>
+
+  <button class="logout-btn" onclick="logout()">
+    🚪 Déconnexion
+  </button>
+</div>
+      </div>
+    </header>
+
+    <section class="page-content">
+
+      <div class="page-header">
+        <h1>Mon panier</h1>
+        <p class="subtitle">Retrouvez ici vos consultations et activités en attente de validation.</p>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>Consultations ajoutées</h2>
+        </div>
+
+        <div id="reservationsList" class="list-container">
+          <p class="empty-state">Chargement...</p>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <button class="btn-primary" onclick="validerPanierReservations()">
+            Payer les consultations
+          </button>
+        </div>
+
+       
+        
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>Activités ajoutées</h2>
+        </div>
+
+        <div id="panierList" class="list-container">
+          <p class="empty-state">Chargement...</p>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <button class="btn-primary" onclick="validerPanierActivite()">
+            Payer les activités
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/notifications.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  chargerPanierReservations();
+  chargerPanierActivite();
+});
+
+async function chargerPanierReservations() {
+  const container = document.getElementById("reservationsList");
+
+  try {
+    const res = await fetch("../backend/lister_panier_reservations.php", {
+      credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      container.innerHTML = `<p class="empty-state">Erreur : ${data.error}</p>`;
+      return;
+    }
+
+    if (data.reservations.length === 0) {
+      container.innerHTML = `<p class="empty-state">Aucune consultation dans le panier.</p>`;
+      return;
+    }
+
+    container.innerHTML = data.reservations.map(item => {
+      const dateStr = new Date(item.date).toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+
+      return `
+  <div class="rdv-card">
+    <div class="rdv-card-header">
+      <div>
+        <div class="rdv-title">${item.service_nom}</div>
+        <div class="rdv-subtitle">
+          ${item.praticien_prenom} ${item.praticien_nom}
+        </div>
+      </div>
+      <span class="badge badge-en-attente">En attente</span>
+    </div>
+
+    <div class="rdv-details">
+      <span>📅 ${dateStr}</span>
+      <span>🕒 ${item.heure_debut.slice(0, 5)} - ${item.heure_fin.slice(0, 5)}</span>
+      <span>💶 ${Number(item.prix).toFixed(2)} €</span>
+    </div>
+
+    <button class="btn-annuler" onclick="supprimerReservationPanier(${item.reservation_id})">
+      Supprimer
+    </button>
+  </div>
+`;
+    }).join("");
+
+  } catch (error) {
+    container.innerHTML = `<p class="empty-state">Erreur de connexion au serveur.</p>`;
+  }
+}
+
+async function validerPanierReservations() {
+  if (!confirm("Confirmer le paiement des consultations ?")) {
+    return;
+  }
+
+  try {
+    const res = await fetch("../backend/valider_panier_reservations.php", {
+      method: "POST",
+      credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Paiement validé ! Consultations confirmées.");
+      chargerPanierReservations();
+    } else {
+      alert(data.error);
+    }
+
+  } catch (error) {
+    alert("Erreur de connexion");
+  }
+}
+
+async function chargerPanierActivite() {
+  const container = document.getElementById("panierList");
+
+  try {
+    const res = await fetch("../backend/lister_panier_activite.php", {
+      credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      container.innerHTML = `<p class="empty-state">Erreur : ${data.error}</p>`;
+      return;
+    }
+
+    if (data.panier.length === 0) {
+      container.innerHTML = `<p class="empty-state">Aucune activité dans le panier.</p>`;
+      return;
+    }
+
+    container.innerHTML = data.panier.map(item => {
+      const date = new Date(item.date_heure);
+
+      const dateStr = date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+
+      const heureStr = date.toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      return `
+  <div class="rdv-card">
+    <div class="rdv-card-header">
+      <div>
+        <div class="rdv-title">${item.nom}</div>
+        <div class="rdv-subtitle">
+          ${item.description || "Activité bien-être"}
+        </div>
+      </div>
+
+      <span class="badge badge-en-attente">
+        En attente
+      </span>
+    </div>
+
+    <div class="rdv-details">
+      <span>📅 ${dateStr} à ${heureStr}</span>
+      <span>📍 ${item.lieu}</span>
+    </div>
+
+    <button
+      class="btn-annuler"
+      onclick="supprimerActivitePanier(${item.id_activite})"
+    >
+      Supprimer
+    </button>
+
+  </div>
+`;
+    }).join("");
+
+  } catch (error) {
+    container.innerHTML = `<p class="empty-state">Erreur de connexion au serveur.</p>`;
+  }
+}
+
+async function validerPanierActivite() {
+  if (!confirm("Confirmer le paiement et l'inscription ?")) {
+    return;
+  }
+
+  try {
+    const res = await fetch("../backend/valider_panier_activite.php", {
+      method: "POST",
+      credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Paiement validé ! Inscription confirmée.");
+      chargerPanierActivite();
+    } else {
+      alert(data.error);
+    }
+
+  } catch (error) {
+    alert("Erreur de connexion");
+  }
+}
+
+async function supprimerReservationPanier(idReservation) {
+  if (!confirm("Supprimer cette consultation du panier ?")) {
+    return;
+  }
+
+  try {
+    const res = await fetch("../backend/supprimer_panier_reservation.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        id_reservation: idReservation
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      chargerPanierReservations();
+    } else {
+      alert(data.error);
+    }
+
+  } catch (error) {
+    alert("Erreur de connexion");
+  }
+}
+async function supprimerActivitePanier(idActivite) {
+  if (!confirm("Supprimer cette activité du panier ?")) {
+    return;
+  }
+
+  try {
+    const res = await fetch("../backend/supprimer_panier_activite.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        id_activite: idActivite
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      chargerPanierActivite();
+    } else {
+      alert(data.error);
+    }
+
+  } catch (error) {
+    alert("Erreur de connexion");
+  }
+}
+
+</script>
+
+</body>
+</html>
