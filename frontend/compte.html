@@ -1,309 +1,117 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VitaCare Campus — Mon Profil</title>
-  <link rel="stylesheet" href="css/style.css">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare Campus – Mon compte</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/compte.css">
 </head>
 <body>
+<div class="app">
+    <!-- SIDEBAR ADMIN -->
+    <aside class="sidebar">
+        <div class="sidebar-logo"><div class="logo-icon">V</div><span>VitaCare Campus Admin</span></div>
+        <nav class="nav-menu">
+            <a href="admin.html" class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
+            <a href="reservations.html" class="nav-item"><i class="far fa-calendar-check"></i> Réservations</a>
+            <a href="programmes.html" class="nav-item"><i class="fas fa-pulse"></i> Programmes</a>
+            <a href="gestpracticiens.html" class="nav-item"><i class="fas fa-user-md"></i> Intervenants</a>
+            <a href="gestetudiants.html" class="nav-item"><i class="fas fa-graduation-cap"></i> Étudiants</a>
+            <a href="stats.html" class="nav-item"><i class="far fa-chart-bar"></i> Rapports statistiques</a>
+        </nav>
+    </aside>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-brand">
-    <div class="sidebar-logo">V</div>
-    <strong>VitaCare Campus</strong>
-  </div>
-  <nav class="sidebar-nav">
-    <a href="index.html"><span class="icon">🏠</span> Dashboard</a>
-    <a href="catalogue.html"><span class="icon">📋</span> Catalogue</a>
-    <a href="historique.html"><span class="icon">📅</span> Suivi &amp; historique</a>
-    <a href="#"><span class="icon">〜</span> Activités</a>
-    <a href="#"><span class="icon">🔔</span> Notifications</a>
-    <a href="profil.html" class="active"><span class="icon">👤</span> Mon profil</a>
-  </nav>
-  <div class="sidebar-footer">
-    <a href="#" onclick="logout()"><span class="icon">🚪</span> Déconnexion</a>
-  </div>
-</aside>
+    <div class="main-container">
+        <header class="top-bar">
+            <div></div>
+            <div class="profile-area">
+                <div class="bell-icon"><i class="far fa-bell"></i><span class="bell-badge">3</span></div>
+                <div class="user-meta" id="userMenu">
+                    <div class="avatar-circle" id="topbarAvatar">AD</div>
+                    <span id="topbarName">Administrateur</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="compte.html"><i class="fas fa-user-circle"></i> Mon compte</a>
+                    <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+                </div>
+            </div>
+        </header>
 
-<!-- TOPBAR -->
-<header class="topbar">
-  <button class="topbar-icon" title="Notifications">🔔</button>
-  <button class="topbar-icon" title="Panier">🛒</button>
-  <div class="topbar-user" onclick="window.location.href='profil.html'">
-    <div class="topbar-avatar" id="topbar-avatar">JD</div>
-    <span class="topbar-name" id="topbar-name">Jean Dupont</span>
-  </div>
-</header>
+        <main class="content-body admin-scroll-layout">
+            <div class="page-header-block">
+                <h1 class="page-title">Mon compte</h1>
+                <p class="page-subtitle">Gérez vos informations personnelles</p>
+            </div>
 
-<!-- MAIN -->
-<main class="main">
-  <div class="page-content">
-    <div class="page-title">Mon profil</div>
-    <div class="page-subtitle">Gérez vos informations personnelles</div>
+            <!-- Avatar -->
+            <div class="card">
+                <div class="profile-avatar-row">
+                    <div class="profile-avatar-big" id="avatarBig">AD</div>
+                    <div class="profile-avatar-info">
+                        <h2 id="displayName">Administrateur</h2>
+                        <span class="role-badge" id="displayRole">Administrateur</span>
+                    </div>
+                </div>
+            </div>
 
-    <!-- CARTE AVATAR -->
-    <div class="card">
-      <div class="profile-avatar-row">
-        <div class="profile-avatar-big" id="avatar-big">JD</div>
-        <div class="profile-avatar-info">
-          <h2 id="display-name">Jean Dupont</h2>
-          <span class="role-badge" id="display-role">Étudiant</span>
-          <br>
-          <button class="btn-ghost">Changer la photo</button>
-        </div>
-      </div>
+            <!-- Informations personnelles -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-user-circle"></i> Informations personnelles</div>
+                <div id="message"></div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" id="prenom" placeholder="Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" id="nom" placeholder="Nom">
+                    </div>
+                    <div class="form-group full">
+                        <label>Email</label>
+                        <input type="email" id="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="tel" id="telephone" placeholder="Téléphone">
+                    </div>
+                </div>
+                <hr class="divider">
+                <button class="btn-primary" id="btnSave">💾 Enregistrer les modifications</button>
+            </div>
+
+            <!-- Changer mot de passe -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-lock"></i> Modifier le mot de passe</div>
+                <div id="messagePwd"></div>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Mot de passe actuel</label>
+                        <input type="password" id="pwdActuel" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>Nouveau mot de passe</label>
+                        <input type="password" id="pwdNew" placeholder="••••••••" oninput="checkStrength(this.value)">
+                        <div class="pwd-strength">
+                            <div class="pwd-bar"><div class="pwd-bar-fill" id="pwdBarFill"></div></div>
+                            <div class="pwd-label" id="pwdLabel"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmation</label>
+                        <input type="password" id="pwdConfirm" placeholder="••••••••">
+                    </div>
+                </div>
+                <hr class="divider">
+                <button class="btn-primary" id="btnChangePwd">🔑 Changer le mot de passe</button>
+            </div>
+        </main>
     </div>
+</div>
 
-    <!-- INFOS PERSONNELLES -->
-    <div class="card">
-      <div class="card-title"><span class="icon">👤</span> Informations personnelles</div>
-      <div id="message"></div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Prénom</label>
-          <input type="text" id="prenom" placeholder="Jean">
-        </div>
-        <div class="form-group">
-          <label>Nom</label>
-          <input type="text" id="nom" placeholder="Dupont">
-        </div>
-        <div class="form-group full">
-          <label>Email</label>
-          <input type="email" id="email" placeholder="jean.dupont@exemple.com">
-        </div>
-        <div class="form-group">
-          <label>Téléphone</label>
-          <input type="tel" id="telephone" placeholder="06 12 34 56 78">
-        </div>
-        <div class="form-group">
-          <label>Adresse</label>
-          <input type="text" id="adresse" placeholder="123 Rue de l'Université">
-        </div>
-        <div class="form-group">
-          <label>Campus</label>
-          <select id="campus">
-            <option value="">Sélectionner</option>
-            <option>Paris</option>
-            <option>Lyon</option>
-            <option>Bordeaux</option>
-            <option>Toulouse</option>
-            <option>Lille</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Filière</label>
-          <select id="filiere">
-            <option value="">Sélectionner</option>
-            <option>Informatique</option>
-            <option>Médecine</option>
-            <option>Droit</option>
-            <option>Sciences</option>
-            <option>Économie</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Année</label>
-          <select id="annee">
-            <option value="">Sélectionner</option>
-            <option>L1</option><option>L2</option><option>L3</option>
-            <option>M1</option><option>M2</option>
-            <option>D1</option><option>D2</option><option>D3</option>
-          </select>
-        </div>
-      </div>
-      <hr class="divider">
-      <button class="btn-primary" onclick="saveProfile()" id="btn-save">
-        💾 Enregistrer les modifications
-      </button>
-    </div>
-
-    <!-- MOT DE PASSE -->
-    <div class="card">
-      <div class="card-title"><span class="icon">🔒</span> Modifier le mot de passe</div>
-      <div id="message-pwd"></div>
-      <div class="form-grid">
-        <div class="form-group full">
-          <label>Mot de passe actuel</label>
-          <input type="password" id="pwd-actuel" placeholder="••••••••">
-        </div>
-        <div class="form-group">
-          <label>Nouveau mot de passe</label>
-          <input type="password" id="pwd-new" placeholder="••••••••" oninput="checkStrength(this.value)">
-          <div class="pwd-strength">
-            <div class="pwd-bar"><div class="pwd-bar-fill" id="pwd-bar-fill"></div></div>
-            <div class="pwd-label" id="pwd-label"></div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Confirmer le nouveau mot de passe</label>
-          <input type="password" id="pwd-confirm" placeholder="••••••••">
-        </div>
-      </div>
-      <hr class="divider">
-      <button class="btn-primary" onclick="savePassword()">🔑 Changer le mot de passe</button>
-    </div>
-
-  </div>
-</main>
-
-<script src="js/auth.js"></script>
-<script>
-  // ── Chargement des données utilisateur ──
-  function loadUser() {
-    const raw = localStorage.getItem("user");
-    if (!raw) { window.location.href = "login.html"; return; }
-    const user = JSON.parse(raw);
-
-    const initiales = ((user.prenom?.[0] ?? "") + (user.nom?.[0] ?? "")).toUpperCase() || "?";
-    document.getElementById("avatar-big").textContent    = initiales;
-    document.getElementById("topbar-avatar").textContent = initiales;
-    document.getElementById("topbar-name").textContent   = (user.prenom ?? "") + " " + (user.nom ?? "");
-    document.getElementById("display-name").textContent  = (user.prenom ?? "") + " " + (user.nom ?? "");
-    document.getElementById("display-role").textContent  =
-      user.role === "praticien" ? "Praticien" :
-      user.role === "admin"     ? "Administrateur" : "Étudiant";
-
-    document.getElementById("prenom").value    = user.prenom    ?? "";
-    document.getElementById("nom").value       = user.nom       ?? "";
-    document.getElementById("email").value     = user.email     ?? "";
-    document.getElementById("telephone").value = user.telephone ?? "";
-    document.getElementById("adresse").value   = user.adresse   ?? "";
-
-    if (user.campus)  setSelect("campus",  user.campus);
-    if (user.filiere) setSelect("filiere", user.filiere);
-    if (user.annee)   setSelect("annee",   user.annee);
-  }
-
-  function setSelect(id, val) {
-    const sel = document.getElementById(id);
-    for (const opt of sel.options) {
-      if (opt.value === val || opt.text === val) { opt.selected = true; break; }
-    }
-  }
-
-  // ── Sauvegarde du profil ──
-  async function saveProfile() {
-    const btn = document.getElementById("btn-save");
-    btn.disabled = true;
-    btn.textContent = "Enregistrement…";
-
-    const raw  = localStorage.getItem("user");
-    const user = raw ? JSON.parse(raw) : {};
-
-    const updated = {
-      id:        user.id,
-      prenom:    document.getElementById("prenom").value.trim(),
-      nom:       document.getElementById("nom").value.trim(),
-      email:     document.getElementById("email").value.trim(),
-      telephone: document.getElementById("telephone").value.trim(),
-      adresse:   document.getElementById("adresse").value.trim(),
-      campus:    document.getElementById("campus").value,
-      filiere:   document.getElementById("filiere").value,
-      annee:     document.getElementById("annee").value,
-    };
-
-    try {
-      const res  = await fetch("../backend/user.php?action=update_profile", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(updated),
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        // Mettre à jour le localStorage
-        localStorage.setItem("user", JSON.stringify({ ...user, ...updated }));
-        loadUser();
-        showMsg("message", "✅ Profil mis à jour avec succès !", "success");
-      } else {
-        showMsg("message", data.error ?? "Erreur lors de la mise à jour.", "error");
-      }
-    } catch {
-      showMsg("message", "Erreur de connexion au serveur.", "error");
-    }
-
-    btn.disabled = false;
-    btn.innerHTML = "💾 Enregistrer les modifications";
-  }
-
-  // ── Changement de mot de passe ──
-  async function savePassword() {
-    const actuel  = document.getElementById("pwd-actuel").value;
-    const nouveau = document.getElementById("pwd-new").value;
-    const confirm = document.getElementById("pwd-confirm").value;
-
-    if (!actuel || !nouveau || !confirm) {
-      showMsg("message-pwd", "Remplis tous les champs.", "error"); return;
-    }
-    if (nouveau !== confirm) {
-      showMsg("message-pwd", "Les mots de passe ne correspondent pas.", "error"); return;
-    }
-    if (nouveau.length < 6) {
-      showMsg("message-pwd", "Mot de passe trop court (6 caractères min).", "error"); return;
-    }
-
-    const user = JSON.parse(localStorage.getItem("user") ?? "{}");
-
-    try {
-      const res  = await fetch("../backend/user.php?action=change_password", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ id: user.id, mot_de_passe_actuel: actuel, nouveau_mot_de_passe: nouveau }),
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        showMsg("message-pwd", "✅ Mot de passe modifié !", "success");
-        document.getElementById("pwd-actuel").value  = "";
-        document.getElementById("pwd-new").value     = "";
-        document.getElementById("pwd-confirm").value = "";
-      } else {
-        showMsg("message-pwd", data.error ?? "Erreur.", "error");
-      }
-    } catch {
-      showMsg("message-pwd", "Erreur de connexion au serveur.", "error");
-    }
-  }
-
-  // ── Force du mot de passe ──
-  function checkStrength(val) {
-    const fill  = document.getElementById("pwd-bar-fill");
-    const label = document.getElementById("pwd-label");
-    if (!val) { fill.style.width = "0"; label.textContent = ""; return; }
-
-    let score = 0;
-    if (val.length >= 8)            score++;
-    if (/[A-Z]/.test(val))          score++;
-    if (/[0-9]/.test(val))          score++;
-    if (/[^A-Za-z0-9]/.test(val))   score++;
-
-    const levels = [
-      { pct: "20%", color: "#e05c5c", text: "Très faible" },
-      { pct: "40%", color: "#f4a261", text: "Faible" },
-      { pct: "65%", color: "#f4d35e", text: "Moyen" },
-      { pct: "85%", color: "#52b788", text: "Fort" },
-      { pct: "100%",color: "#2d6a4f", text: "Très fort" },
-    ];
-    const lvl = levels[Math.min(score, 4)];
-    fill.style.width      = lvl.pct;
-    fill.style.background = lvl.color;
-    label.textContent     = lvl.text;
-    label.style.color     = lvl.color;
-  }
-
-  // ── Utilitaire messages ──
-  function showMsg(id, text, type) {
-    const el = document.getElementById(id);
-    el.textContent = text;
-    el.className   = type === "success" ? "msg-success" : "msg-error";
-    setTimeout(() => { el.className = ""; el.style.display = "none"; }, 4000);
-  }
-
-  loadUser();
-</script>
+<script src="js/compte.js"></script>
 </body>
 </html>

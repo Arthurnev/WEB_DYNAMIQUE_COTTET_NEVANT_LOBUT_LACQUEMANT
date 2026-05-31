@@ -128,25 +128,6 @@ body {
     position: relative;
 }
 
-.bell-icon {
-    position: relative;
-    font-size: 1.25rem;
-    color: #64748b;
-    cursor: pointer;
-}
-
-.bell-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #ef4444;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 1px 5px;
-    border-radius: 10px;
-}
-
 .user-meta {
     display: flex;
     align-items: center;

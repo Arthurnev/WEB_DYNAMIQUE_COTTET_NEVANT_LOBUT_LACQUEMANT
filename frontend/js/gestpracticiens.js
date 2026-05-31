@@ -56,7 +56,7 @@ function renderTable() {
 
     // Si la liste est vide (pas de praticiens du tout)
     if (praticiens.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:2rem;">📭 Aucun intervenant pour le moment</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:2rem;"> Aucun intervenant pour le moment</td></tr>';
         return;
     }
 
