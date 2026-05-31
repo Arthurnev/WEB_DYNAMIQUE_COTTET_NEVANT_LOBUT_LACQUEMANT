@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare Campus – Notifications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Réutilisez les styles de la page admin (ou simplifiez) */
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;height:100vh;overflow:hidden}
+        .app{display:flex;height:100vh}
+        .sidebar{width:280px;background:white;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;position:fixed;height:100vh;top:0;left:0;z-index:1100;padding:1.5rem}
+        .sidebar-logo{display:flex;align-items:center;gap:.75rem;font-weight:700;font-size:1.1rem;margin-bottom:2rem}
+        .logo-icon{background:#f15a24;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800}
+        .nav-menu{flex:1;display:flex;flex-direction:column;gap:.5rem}
+        .nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:10px;color:#64748b;font-weight:500;text-decoration:none}
+        .nav-item:hover{background:#f8fafc;color:#1e293b}
+        .nav-item.active{background:rgba(17,138,107,.1);color:#118a6b;font-weight:600}
+        .main-container{margin-left:280px;flex:1;display:flex;flex-direction:column;height:100vh;overflow-y:auto}
+        .top-bar{height:70px;background:white;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+        .profile-area{display:flex;align-items:center;gap:1.5rem}
+        .user-meta{display:flex;align-items:center;gap:.75rem;cursor:pointer}
+        .avatar-circle{width:36px;height:36px;background:#2e8b57;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+        .admin-name{font-weight:600}
+        .content-body{padding:2rem;max-width:1000px;margin:0 auto}
+        .page-title{font-size:1.5rem;font-weight:700;margin-bottom:.5rem}
+        .page-subtitle{font-size:.9rem;color:#64748b;margin-bottom:2rem}
+        .notif-filters{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+        .filter-btn{padding:8px 20px;border:none;border-radius:40px;font-weight:600;background:#f3f4f6;color:#6b7280;cursor:pointer}
+        .filter-btn.active{background:#2e8b57;color:white}
+        .mark-all-read{background:transparent;border:none;color:#2e8b57;font-weight:600;cursor:pointer;margin-left:auto}
+        .notif-list{display:flex;flex-direction:column;gap:12px}
+        .notif-card{background:white;border:1px solid #e5e7eb;border-radius:16px;padding:20px;display:flex;gap:16px;position:relative}
+        .notif-card.unread{border-left:4px solid #2e8b57;background:#fafcff}
+        .notif-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+        .notif-icon.ajout{background:#d1fae5;color:#065f46}
+        .notif-icon.suppression{background:#fee2e2;color:#dc2626}
+        .notif-content{flex:1}
+        .notif-title{font-weight:700;font-size:16px;margin-bottom:4px}
+        .notif-message{color:#6b7280;font-size:14px}
+        .notif-date{color:#9ca3af;font-size:13px;margin-top:8px}
+        .notif-dot{width:10px;height:10px;background:#2e8b57;border-radius:50%;position:absolute;top:20px;right:20px}
+        .empty-state{text-align:center;padding:60px;background:white;border-radius:20px;color:#9ca3af}
+        @media (max-width:768px){.sidebar{display:none}.main-container{margin-left:0}}
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="sidebar-logo"><div class="logo-icon">V</div><span>VitaCare Campus Admin</span></div>
+        <nav class="nav-menu">
+            <a href="admin.html" class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
+            <a href="reservations.html" class="nav-item"><i class="far fa-calendar-check"></i> Réservations</a>
+            <a href="programmes.html" class="nav-item"><i class="fas fa-pulse"></i> Activités</a>
+            <a href="gestpracticiens.html" class="nav-item"><i class="fas fa-user-md"></i> Intervenants</a>
+            <a href="gestetudiants.html" class="nav-item"><i class="fas fa-graduation-cap"></i> Étudiants</a>
+            <a href="notifications.html" class="nav-item active"><i class="fas fa-bell"></i> Notifications</a>
+        </nav>
+    </aside>
+    <div class="main-container">
+        <header class="top-bar"><div></div><div class="profile-area"><div class="user-meta" onclick="toggleAdminMenu(event)"><div class="avatar-circle">AD</div><span class="admin-name">Admin</span></div></div></div></header>
+        <main class="content-body">
+            <div class="page-title">Notifications</div>
+            <div class="page-subtitle" id="unread-count-text">0 notification non lue</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px;">
+                <div class="notif-filters">
+                    <button class="filter-btn active" data-filter="all" onclick="changerFiltre('all')">Toutes</button>
+                    <button class="filter-btn" data-filter="ajout" onclick="changerFiltre('ajout')">Ajouts</button>
+                    <button class="filter-btn" data-filter="suppression" onclick="changerFiltre('suppression')">Suppressions</button>
+                </div>
+                <button class="mark-all-read" onclick="marquerToutLu()">Tout marquer comme lu</button>
+            </div>
+            <div id="notifications-list" class="notif-list">Chargement...</div>
+        </main>
+    </div>
+</div>
+
+<script>
+const API_NOTIF = 'gestnotifications.php';
+let allNotifications = [];
+let currentFilter = 'all';
+
+async function chargerToutesNotifications() {
+    try {
+        const res = await fetch(`${API_NOTIF}?action=list&type=all`);
+        const data = await res.json();
+        if (data.success) {
+            allNotifications = data.data;
+            afficherListe();
+            mettreAJourCompteurs();
+        }
+    } catch (err) { console.error(err); }
+}
+
+function afficherListe() {
+    const container = document.getElementById('notifications-list');
+    let filtered = currentFilter === 'all' ? allNotifications : allNotifications.filter(n => n.type === currentFilter);
+    if (filtered.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><p>Aucune notification pour le moment</p></div>`;
+        return;
+    }
+    container.innerHTML = filtered.map(notif => `
+        <div class="notif-card ${notif.is_read ? 'read' : 'unread'}" onclick="redirigerEtMarquerLu(${notif.id}, '${notif.lien || '#'}')">
+            <div class="notif-icon ${notif.type}"><i class="fas fa-${notif.type === 'ajout' ? 'plus' : 'minus'}-circle"></i></div>
+            <div class="notif-content">
+                <div class="notif-title">${escapeHtml(notif.title)}</div>
+                <div class="notif-message">${escapeHtml(notif.message)}</div>
+                <div class="notif-date">${new Date(notif.created_at).toLocaleString('fr-FR')}</div>
+            </div>
+            ${!notif.is_read ? '<div class="notif-dot"></div>' : ''}
+        </div>
+    `).join('');
+}
+
+async function redirigerEtMarquerLu(id, lien) {
+    await fetch(API_NOTIF, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'mark_read', id })
+    });
+    if (lien && lien !== '#') window.location.href = lien;
+    else chargerToutesNotifications();
+}
+
+async function marquerToutLu() {
+    await fetch(API_NOTIF, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'mark_all_read' })
+    });
+    chargerToutesNotifications();
+}
+
+function changerFiltre(filtre) {
+    currentFilter = filtre;
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.filter-btn[data-filter="${filtre}"]`).classList.add('active');
+    afficherListe();
+}
+
+function mettreAJourCompteurs() {
+    const nonLues = allNotifications.filter(n => !n.is_read).length;
+    document.getElementById('unread-count-text').innerText = `${nonLues} notification${nonLues > 1 ? 's' : ''} non lue${nonLues > 1 ? 's' : ''}`;
+    const topbarBadge = document.getElementById('topbar-notif-count');
+    if (topbarBadge) {
+        topbarBadge.textContent = nonLues;
+        topbarBadge.classList.toggle('show', nonLues > 0);
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+}
+
+function toggleAdminMenu(e) { /* facultatif */ }
+document.addEventListener('DOMContentLoaded', chargerToutesNotifications);
+</script>
+</body>
+</html>

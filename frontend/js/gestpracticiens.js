@@ -1,5 +1,6 @@
 let praticiens = [];
 
+// ========== CHARGEMENT DES PRATICIENS ==========
 async function loadPraticiens() {
     try {
         const response = await fetch("../backend/gestpracticiens.php?action=list");
@@ -17,6 +18,7 @@ async function loadPraticiens() {
     }
 }
 
+// ========== SUPPRESSION D'UN PRATICIEN ==========
 async function deletePraticien(id) {
     if (!confirm("Supprimer définitivement ce praticien ? Toutes ses données seront effacées.")) {
         return;
@@ -40,28 +42,34 @@ async function deletePraticien(id) {
     }
 }
 
+// ========== ÉCHAPPEMENT HTML ==========
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'));
 }
 
+// ========== AFFICHAGE DU TABLEAU (AVEC RECHERCHE ET MESSAGE SI VIDE) ==========
 function renderTable() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+    const tbody = document.getElementById('tableBody');
+    if (!tbody) return;
+
+    // Si la liste est vide (pas de praticiens du tout)
+    if (praticiens.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:2rem;">📭 Aucun intervenant pour le moment</td></tr>';
+        return;
+    }
 
     const filtered = praticiens.filter(p => {
-        const matchSearch = searchTerm === '' ||
+        return searchTerm === '' ||
             p.nom.toLowerCase().includes(searchTerm) ||
             p.prenom.toLowerCase().includes(searchTerm) ||
             p.email.toLowerCase().includes(searchTerm) ||
             (p.specialite && p.specialite.toLowerCase().includes(searchTerm));
-        return matchSearch;
     });
 
-    const tbody = document.getElementById('tableBody');
-    if (!tbody) return;
-
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:2rem;">Aucun praticien trouvé</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:2rem;">🔍 Aucun intervenant ne correspond à votre recherche</td></tr>';
         return;
     }
 
@@ -92,14 +100,44 @@ function renderTable() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadPraticiens();
-    document.getElementById('searchInput').addEventListener('input', renderTable);
+// ========== GESTION DE LA TOPBAR (MENU ADMIN) ==========
+function toggleAdminMenu(event) {
+    event.stopPropagation();
+    const adminMenu = document.getElementById('admin-menu');
+    adminMenu.classList.toggle('show');
+}
 
-    const helpBtn = document.querySelector('.floating-help-btn');
-    if (helpBtn) helpBtn.addEventListener('click', () => alert("Support : support@vitacare-campus.fr"));
-    const bell = document.querySelector('.bell-icon');
-    if (bell) bell.addEventListener('click', () => alert("3 notifications non lues"));
+function logout(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+}
+
+document.addEventListener('click', function(event) {
     const userMeta = document.querySelector('.user-meta');
-    if (userMeta) userMeta.addEventListener('click', () => alert("Profil administrateur"));
+    const adminMenu = document.getElementById('admin-menu');
+    if (userMeta && !userMeta.contains(event.target)) {
+        adminMenu.classList.remove('show');
+    }
+});
+
+// ========== INITIALISATION AU CHARGEMENT ==========
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadPraticiens();
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.addEventListener('input', renderTable);
+
+    // Affichage des initiales et du nom depuis localStorage
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+    const avatarElement = document.getElementById('topbar-avatar');
+    const fullnameElement = document.getElementById('admin-fullname');
+
+    const prenom = user.prenom || 'Judicaël';
+    const nom = user.nom || 'LACQUEMANT';
+    const initiales = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase();
+
+    if (avatarElement) avatarElement.textContent = initiales;
+    if (fullnameElement) fullnameElement.textContent = `Ad. ${nom}`;
 });
