@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare Campus – Mon compte</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/compteA.css">
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">V</div>
+            <span>VitaCare Campus Admin</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="admin.html" class="nav-item"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
+            <a href="reservations.html" class="nav-item"><i class="far fa-calendar-check"></i> Réservations</a>
+            <a href="programmes.html" class="nav-item"><i class="fas fa-pulse"></i> Activités & Programmes</a>
+            <a href="gestpracticiens.html" class="nav-item"><i class="fas fa-user-md"></i> Intervenants</a>
+            <a href="gestetudiants.html" class="nav-item"><i class="fas fa-graduation-cap"></i> Étudiants</a>
+            <a href="compteA.html" class="nav-item active"><i class="fas fa-user-circle"></i> Mon compte</a>
+        </nav>
+    </aside>
+
+    <div class="main-container">
+        <header class="top-bar">
+            <div></div>
+            <div class="profile-area">
+                <div class="bell-icon">
+                    <i class="far fa-bell"></i>
+                    <span class="bell-badge">3</span>
+                </div>
+                <div class="user-meta" onclick="toggleAdminMenu(event)">
+                    <div class="avatar-circle" id="topbar-avatar">JL</div>
+                    <span class="admin-name" id="admin-fullname">Ad. Lacquemant</span>
+                    <div class="admin-dropdown" id="admin-menu">
+                        <a href="compteA.html" class="dropdown-item" onclick="event.stopPropagation()">
+                            <i class="fas fa-user-circle"></i> Mon compte
+                        </a>
+                        <div class="dropdown-item logout-item" onclick="logout(event)">
+                            <i class="fas fa-door-open"></i> Déconnexion
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-body admin-scroll-layout">
+            <div class="page-header-block">
+                <h1 class="page-title">Mon compte</h1>
+                <p class="page-subtitle">Gérez vos informations personnelles</p>
+            </div>
+
+            <div class="card">
+                <div class="profile-avatar-row">
+                    <div class="profile-avatar-big" id="avatarBig">JL</div>
+                    <div class="profile-avatar-info">
+                        <h2 id="displayName">Judicaël LACQUEMANT</h2>
+                        <span class="role-badge" id="displayRole">Administrateur</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-user-circle"></i> Informations personnelles</div>
+                <div id="message"></div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" id="prenom" placeholder="Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" id="nom" placeholder="Nom">
+                    </div>
+                    <div class="form-group full">
+                        <label>Email</label>
+                        <input type="email" id="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="tel" id="telephone" placeholder="Téléphone">
+                    </div>
+                </div>
+                <hr class="divider">
+                <button class="btn-primary" id="btnSave">💾 Enregistrer les modifications</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-lock"></i> Modifier le mot de passe</div>
+                <div id="messagePwd"></div>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Mot de passe actuel</label>
+                        <input type="password" id="pwdActuel" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>Nouveau mot de passe</label>
+                        <input type="password" id="pwdNew" placeholder="••••••••" oninput="checkStrength(this.value)">
+                        <div class="pwd-strength">
+                            <div class="pwd-bar">
+                                <div class="pwd-bar-fill" id="pwdBarFill"></div>
+                            </div>
+                            <div class="pwd-label" id="pwdLabel"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmation</label>
+                        <input type="password" id="pwdConfirm" placeholder="••••••••">
+                    </div>
+                </div>
+                <hr class="divider">
+                <button class="btn-primary" id="btnChangePwd">🔑 Changer le mot de passe</button>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="js/compteA.js"></script>
+</body>
+</html>
