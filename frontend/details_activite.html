@@ -3,84 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Patients - VitaCare Campus | Dr. Martin</title>
+    <title>Détails de l'activité - VitaCare Campus</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style_practicien.css">
     <style>
         .hidden { display: none; }
         .account-menu { display: none; }
         .account-menu:not(.hidden) { display: block; }
-    
-    /* Harmonisation interface praticien avec le style patient */
-    .main-content {
-      width: calc(100vw - 280px) !important;
-      max-width: none !important;
-    }
-
-    .page-content {
-      width: 100% !important;
-      max-width: none !important;
-      margin: 0 !important;
-      padding: 48px 48px !important;
-    }
-
-    .topbar {
-      background: #fff !important;
-      border-bottom: 1px solid #e5e7eb !important;
-    }
-
-    .sidebar-footer .help-box {
-      background: #eaf7f4;
-      border-radius: 16px;
-      padding: 18px;
-      text-align: center;
-    }
-
-    .sidebar-footer .contact-toggle {
-      margin-top: 10px;
-      border: none;
-      background: transparent;
-      color: #2e8b57;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .sidebar-footer .contact-box {
-      margin-top: 12px;
-      text-align: left;
-      background: #fff;
-      border: 1px solid #dbeafe;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 13px;
-    }
-
-    .sidebar-footer .contact-box p {
-      margin: 0 0 10px 0;
-      color: #334155;
-    }
-
-    .sidebar-footer .faq-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #2e8b57;
-      font-weight: 700;
-      text-decoration: none;
-      margin-top: 4px;
-    }
-
-    .sidebar-nav a {
-      gap: 12px;
-    }
-
-    .sidebar-nav .badge {
-      margin-left: auto;
-    }
-
-  </style>
+    </style>
 </head>
 <body>
 
@@ -92,23 +23,19 @@
         </div>
         <nav class="sidebar-nav">
             <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
-            <a href="agenda_praticien.html"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            <a href="agenda_praticien.html" class="active"><i class="fas fa-calendar-alt"></i> Agenda</a>
             <a href="disponibilites_praticien.html"><i class="fas fa-clock"></i> Disponibilités</a>
-            <a href="patients_praticien.html" class="active"><i class="fas fa-users"></i> Patients</a>
-            <a href="activites_praticien.html" ><i class="fas fa-heart"></i> Activités</a>
-            <a href="notifications_praticien.html"><i class="fas fa-bell"></i> Notifications <span class="badge" id="sidebar-notif-count">0</span></a>
+            <a href="patients_praticien.html"><i class="fas fa-users"></i> Patients</a>
+            <a href="activites_praticien.html"><i class="fas fa-heart"></i> Activités</a>
+                        <a href="notifications_praticien.html"><i class="fas fa-bell"></i> Notifications <span class="badge" id="sidebar-notif-count">0</span></a>
+
         </nav>
         <div class="sidebar-footer">
             <div class="help-box">
                 <div class="help-icon"><i class="fas fa-question"></i></div>
                 <strong>Besoin d'aide ?</strong>
                 <p>Notre équipe est là pour vous aider.</p>
-                <button type="button" class="contact-toggle" onclick="togglePraticienHelp()">Nous contacter</button>
-                <div class="contact-box hidden" id="contactBox">
-                    <p><strong><i class="fas fa-phone"></i> Téléphone</strong><br>01 23 45 67 89</p>
-                    <p><strong><i class="fas fa-envelope"></i> Email</strong><br>support@vitacare.fr</p>
-                    <a href="aide_praticien.html" class="faq-link"><i class="fas fa-circle-question"></i> FAQ</a>
-                </div>
+                <a href="aide_praticien.html">Nous contacter</a>
             </div>
         </div>
     </aside>
@@ -145,19 +72,11 @@
         </header>
 
         <div class="page-content">
-            <div class="patients-header">
-                <div>
-                    <h1>Patients</h1>
-                    <p class="subtitle">Gérez vos patients et consultez leur historique</p>
-                </div>
-            </div>
+            <button class="btn-back" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i> Retour à l'agenda
+            </button>
 
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Rechercher un patient..." onkeyup="rechercherPatient()">
-            </div>
-
-            <div id="patientsContainer" class="patients-grid">
+            <div id="detailContainer" class="detail-container">
                 <div style="text-align:center; padding:40px;">Chargement...</div>
             </div>
         </div>
@@ -165,34 +84,7 @@
 </div>
 
 <script>
-
-    function togglePraticienHelp() {
-        const box = document.getElementById("contactBox");
-        if (box) box.classList.toggle("hidden");
-    }
-
-    function setPraticienIdentity(user) {
-        const prenom = user.prenom || "";
-        const nom = user.nom || "";
-        const fullName = `${prenom} ${nom}`.trim();
-        const initials = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase() || "DR";
-
-        const studentAvatar = document.getElementById("studentAvatar");
-        const studentName = document.getElementById("studentName");
-        const avatarInitials = document.getElementById("avatar-initials");
-        const userName = document.getElementById("user-name");
-        const profileAvatar = document.getElementById("profileAvatar");
-        const profileName = document.getElementById("profileName");
-
-        if (studentAvatar) studentAvatar.textContent = initials;
-        if (studentName) studentName.textContent = `Dr. ${fullName}`.trim();
-        if (avatarInitials) avatarInitials.textContent = initials;
-        if (userName) userName.textContent = `Dr. ${fullName}`.trim();
-        if (profileAvatar) profileAvatar.textContent = initials;
-        if (profileName) profileName.textContent = `Dr. ${fullName}`.trim();
-    }
-
-    let allPatients = [];
+    let activiteId = null;
 
     document.addEventListener('DOMContentLoaded', async () => {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -200,18 +92,29 @@
             window.location.href = "login.html";
             return;
         }
-        setPraticienIdentity(user);
-        await chargerPatients();
+        document.getElementById("studentAvatar").textContent = (user.prenom ? user.prenom[0] : "D") + user.nom[0];
+        document.getElementById("studentName").textContent = "Dr. " + user.nom;
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        activiteId = urlParams.get('id');
+        
+        if (!activiteId) {
+            window.location.href = "agenda_praticien.html";
+            return;
+        }
+        
+        await chargerDetails();
         initNotifications();
     });
 
     function toggleAccountMenu() {
-    const menu = document.getElementById("accountMenu");
-
-    if (!menu) return;
-
-    menu.classList.toggle("hidden");
-}
+        const menu = document.getElementById('accountMenu');
+        if (menu.style.display === 'block') {
+            menu.style.display = 'none';
+        } else {
+            menu.style.display = 'block';
+        }
+    }
 
     function logout() {
         localStorage.removeItem("user");
@@ -226,76 +129,101 @@
         }
     });
 
-    async function chargerPatients() {
-        const container = document.getElementById('patientsContainer');
+    async function chargerDetails() {
+        const container = document.getElementById('detailContainer');
         try {
-            const res = await fetch('../backend/lister_patients.php', { credentials: 'include' });
+            const res = await fetch(`../backend/details_activite.php?id=${activiteId}`, { credentials: 'include' });
             const data = await res.json();
             
             if (!data.success) {
-                container.innerHTML = `<div class="empty-patients"><p>Erreur: ${data.error}</p></div>`;
+                container.innerHTML = `<div style="text-align:center; padding:40px; color:red;">Erreur: ${data.error}</div>`;
                 return;
             }
             
-            allPatients = data.patients;
-            afficherPatients(allPatients);
-        } catch (error) {
-            container.innerHTML = `<div class="empty-patients"><p>Erreur: ${error.message}</p></div>`;
-        }
-    }
-
-    function afficherPatients(patients) {
-        const container = document.getElementById('patientsContainer');
-        
-        if (patients.length === 0) {
-            container.innerHTML = `
-                <div class="empty-patients">
-                    <i class="fas fa-user-friends"></i>
-                    <p>Aucun patient pour le moment</p>
-                    <p class="subtitle">Les patients apparaîtront ici après leur premier rendez-vous</p>
-                </div>
-            `;
-            return;
-        }
-        
-        container.innerHTML = patients.map(patient => {
-            const derniereVisite = patient.derniere_visite ? new Date(patient.derniere_visite).toLocaleDateString('fr-FR') : 'Aucune';
-            const telephone = patient.telephone || 'Non renseigné';
+            const activite = data.activite;
+            const inscrits = data.inscrits || [];
             
-            return `
-                <div class="patient-card">
-                    <div class="patient-card-header">
-                        <div class="patient-avatar-large"><i class="fas fa-user-circle"></i></div>
-                        <div class="patient-info-large">
-                            <h3>${patient.prenom} ${patient.nom}</h3>
-                            <p><i class="fas fa-calendar-alt"></i> ${patient.nb_consultations} consultation${patient.nb_consultations > 1 ? 's' : ''}</p>
-                            <p><i class="fas fa-envelope"></i> ${patient.email}</p>
-                            <p><i class="fas fa-phone"></i> ${telephone}</p>
-                            <p><i class="fas fa-clock"></i> Dernière visite : ${derniereVisite}</p>
+            const date = new Date(activite.date_heure);
+            const dateStr = date.toLocaleDateString('fr-FR');
+            const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            const percent = inscrits.length > 0 ? (inscrits.length / activite.capacite_max) * 100 : 0;
+            
+            let inscritsHtml = '';
+            if (inscrits.length > 0) {
+                inscritsHtml = `
+                    <div class="info-section">
+                        <h3><i class="fas fa-users"></i> Inscrits (${inscrits.length}/${activite.capacite_max})</h3>
+                        <div class="progress-bar-container">
+                            <div class="progress-fill" style="width: ${percent}%;"></div>
+                        </div>
+                        <div class="inscrits-list">
+                            ${inscrits.map(i => `
+                                <div class="inscrit-item">
+                                    <span class="inscrit-name">${escapeHtml(i.prenom)} ${escapeHtml(i.nom)}</span>
+                                    <span class="inscrit-email">${escapeHtml(i.email)}</span>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
-                    <div class="patient-card-footer">
-                        <button class="btn-view-file" onclick="voirDossier(${patient.id})">
-                            <i class="fas fa-folder-open"></i> Voir le dossier
-                        </button>
+                `;
+            } else {
+                inscritsHtml = `
+                    <div class="info-section">
+                        <h3><i class="fas fa-users"></i> Inscrits</h3>
+                        <div class="empty-inscrits">
+                            <i class="fas fa-user-plus"></i>
+                            <p>Aucun inscrit pour le moment</p>
+                        </div>
                     </div>
+                `;
+            }
+            
+            container.innerHTML = `
+                <div class="detail-header">
+                    <h1>${escapeHtml(activite.nom)}</h1>
+                    <p>${escapeHtml(activite.description || 'Aucune description')}</p>
+                </div>
+                <div class="detail-body">
+                    <div class="info-section">
+                        <h3><i class="far fa-calendar-alt"></i> Date et heure</h3>
+                        <div class="info-card">
+                            <div class="info-text">
+                                <div class="value">${dateStr} à ${timeStr}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3><i class="fas fa-map-marker-alt"></i> Lieu</h3>
+                        <div class="info-card">
+                            <div class="info-text">
+                                <div class="value">${escapeHtml(activite.lieu)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3><i class="fas fa-users"></i> Capacité</h3>
+                        <div class="info-card">
+                            <div class="info-text">
+                                <div class="value">${activite.capacite_max} personnes</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${inscritsHtml}
                 </div>
             `;
-        }).join('');
+        } catch (error) {
+            container.innerHTML = `<div style="text-align:center; padding:40px; color:red;">Erreur: ${error.message}</div>`;
+        }
     }
 
-    function rechercherPatient() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = allPatients.filter(patient => 
-            patient.nom.toLowerCase().includes(searchTerm) || 
-            patient.prenom.toLowerCase().includes(searchTerm) ||
-            patient.email.toLowerCase().includes(searchTerm)
-        );
-        afficherPatients(filtered);
-    }
-
-    function voirDossier(patientId) {
-        window.location.href = `dossier_patient.html?id=${patientId}`;
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     // ========== NOTIFICATIONS ==========
@@ -337,12 +265,6 @@
                     const notifications = data.notifications;
                     const nonLues = notifications.filter(n => n.lu == 0).length;
                     const badge = document.getElementById('topbar-notif-count');
-                    const sidebarBadge = document.getElementById('sidebar-notif-count');
-
-if (sidebarBadge) {
-  sidebarBadge.textContent = nonLues;
-  sidebarBadge.style.display = nonLues > 0 ? 'inline-block' : 'none';
-}
                     if (badge) {
                         if (nonLues > 0) {
                             badge.textContent = nonLues;
@@ -444,13 +366,6 @@ if (sidebarBadge) {
             }
         })
         .catch(err => console.error("Erreur:", err));
-    }
-
-    function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 </script>
 

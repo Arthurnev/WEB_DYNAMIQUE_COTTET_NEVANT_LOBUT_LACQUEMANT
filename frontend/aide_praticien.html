@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Aide - VitaCare Campus | Praticien</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style_practicien.css">
+    <style>
+        .aide-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .faq-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .faq-header h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            color: #1f2937;
+        }
+        .faq-header p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+        .faq-search {
+            background: white;
+            border-radius: 50px;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 40px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .faq-search i {
+            color: #9ca3af;
+            font-size: 18px;
+        }
+        .faq-search input {
+            border: none;
+            flex: 1;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+        }
+        .faq-categories {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            justify-content: center;
+        }
+        .cat-btn {
+            padding: 8px 20px;
+            border-radius: 40px;
+            background: #f3f4f6;
+            color: #4b5563;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover {
+            background: #e5e7eb;
+        }
+        .cat-btn.active {
+            background: #2e8b57;
+            color: white;
+        }
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .faq-item {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .faq-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .faq-question {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+        }
+        .faq-question:hover {
+            background: #f8fafc;
+        }
+        .faq-question h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+            flex: 1;
+            padding-right: 16px;
+        }
+        .faq-question i {
+            color: #2e8b57;
+            transition: transform 0.2s;
+            font-size: 14px;
+        }
+        .faq-question.open i {
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            border-top: 0px solid #e5e7eb;
+        }
+        .faq-answer.open {
+            padding: 20px 24px;
+            max-height: 500px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .faq-answer p {
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .faq-answer ul {
+            padding-left: 20px;
+            color: #4b5563;
+            margin: 8px 0;
+        }
+        .faq-answer li {
+            margin: 6px 0;
+        }
+        .contact-card {
+            background: #eaf7f4;
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 48px;
+        }
+        .contact-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+        .contact-card p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+        .contact-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-contact {
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-mail {
+            background: #2e8b57;
+            color: white;
+        }
+        .btn-mail:hover {
+            background: #1f6e43;
+            transform: translateY(-2px);
+        }
+        .btn-phone {
+            background: white;
+            color: #2e8b57;
+            border: 1px solid #cbd5e1;
+        }
+        .btn-phone:hover {
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+        .no-results {
+            text-align: center;
+            padding: 60px;
+            color: #9ca3af;
+        }
+        .no-results i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #cbd5e1;
+        }
+        @media (max-width: 768px) {
+            .faq-question h3 {
+                font-size: 14px;
+            }
+            .faq-question {
+                padding: 16px 20px;
+            }
+            .faq-answer.open {
+                padding: 16px 20px;
+            }
+            .contact-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn-contact {
+                justify-content: center;
+                width: 100%;
+                max-width: 250px;
+            }
+            .faq-categories {
+                gap: 8px;
+            }
+            .cat-btn {
+                padding: 6px 14px;
+                font-size: 13px;
+            }
+        }
+        @media (max-width: 480px) {
+            .faq-header h1 {
+                font-size: 24px;
+            }
+            .contact-card {
+                padding: 24px;
+            }
+        }
+        .hidden { display: none; }
+        .account-menu { display: none; }
+        .account-menu:not(.hidden) { display: block; }
+    
+    /* Harmonisation interface praticien avec le style patient */
+    .main-content {
+      width: calc(100vw - 280px) !important;
+      max-width: none !important;
+    }
+
+    .page-content {
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 48px 48px !important;
+    }
+
+    .topbar {
+      background: #fff !important;
+      border-bottom: 1px solid #e5e7eb !important;
+    }
+
+    .sidebar-footer .help-box {
+      background: #eaf7f4;
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .sidebar-footer .contact-toggle {
+      margin-top: 10px;
+      border: none;
+      background: transparent;
+      color: #2e8b57;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .sidebar-footer .contact-box {
+      margin-top: 12px;
+      text-align: left;
+      background: #fff;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 13px;
+    }
+
+    .sidebar-footer .contact-box p {
+      margin: 0 0 10px 0;
+      color: #334155;
+    }
+
+    .sidebar-footer .faq-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #2e8b57;
+      font-weight: 700;
+      text-decoration: none;
+      margin-top: 4px;
+    }
+
+    .sidebar-nav a {
+      gap: 12px;
+    }
+
+    .sidebar-nav .badge {
+      margin-left: auto;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">V</div>
+            <span class="brand-name">VitaCare <small>Campus</small></span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
+            <a href="agenda_praticien.html"><i class="fas fa-calendar-alt"></i> Agenda</a>
+            <a href="disponibilites_praticien.html"><i class="fas fa-clock"></i> Disponibilités</a>
+            <a href="patients_praticien.html"><i class="fas fa-users"></i> Patients</a>
+            <a href="activites_praticien.html"><i class="fas fa-heart"></i> Activités</a>
+            <a href="notifications_praticien.html"><i class="fas fa-bell"></i> Notifications <span class="badge" id="sidebar-notif-count">0</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="help-box">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <strong>Besoin d'aide ?</strong>
+                <p>Notre équipe est là pour vous aider.</p>
+                <button type="button" class="contact-toggle" onclick="togglePraticienHelp()">Nous contacter</button>
+                <div class="contact-box hidden" id="contactBox">
+                    <p><strong><i class="fas fa-phone"></i> Téléphone</strong><br>01 23 45 67 89</p>
+                    <p><strong><i class="fas fa-envelope"></i> Email</strong><br>support@vitacare.fr</p>
+                    <a href="aide_praticien.html" class="faq-link"><i class="fas fa-circle-question"></i> FAQ</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-right">
+                <div class="notif-dropdown-container" style="position:relative;">
+                    <span class="icon-btn notif-bell" id="notif-bell" style="cursor:pointer; position:relative;">
+                        <i class="fas fa-bell"></i>
+                        <span id="topbar-notif-count" style="position:absolute; top:-8px; right:-8px; background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:999px; display:none;">0</span>
+                    </span>
+                    <div id="notif-dropdown" style="display:none; position:absolute; top:100%; right:0; width:380px; max-height:450px; background:white; border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,0.15); border:1px solid #e5e7eb; z-index:1000; margin-top:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid #e5e7eb;">
+                            <span style="font-weight:700; font-size:16px;">Notifications</span>
+                            <button id="markAllReadBtn" style="background:transparent; border:none; color:#2e8b57; font-size:13px; font-weight:600; cursor:pointer;">Tout marquer comme lu</button>
+                        </div>
+                        <div id="notif-dropdown-list" style="max-height:320px; overflow-y:auto;">
+                            <div style="padding:20px; text-align:center;">Chargement...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="account-wrapper" style="position:relative; display:inline-block; margin-left:15px;">
+                    <button class="avatar-button" onclick="toggleAccountMenu()" style="background:none; border:none; cursor:pointer;">
+                        <div class="student-avatar" id="studentAvatar" style="width:35px; height:35px; border-radius:50%; background:#2e8b57; color:white; display:inline-flex; align-items:center; justify-content:center;">MM</div>
+                    </button>
+                    <strong id="studentName" style="margin-left:8px;"></strong>
+                    <div class="account-menu hidden" id="accountMenu" style="position:absolute; top:40px; right:0; background:white; border:1px solid #ccc; border-radius:8px; padding:10px; min-width:150px; box-shadow:0 4px 12px rgba(0,0,0,0.1); z-index:1000;">
+                        <a href="compte_praticien.html" style="display:block; padding:8px; text-decoration:none; color:#333;"><i class="fas fa-user-cog"></i> Mon compte</a>
+                        <button class="logout-btn" onclick="logout()" style="display:block; width:100%; padding:8px; background:none; border:none; text-align:left; cursor:pointer; color:#333;"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="aide-container">
+                <div class="faq-header">
+                    <h1><i class="fas fa-question-circle"></i> Centre d'aide</h1>
+                    <p>Les réponses à vos questions sur VitaCare Campus</p>
+                </div>
+
+                <div class="faq-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Rechercher une question..." onkeyup="filtrerFAQ()">
+                </div>
+
+                <div class="faq-categories">
+                    <button class="cat-btn active" data-cat="all" onclick="filtrerCategorie('all')">Toutes</button>
+                    <button class="cat-btn" data-cat="compte" onclick="filtrerCategorie('compte')">Compte</button>
+                    <button class="cat-btn" data-cat="rdv" onclick="filtrerCategorie('rdv')">Rendez-vous</button>
+                    <button class="cat-btn" data-cat="activite" onclick="filtrerCategorie('activite')">Activités</button>
+                    <button class="cat-btn" data-cat="patient" onclick="filtrerCategorie('patient')">Patients</button>
+                    <button class="cat-btn" data-cat="technique" onclick="filtrerCategorie('technique')">Technique</button>
+                </div>
+
+                <div id="faqList" class="faq-list"></div>
+
+                <div class="contact-card">
+                    <h3><i class="fas fa-headset"></i> Vous n'avez pas trouvé votre réponse ?</h3>
+                    <p>Notre équipe est là pour vous aider 7j/7</p>
+                    <div class="contact-buttons">
+                        <a href="mailto:support@vitacare.fr" class="btn-contact btn-mail">
+                            <i class="fas fa-envelope"></i> support@vitacare.fr
+                        </a>
+                        <a href="tel:+33123456789" class="btn-contact btn-phone">
+                            <i class="fas fa-phone"></i> 01 23 45 67 89
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+
+    function togglePraticienHelp() {
+        const box = document.getElementById("contactBox");
+        if (box) box.classList.toggle("hidden");
+    }
+
+    function setPraticienIdentity(user) {
+        const prenom = user.prenom || "";
+        const nom = user.nom || "";
+        const fullName = `${prenom} ${nom}`.trim();
+        const initials = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase() || "DR";
+
+        const studentAvatar = document.getElementById("studentAvatar");
+        const studentName = document.getElementById("studentName");
+        const avatarInitials = document.getElementById("avatar-initials");
+        const userName = document.getElementById("user-name");
+        const profileAvatar = document.getElementById("profileAvatar");
+        const profileName = document.getElementById("profileName");
+
+        if (studentAvatar) studentAvatar.textContent = initials;
+        if (studentName) studentName.textContent = `Dr. ${fullName}`.trim();
+        if (avatarInitials) avatarInitials.textContent = initials;
+        if (userName) userName.textContent = `Dr. ${fullName}`.trim();
+        if (profileAvatar) profileAvatar.textContent = initials;
+        if (profileName) profileName.textContent = `Dr. ${fullName}`.trim();
+    }
+
+    const faqData = [
+        { id: 1, question: "Comment créer un compte praticien ?", answer: "Pour créer un compte praticien, rendez-vous sur la page d'inscription, sélectionnez l'onglet 'Praticien' et remplissez le formulaire avec vos informations professionnelles (nom, prénom, email, spécialité, diplôme, numéro RPPS). Une fois le formulaire validé, vous recevrez un email de confirmation.", categorie: "compte" },
+        { id: 2, question: "Comment modifier mes disponibilités ?", answer: "Pour gérer vos disponibilités, allez dans la section 'Disponibilités' depuis le menu latéral. Vous pouvez ajouter une nouvelle plage horaire en cliquant sur 'Ajouter une disponibilité' ou supprimer une disponibilité existante en cliquant sur l'icône poubelle.", categorie: "rdv" },
+        { id: 3, question: "Comment créer une activité ?", answer: "Pour créer une activité, rendez-vous dans la section 'Activités' puis cliquez sur 'Créer une activité'. Remplissez le formulaire (titre, description, date, heure, lieu, capacité maximum, prix). Une fois publiée, l'activité sera visible par les étudiants.", categorie: "activite" },
+        { id: 4, question: "Comment consulter le dossier d'un patient ?", answer: "Pour consulter le dossier d'un patient, allez dans 'Patients' puis cliquez sur 'Voir le dossier' à côté du patient souhaité. Vous y verrez l'historique des consultations, les activités auxquelles il s'est inscrit et vos commentaires.", categorie: "patient" },
+        { id: 5, question: "Comment ajouter une note à une consultation ?", answer: "Dans le dossier du patient, allez dans l'onglet 'Consultations', puis cliquez sur 'Ajouter un commentaire' à côté de la consultation concernée. Écrivez votre note et enregistrez-la.", categorie: "patient" },
+        { id: 6, question: "Comment voir les inscrits à mon activité ?", answer: "Dans la page 'Mes activités', cliquez sur 'Voir les inscrits' sur la carte de l'activité. Une fenêtre s'ouvre avec la liste des étudiants inscrits avec leurs noms et emails.", categorie: "activite" },
+        { id: 7, question: "Comment modifier mon mot de passe ?", answer: "Pour modifier votre mot de passe, connectez-vous à votre compte, puis allez dans les paramètres de votre profil. Vous pouvez y changer votre mot de passe et vos informations personnelles.", categorie: "compte" },
+        { id: 8, question: "Que faire en cas de problème technique ?", answer: "En cas de problème technique, vérifiez d'abord votre connexion internet. Si le problème persiste, contactez notre support technique à support@vitacare.fr en décrivant précisément le problème.", categorie: "technique" },
+        { id: 9, question: "Comment annuler un rendez-vous ?", answer: "Pour annuler un rendez-vous, rendez-vous dans l'agenda, cliquez sur le rendez-vous concerné, puis sur le bouton 'Annuler'. Confirmez l'annulation.", categorie: "rdv" },
+        { id: 10, question: "Comment exporter mes données ?", answer: "Pour exporter vos données (patients, rendez-vous, activités), contactez notre support. Nous pouvons vous fournir un export au format CSV ou PDF sur demande.", categorie: "technique" },
+        { id: 11, question: "Comment fonctionne le système de notifications ?", answer: "La cloche en haut à droite affiche vos notifications. Les notifications non lues sont surlignées en vert. Cliquez sur une notification pour la marquer comme lue. Le compteur rouge indique le nombre de notifications non lues.", categorie: "technique" },
+        { id: 12, question: "Puis-je modifier un rendez-vous déjà pris ?", answer: "Pour modifier un rendez-vous, vous devez d'abord l'annuler, puis proposer une nouvelle plage horaire au patient. Nous travaillons sur une fonctionnalité de modification directe.", categorie: "rdv" }
+    ];
+
+    let currentCategory = "all";
+    let currentSearch = "";
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user) {
+            setPraticienIdentity(user);
+        }
+        afficherFAQ();
+        initNotifications();
+    });
+
+    function toggleAccountMenu() {
+        const menu = document.getElementById('accountMenu');
+        if (menu.style.display === 'block') {
+            menu.style.display = 'none';
+        } else {
+            menu.style.display = 'block';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+    }
+
+    document.addEventListener('click', function(event) {
+        const menu = document.getElementById('accountMenu');
+        const button = document.querySelector('.avatar-button');
+        if (menu && button && !button.contains(event.target) && !menu.contains(event.target)) {
+            menu.style.display = 'none';
+        }
+    });
+
+    function filtrerCategorie(cat) {
+        currentCategory = cat;
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            if (btn.dataset.cat === cat) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+        afficherFAQ();
+    }
+
+    function filtrerFAQ() {
+        currentSearch = document.getElementById('searchInput').value.toLowerCase();
+        afficherFAQ();
+    }
+
+    function afficherFAQ() {
+        let filtered = faqData;
+        
+        if (currentCategory !== "all") {
+            filtered = filtered.filter(f => f.categorie === currentCategory);
+        }
+        
+        if (currentSearch) {
+            filtered = filtered.filter(f => 
+                f.question.toLowerCase().includes(currentSearch) || 
+                f.answer.toLowerCase().includes(currentSearch)
+            );
+        }
+        
+        const container = document.getElementById('faqList');
+        
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="no-results"><i class="fas fa-search"></i><p>Aucune question trouvée</p></div>';
+            return;
+        }
+        
+        container.innerHTML = filtered.map(faq => `
+            <div class="faq-item" data-id="${faq.id}">
+                <div class="faq-question" onclick="toggleReponse(${faq.id})">
+                    <h3>${escapeHtml(faq.question)}</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer" id="reponse-${faq.id}">
+                    <p>${escapeHtml(faq.answer)}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleReponse(id) {
+        const reponse = document.getElementById(`reponse-${id}`);
+        const questionDiv = reponse.previousElementSibling;
+        
+        reponse.classList.toggle('open');
+        questionDiv.classList.toggle('open');
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // ========== NOTIFICATIONS ==========
+    function initNotifications() {
+        const bell = document.getElementById('notif-bell');
+        const dropdown = document.getElementById('notif-dropdown');
+        const markAllBtn = document.getElementById('markAllReadBtn');
+        
+        chargerNotifications();
+        
+        if (bell && dropdown) {
+            bell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                } else {
+                    chargerNotifications();
+                    dropdown.style.display = 'block';
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!bell.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
+        }
+        
+        if (markAllBtn) {
+            markAllBtn.onclick = marquerToutLu;
+        }
+    }
+
+    function chargerNotifications() {
+        fetch('../backend/notifications.php', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const notifications = data.notifications;
+                    const nonLues = notifications.filter(n => n.lu == 0).length;
+                    const badge = document.getElementById('topbar-notif-count');
+                    const topbarBadge = document.getElementById("topbar-notif-count");
+        if (topbarBadge) {
+          topbarBadge.textContent = nonLues;
+          topbarBadge.style.display = nonLues > 0 ? "block" : "none";
+        }
+
+        const sidebarBadge = document.getElementById("sidebar-notif-count");
+        if (sidebarBadge) {
+          sidebarBadge.textContent = nonLues;
+          sidebarBadge.style.display = nonLues > 0 ? "inline-block" : "none";
+        }
+                    if (badge) {
+                        if (nonLues > 0) {
+                            badge.textContent = nonLues;
+                            badge.style.display = 'block';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                    afficherNotifications(notifications);
+                }
+            })
+            .catch(err => console.error("Erreur:", err));
+    }
+
+    function afficherNotifications(notifications) {
+        const container = document.getElementById('notif-dropdown-list');
+        if (!container) return;
+        
+        if (notifications.length === 0) {
+            container.innerHTML = '<div style="padding:20px; text-align:center; color:#9ca3af;">Aucune notification</div>';
+            return;
+        }
+        
+        const recentes = [...notifications].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+        
+        container.innerHTML = recentes.map(notif => {
+            const estLu = notif.lu == 1;
+            let bgColor = '#e5e7eb';
+            let iconColor = '#4b5563';
+            let iconFa = 'fa-info-circle';
+            
+            if (notif.type === 'rappel') {
+                bgColor = '#fef3c7';
+                iconColor = '#d97706';
+                iconFa = 'fa-bell';
+            } else if (notif.type === 'confirmation') {
+                bgColor = '#d1fae5';
+                iconColor = '#065f46';
+                iconFa = 'fa-check-circle';
+            } else if (notif.type === 'annulation') {
+                bgColor = '#fee2e2';
+                iconColor = '#dc2626';
+                iconFa = 'fa-times-circle';
+            }
+            
+            const date = new Date(notif.date);
+            const dateStr = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'numeric' });
+            const heureStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            
+            const titre = notif.message.length > 50 ? notif.message.substring(0, 50) + '...' : notif.message;
+            
+            return `
+                <div onclick="marquerCommeLu(${notif.id})" style="padding:12px 18px; display:flex; gap:12px; cursor:pointer; border-bottom:1px solid #f0f4f9; ${!estLu ? 'background:#eaf7f4;' : ''}">
+                    <div style="width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; background:${bgColor}; color:${iconColor}">
+                        <i class="fas ${iconFa}"></i>
+                    </div>
+                    <div style="flex:1">
+                        <div style="font-weight:600; font-size:14px; color:#1f2937; margin-bottom:4px;">${escapeHtml(titre)}</div>
+                        <div style="font-size:12px; color:#6b7280;">${escapeHtml(notif.message.substring(0, 80))}</div>
+                        <div style="font-size:11px; color:#9ca3af; margin-top:4px;">${dateStr} à ${heureStr}</div>
+                    </div>
+                    ${!estLu ? '<div style="width:8px; height:8px; border-radius:50%; background:#2e8b57; margin-top:12px;"></div>' : ''}
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML += `
+            <div style="padding:12px 18px; text-align:center; border-top:1px solid #e5e7eb;">
+                <a href="notifications_praticien.html" style="color:#2e8b57; text-decoration:none; font-weight:600;">Voir toutes les notifications →</a>
+            </div>
+        `;
+    }
+
+    function marquerCommeLu(id) {
+        fetch('../backend/marquer_notification_lu.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ id: id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                chargerNotifications();
+            }
+        })
+        .catch(err => console.error("Erreur:", err));
+    }
+
+    function marquerToutLu() {
+        fetch('../backend/marquer_tout_lu.php', {
+            method: 'POST',
+            credentials: 'include'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                chargerNotifications();
+            }
+        })
+        .catch(err => console.error("Erreur:", err));
+    }
+</script>
+
+</body>
+</html>

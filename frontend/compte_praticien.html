@@ -3,15 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Gestion des disponibilités - VitaCare Campus | Dr. Martin</title>
+    <title>Mon compte - VitaCare Campus | Praticien</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style_practicien.css">
     <style>
+        .account-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .profile-header {
+            background: linear-gradient(135deg, #2e8b57 0%, #1f6e43 100%);
+            border-radius: 24px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            border: 3px solid white;
+        }
+        .profile-info h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .profile-info p {
+            opacity: 0.9;
+            margin: 5px 0;
+        }
+        .badge-role {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1f2937;
+        }
+        .card-title i {
+            color: #2e8b57;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 13px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: #f9fafb;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #2e8b57;
+            box-shadow: 0 0 0 3px rgba(46,139,87,0.1);
+            background: white;
+        }
+        .btn-save {
+            background: #2e8b57;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .btn-save:hover {
+            background: #1f6e43;
+            transform: translateY(-2px);
+        }
+        .info-text {
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 12px;
+            color: #166534;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #e5e7eb;
+        }
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 24px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            z-index: 1100;
+            animation: slideIn 0.3s ease;
+        }
+        .toast.success { background: #2e8b57; }
+        .toast.error { background: #dc2626; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
         .hidden { display: none; }
         .account-menu { display: none; }
-        .account-menu:not(.hidden) { display: block; }
+        .account-menu.show { display: block; }
     
     /* Harmonisation interface praticien avec le style patient */
     .main-content {
@@ -85,7 +241,6 @@
 <body>
 
 <div class="app-container">
-
     <aside class="sidebar">
         <div class="sidebar-brand">
             <div class="brand-icon">V</div>
@@ -94,12 +249,11 @@
         <nav class="sidebar-nav">
             <a href="dashboard_praticien.html"><i class="fas fa-th-large"></i> Tableau de bord</a>
             <a href="agenda_praticien.html"><i class="fas fa-calendar-alt"></i> Agenda</a>
-            <a href="disponibilites_praticien.html" class="active"><i class="fas fa-clock"></i> Disponibilités</a>
+            <a href="disponibilites_praticien.html"><i class="fas fa-clock"></i> Disponibilités</a>
             <a href="patients_praticien.html"><i class="fas fa-users"></i> Patients</a>
             <a href="activites_praticien.html"><i class="fas fa-heart"></i> Activités</a>
             <a href="notifications_praticien.html"><i class="fas fa-bell"></i> Notifications <span class="badge" id="sidebar-notif-count">0</span></a>
         </nav>
-
         <div class="sidebar-footer">
             <div class="help-box">
                 <div class="help-icon"><i class="fas fa-question"></i></div>
@@ -147,59 +301,107 @@
         </header>
 
         <div class="page-content">
-            <div class="disponibilites-header">
-                <div>
-                    <h1>Gestion des disponibilités</h1>
-                    <p class="subtitle">Gérez vos plages horaires disponibles pour les réservations</p>
+            <div class="account-container">
+                <div id="message"></div>
+                
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">MM</div>
+                    <div class="profile-info">
+                        <h2 id="profileName">Dr. Martin</h2>
+                        <p><i class="fas fa-envelope"></i> <span id="profileEmail">email@example.com</span></p>
+                        <span class="badge-role"><i class="fas fa-user-md"></i> Praticien</span>
+                    </div>
                 </div>
-                <button class="btn-add" id="openModalBtn">
-                    <i class="fas fa-plus"></i> Ajouter une disponibilité
-                </button>
-            </div>
 
-            <div id="disponibilitesContainer" class="disponibilites-table">
-                <div style="text-align:center; padding:40px;">Chargement...</div>
+                <form id="profileForm">
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-user-circle"></i>
+                            Informations personnelles
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Prénom</label>
+                                <input type="text" id="prenom" name="prenom">
+                            </div>
+                            <div class="form-group">
+                                <label>Nom</label>
+                                <input type="text" id="nom" name="nom">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Email</label>
+                                <input type="email" id="email" name="email">
+                            </div>
+                            <div class="form-group">
+                                <label>Téléphone</label>
+                                <input type="tel" id="telephone" name="telephone" placeholder="06 12 34 56 78">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Adresse professionnelle</label>
+                                <input type="text" id="adresse_pro" name="adresse_pro" placeholder="Cabinet, hôpital...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-graduation-cap"></i>
+                            Informations professionnelles
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Spécialité</label>
+                                <select id="specialite" name="specialite">
+                                    <option value="">Sélectionner une spécialité</option>
+                                    <option value="medecine_generale">Médecine générale</option>
+                                    <option value="cardiologie">Cardiologie</option>
+                                    <option value="dermatologie">Dermatologie</option>
+                                    <option value="gynecologie">Gynécologie</option>
+                                    <option value="pediatrie">Pédiatrie</option>
+                                    <option value="psychiatrie">Psychiatrie</option>
+                                    <option value="psychologie">Psychologie</option>
+                                    <option value="nutrition">Nutrition</option>
+                                    <option value="sport">Médecine du sport</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Diplôme</label>
+                                <input type="text" id="diplome" name="diplome" placeholder="Ex: Doctorat en médecine">
+                            </div>
+                            <div class="form-group">
+                                <label>Numéro RPPS</label>
+                                <input type="text" id="numero_rpps" name="numero_rpps" placeholder="Numéro RPPS">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-lock"></i>
+                            Sécurité
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nouveau mot de passe</label>
+                                <input type="password" id="new_password" placeholder="Laisser vide pour ne pas changer">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmer le mot de passe</label>
+                                <input type="password" id="confirm_password" placeholder="Confirmer">
+                            </div>
+                        </div>
+                        <div class="info-text">
+                            <i class="fas fa-info-circle"></i> Le numéro RPPS et les diplômes sont des informations importantes pour les étudiants.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Enregistrer les modifications
+                    </button>
+                </form>
             </div>
         </div>
     </main>
-</div>
-
-<!-- Modal -->
-<div id="dispoModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2><i class="fas fa-plus-circle"></i> Nouvelle disponibilité</h2>
-            <button class="modal-close" id="closeModalBtn">&times;</button>
-        </div>
-        <form id="dispoForm">
-            <div class="form-group">
-                <label>Date *</label>
-                <input type="date" id="dispoDate" required>
-            </div>
-            <div class="form-group">
-                <label>Répétition</label>
-                <select id="dispoRepetition">
-                    <option value="unique">Une seule fois</option>
-                    <option value="hebdomadaire">Hebdomadaire</option>
-                    <option value="mensuelle">Mensuelle</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Heure de début *</label>
-                    <input type="time" id="dispoHeureDebut" required>
-                </div>
-                <div class="form-group">
-                    <label>Heure de fin *</label>
-                    <input type="time" id="dispoHeureFin" required>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel-modal" id="cancelModalBtn">Annuler</button>
-                <button type="submit" class="btn-submit">Ajouter</button>
-            </div>
-        </form>
-    </div>
 </div>
 
 <script>
@@ -234,27 +436,19 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
         const user = JSON.parse(localStorage.getItem("user"));
-        if (!user) {
+        if (!user || user.role !== 'praticien') {
             window.location.href = "login.html";
             return;
         }
         currentUser = user;
         
-        setPraticienIdentity(user);
+        document.getElementById("studentAvatar").textContent = (user.prenom ? user.prenom[0] : "D") + (user.nom ? user.nom[0] : "M");
+        document.getElementById("studentName").textContent = "Dr. " + (user.nom || 'Praticien');
         
-        await chargerDisponibilites();
-        
-        document.getElementById('openModalBtn').onclick = openModal;
-        document.getElementById('closeModalBtn').onclick = closeModal;
-        document.getElementById('cancelModalBtn').onclick = closeModal;
-        document.getElementById('dispoForm').onsubmit = ajouterDisponibilite;
-        
-        window.onclick = (event) => {
-            const modal = document.getElementById('dispoModal');
-            if (event.target === modal) closeModal();
-        };
-        
+        await chargerProfil();
         initNotifications();
+        
+        document.getElementById('profileForm').onsubmit = sauvegarderProfil;
     });
 
     function toggleAccountMenu() {
@@ -278,110 +472,29 @@
         }
     });
 
-    async function chargerDisponibilites() {
-        const container = document.getElementById('disponibilitesContainer');
+    async function chargerProfil() {
         try {
-            const res = await fetch('../backend/lister_disponibilites.php', { credentials: 'include' });
-            const data = await res.json();
-            
-            if (!data.success) {
-                container.innerHTML = `<div class="empty-disponibilites"><p>Erreur: ${data.error}</p></div>`;
-                return;
-            }
-            
-            const disponibilites = data.disponibilites;
-            
-            if (disponibilites.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-disponibilites">
-                        <i class="fas fa-calendar-plus"></i>
-                        <p>Vous n'avez pas encore créé de disponibilité</p>
-                        <button class="btn-add" onclick="document.getElementById('openModalBtn').click()">
-                            <i class="fas fa-plus"></i> Ajouter une disponibilité
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = `
-                <table class="disponibilites-table">
-                    <thead>
-                        <tr><th>Date</th><th>Horaire</th><th>Répétition</th><th>Statut</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            for (const dispo of disponibilites) {
-                const date = new Date(dispo.date);
-                const dateStr = date.toLocaleDateString('fr-FR');
-                const heureDebut = dispo.heure_debut.substring(0, 5);
-                const heureFin = dispo.heure_fin.substring(0, 5);
-                
-                let statutClass = '';
-                let statutLabel = '';
-                let actions = '';
-                
-                if (dispo.statut === 'disponible') {
-                    statutClass = 'statut-libre';
-                    statutLabel = 'Libre';
-                    actions = `<button class="btn-delete-dispo" onclick="supprimerDisponibilite(${dispo.id})" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:16px;"><i class="fas fa-trash-alt"></i></button>`;
-                } else if (dispo.statut === 'reserve') {
-                    statutClass = 'statut-reserve';
-                    statutLabel = 'Réservé';
-                    let reservationId = null;
-                    try {
-                        const res2 = await fetch(`../backend/get_reservation_id.php?creneau_id=${dispo.id}`, { credentials: 'include' });
-                        const data2 = await res2.json();
-                        if (data2.success) reservationId = data2.reservation_id;
-                    } catch(e) {}
-                    
-                    if (reservationId) {
-                        actions = `<button class="btn-cancel-rdv" onclick="annulerRdv(${reservationId})" style="background:#fee2e2; border:1px solid #dc2626; color:#dc2626; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px;"><i class="fas fa-calendar-times"></i> Annuler</button>`;
-                    } else {
-                        actions = `<span style="color:#999;">-</span>`;
-                    }
-                } else {
-                    statutClass = 'statut-bloque';
-                    statutLabel = 'Bloqué';
-                    actions = `<button class="btn-delete-dispo" onclick="supprimerDisponibilite(${dispo.id})" style="background:transparent; border:none; color:#dc2626; cursor:pointer; font-size:16px;"><i class="fas fa-trash-alt"></i></button>`;
-                }
-                
-                html += `
-                    <tr>
-                        <td>${dateStr}</td>
-                        <td>${heureDebut} - ${heureFin}</td>
-                        <td>Unique<br></td>
-                        <td><span class="${statutClass}">${statutLabel}</span></td>
-                        <td>${actions}</td>
-                    </tr>
-                `;
-            }
-            
-            html += `</tbody><table>`;
-            container.innerHTML = html;
-            
-        } catch (error) {
-            container.innerHTML = `<div class="empty-disponibilites"><p>Erreur: ${error.message}</p></div>`;
-        }
-    }
-
-    async function annulerRdv(reservationId) {
-        if (!confirm('Annuler ce rendez-vous ?')) return;
-        
-        try {
-            const res = await fetch('../backend/annuler_rdv.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ id: reservationId })
-            });
+            const res = await fetch('../backend/get_praticien_profil.php', { credentials: 'include' });
             const data = await res.json();
             
             if (data.success) {
-                showToast('Rendez-vous annulé', 'success');
-                await chargerDisponibilites();
-                chargerNotifications();
+                const p = data.profil;
+                document.getElementById('prenom').value = p.prenom || '';
+                document.getElementById('nom').value = p.nom || '';
+                document.getElementById('email').value = p.email || '';
+                document.getElementById('telephone').value = p.telephone || '';
+                document.getElementById('adresse_pro').value = p.adresse_pro || '';
+                document.getElementById('specialite').value = p.specialite || '';
+                document.getElementById('diplome').value = p.diplome || '';
+                document.getElementById('numero_rpps').value = p.numero_rpps || '';
+                
+                const nomComplet = (p.prenom ? p.prenom + ' ' : '') + (p.nom ? p.nom : 'Dr. Martin');
+                document.getElementById('profileName').textContent = nomComplet;
+                document.getElementById('profileEmail').textContent = p.email || '';
+                const initiales = ((p.prenom?.[0] || 'D') + (p.nom?.[0] || 'M')).toUpperCase();
+                document.getElementById('profileAvatar').textContent = initiales;
+                document.getElementById("studentAvatar").textContent = initiales;
+                document.getElementById("studentName").textContent = "Dr. " + (p.nom || 'Praticien');
             } else {
                 showToast('Erreur: ' + data.error, 'error');
             }
@@ -390,83 +503,63 @@
         }
     }
 
-    async function ajouterDisponibilite(event) {
+    async function sauvegarderProfil(event) {
         event.preventDefault();
         
-        const date = document.getElementById('dispoDate').value;
-        const repetition = document.getElementById('dispoRepetition').value;
-        const heureDebut = document.getElementById('dispoHeureDebut').value;
-        const heureFin = document.getElementById('dispoHeureFin').value;
+        const newPassword = document.getElementById('new_password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
         
-        if (!date || !heureDebut || !heureFin) {
-            showToast('Veuillez remplir tous les champs obligatoires', 'error');
+        if (newPassword && newPassword !== confirmPassword) {
+            showToast('Les mots de passe ne correspondent pas', 'error');
             return;
         }
         
-        if (heureDebut >= heureFin) {
-            showToast('L\'heure de fin doit être après l\'heure de début', 'error');
+        if (newPassword && newPassword.length < 6) {
+            showToast('Le mot de passe doit faire au moins 6 caractères', 'error');
             return;
         }
+        
+        const data = {
+            prenom: document.getElementById('prenom').value,
+            nom: document.getElementById('nom').value,
+            email: document.getElementById('email').value,
+            telephone: document.getElementById('telephone').value,
+            adresse_pro: document.getElementById('adresse_pro').value,
+            specialite: document.getElementById('specialite').value,
+            diplome: document.getElementById('diplome').value,
+            numero_rpps: document.getElementById('numero_rpps').value,
+            new_password: newPassword || null
+        };
         
         try {
-            const res = await fetch('../backend/ajouter_disponibilite.php', {
+            const res = await fetch('../backend/mettre_a_jour_praticien.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({
-                    date: date,
-                    heure_debut: heureDebut,
-                    heure_fin: heureFin,
-                    repetition: repetition
-                })
+                body: JSON.stringify(data)
             });
+            const result = await res.json();
             
-            const data = await res.json();
-            
-            if (data.success) {
-                showToast('Disponibilité ajoutée', 'success');
-                closeModal();
-                document.getElementById('dispoForm').reset();
-                await chargerDisponibilites();
+            if (result.success) {
+                showToast('Profil mis à jour avec succès', 'success');
+                document.getElementById('new_password').value = '';
+                document.getElementById('confirm_password').value = '';
+                
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (user) {
+                    user.prenom = data.prenom;
+                    user.nom = data.nom;
+                    user.email = data.email;
+                    localStorage.setItem("user", JSON.stringify(user));
+                }
+                
+                chargerProfil();
             } else {
-                showToast('Erreur: ' + data.error, 'error');
+                showToast('Erreur: ' + result.error, 'error');
             }
         } catch (error) {
             showToast('Erreur de connexion', 'error');
         }
-    }
-
-    async function supprimerDisponibilite(id) {
-        if (!confirm('Supprimer cette disponibilité ?')) return;
-        
-        try {
-            const res = await fetch(`../backend/supprimer_disponibilite.php?id=${id}`, { credentials: 'include' });
-            const data = await res.json();
-            
-            if (data.success) {
-                showToast('Disponibilité supprimée', 'success');
-                await chargerDisponibilites();
-            } else {
-                showToast('Erreur: ' + data.error, 'error');
-            }
-        } catch (error) {
-            showToast('Erreur de connexion', 'error');
-        }
-    }
-
-    function openModal() {
-        const modal = document.getElementById('dispoModal');
-        modal.classList.add('open');
-        const today = new Date();
-        today.setDate(today.getDate() + 1);
-        document.getElementById('dispoDate').value = today.toISOString().split('T')[0];
-        document.getElementById('dispoHeureDebut').value = '09:00';
-        document.getElementById('dispoHeureFin').value = '12:00';
-    }
-
-    function closeModal() {
-        document.getElementById('dispoModal').classList.remove('open');
-        document.getElementById('dispoForm').reset();
     }
 
     function showToast(message, type) {
@@ -474,7 +567,7 @@
         toast.className = `toast ${type}`;
         toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
         document.body.appendChild(toast);
-        setTimeout(() => { toast.remove(); }, 3000);
+        setTimeout(() => toast.remove(), 3000);
     }
 
     function initNotifications() {
@@ -515,12 +608,17 @@
                     const notifications = data.notifications;
                     const nonLues = notifications.filter(n => n.lu == 0).length;
                     const badge = document.getElementById('topbar-notif-count');
-                    const sidebarBadge = document.getElementById('sidebar-notif-count');
+                    const topbarBadge = document.getElementById("topbar-notif-count");
+        if (topbarBadge) {
+          topbarBadge.textContent = nonLues;
+          topbarBadge.style.display = nonLues > 0 ? "block" : "none";
+        }
 
-if (sidebarBadge) {
-  sidebarBadge.textContent = nonLues;
-  sidebarBadge.style.display = nonLues > 0 ? 'inline-block' : 'none';
-}
+        const sidebarBadge = document.getElementById("sidebar-notif-count");
+        if (sidebarBadge) {
+          sidebarBadge.textContent = nonLues;
+          sidebarBadge.style.display = nonLues > 0 ? "inline-block" : "none";
+        }
                     if (badge) {
                         if (nonLues > 0) {
                             badge.textContent = nonLues;
