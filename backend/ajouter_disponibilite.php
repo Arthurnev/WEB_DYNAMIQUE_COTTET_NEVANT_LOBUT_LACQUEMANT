@@ -28,7 +28,44 @@ if (empty($date) || empty($heure_debut) || empty($heure_fin)) {
     exit;
 }
 
+if ($heure_debut >= $heure_fin) {
+    echo json_encode([
+        "success" => false,
+        "error" => "L'heure de début doit être avant l'heure de fin"
+    ]);
+    exit;
+}
+
 try {
+    // Vérifie s'il existe déjà un créneau qui chevauche celui demandé
+    $stmtCheck = $pdo->prepare("
+        SELECT id
+        FROM creneau
+        WHERE id_praticien = ?
+        AND date = ?
+        AND statut != 'annule'
+        AND (
+            heure_debut < ?
+            AND heure_fin > ?
+        )
+        LIMIT 1
+    ");
+
+    $stmtCheck->execute([
+        $id_praticien,
+        $date,
+        $heure_fin,
+        $heure_debut
+    ]);
+
+    if ($stmtCheck->fetch()) {
+        echo json_encode([
+            "success" => false,
+            "error" => "Impossible d'ajouter cette disponibilité : elle chevauche déjà un créneau existant."
+        ]);
+        exit;
+    }
+
     $stmtService = $pdo->prepare("
         SELECT id
         FROM service
