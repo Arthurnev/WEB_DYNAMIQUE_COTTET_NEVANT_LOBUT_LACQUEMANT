@@ -15,8 +15,9 @@ try {
     $stmt = $pdo->prepare("
         SELECT DISTINCT 
             u.id, u.nom, u.prenom, u.email, u.telephone,
-            COUNT(r.id) as nb_consultations,
-            MAX(c.date) as derniere_visite
+        COUNT(CASE WHEN r.statut != 'annulee' THEN r.id END
+        ) as nb_consultations,           
+        MAX(c.date) as derniere_visite
         FROM reservation r
         JOIN creneau c ON r.id_creneau = c.id
         JOIN utilisateur u ON r.id_etudiant = u.id

@@ -24,8 +24,15 @@ try {
             u.nom AS praticien_nom,
             u.prenom AS praticien_prenom,
 
-            CASE WHEN pa.id IS NOT NULL THEN 1 ELSE 0 END AS est_panier,
-            CASE WHEN ia.id IS NOT NULL THEN 1 ELSE 0 END AS est_inscrit
+            CASE 
+                WHEN pa.id IS NOT NULL THEN 1 
+                ELSE 0 
+            END AS est_panier,
+
+            CASE 
+                WHEN ia.id IS NOT NULL THEN 1 
+                ELSE 0 
+            END AS est_inscrit
 
         FROM activite a
 
@@ -51,6 +58,9 @@ try {
     ]);
 
 } catch (Exception $e) {
-    echo json_encode(["success" => false, "error" => $e->getMessage()]);
+    echo json_encode([
+        "success" => false,
+        "error" => $e->getMessage()
+    ]);
 }
 ?>

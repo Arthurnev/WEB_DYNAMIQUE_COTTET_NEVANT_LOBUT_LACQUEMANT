@@ -12,12 +12,32 @@ if (!isset($_SESSION['user_id'])) {
 $praticien_id = $_SESSION['user_id'];
 
 try {
-    $stmt = $pdo->prepare("SELECT * FROM creneau WHERE id_praticien = ? ORDER BY date ASC, heure_debut ASC");
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM creneau
+        WHERE id_praticien = ?
+        AND (
+            date > CURDATE()
+            OR (
+                date = CURDATE()
+                AND heure_fin > CURTIME()
+            )
+        )
+        ORDER BY date ASC, heure_debut ASC
+    ");
+
     $stmt->execute([$praticien_id]);
-    $disponibilites = $stmt->fetchAll();
-    
-    echo json_encode(["success" => true, "disponibilites" => $disponibilites]);
+    $disponibilites = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode([
+        "success" => true,
+        "disponibilites" => $disponibilites
+    ]);
+
 } catch (PDOException $e) {
-    echo json_encode(["success" => false, "error" => $e->getMessage()]);
+    echo json_encode([
+        "success" => false,
+        "error" => $e->getMessage()
+    ]);
 }
 ?>
